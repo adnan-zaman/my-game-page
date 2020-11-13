@@ -1,3 +1,12 @@
+/**
+ * Adding this script to a page adds custom form validation to
+ * all forms on a page. On form submission, each of the input elements
+ * within the form will be checked for validity.
+ * Forms are expected to contain a div.form-error element, which will be
+ * populated with the error message if any of the form's inputs
+ * are invalid.
+ */
+
 //add onsubmit event handler for all forms
 document
   .querySelectorAll("form")

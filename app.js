@@ -1,3 +1,7 @@
+/**
+ * Sets up and exports the Express application.
+ */
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");

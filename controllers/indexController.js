@@ -7,6 +7,7 @@ const authDebug = require("debug")("passport");
 exports.index_get = function (req, res) {
   debug("GET");
   debug(`session id: ${req.sessionID}`);
+  if (req.isAuthenticated()) return res.redirect("/users");
   res.render("login.pug");
 };
 
@@ -43,9 +44,8 @@ exports.index_post = function (req, res, next) {
         authDebug(`login error: ${err.message}`);
         return next(err);
       }
-      res.locals.name = req.user.email;
-      res.locals.password = req.user.password;
-      res.render("success");
+      debug("redirecting to /users");
+      res.redirect("/users");
     });
   })(req, res, next);
 };

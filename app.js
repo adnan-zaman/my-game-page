@@ -2,6 +2,8 @@
  * Sets up and exports the Express application.
  */
 
+/* imports */
+
 //middleware
 const express = require("express");
 const logger = require("morgan");
@@ -22,34 +24,43 @@ const uid = require("uid-safe");
 //mocks
 const db = require("./mockdb");
 
-const app = express();
+//errors
+const { UserNotFoundError, IncorrectPasswordError } = require("./errors");
 
 //routers
 const indexRouter = require("./routes/index");
 
+const app = express();
+
 /* setting up passport */
 passport.use(
   new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    authDebug("finding user in db");
-    const user = { email: email, password: password };
-    return done(null, user);
+    authDebug(`local strategy for ${email}`);
+    const user = db.findByColumn("email", email);
+    let error = null;
+
+    if (!user) error = new UserNotFoundError();
+    else if (user.password !== password) error = new IncorrectPasswordError();
+    return done(error, error ? null : user);
   })
 );
 
 passport.serializeUser((user, done) => {
   authDebug(`serializing ${user.email}`);
-  done(null, user);
+  done(null, user.email);
 });
 
 passport.deserializeUser((id, done) => {
-  authDebug(`deserializing --v`);
-  authDebug(id);
-  done(null, id);
+  authDebug(`deserializing ${id}`);
+  const user = db.findByColumn("email", id);
+  done(null, user);
 });
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
+
+/* adding middleware */
 
 //http logging
 app.use(logger("dev"));

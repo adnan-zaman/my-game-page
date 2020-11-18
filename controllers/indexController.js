@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const passport = require("passport");
+const { UserNotFoundError, IncorrectPasswordError } = require("../errors");
 const debug = require("debug")("index");
 const authDebug = require("debug")("passport");
 
@@ -22,14 +23,24 @@ exports.index_post = function (req, res, next) {
   }
 
   passport.authenticate("local", (err, user, info) => {
-    authDebug("um hi");
     if (err) {
-      authDebug("auth error");
+      authDebug(`auth error: ${err.message}`);
+      //error due to usage
+      if (
+        err instanceof UserNotFoundError ||
+        err instanceof IncorrectPasswordError
+      ) {
+        res.locals.error_msg = err.message;
+        res.locals.email_value = req.body.email;
+        res.locals.password_value = req.body.password;
+        return res.render("login");
+      }
+      //non-usage related error
       return next(err);
     }
     req.login(user, (err) => {
       if (err) {
-        authDebug("login error");
+        authDebug(`login error: ${err.message}`);
         return next(err);
       }
       res.locals.name = req.user.email;

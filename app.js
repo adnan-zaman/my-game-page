@@ -2,15 +2,50 @@
  * Sets up and exports the Express application.
  */
 
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
+//middleware
+const express = require("express");
+const logger = require("morgan");
+const createError = require("http-errors");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
-var app = express();
+//node modules
+const path = require("path");
+
+//debugging
+const debug = require("debug")("app");
+const authDebug = require("debug")("passport");
+const uid = require("uid-safe");
+
+//mocks
+const db = require("./mockdb");
+
+const app = express();
 
 //routers
 const indexRouter = require("./routes/index");
+
+/* setting up passport */
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    authDebug("finding user in db");
+    const user = { email: email, password: password };
+    return done(null, user);
+  })
+);
+
+passport.serializeUser((user, done) => {
+  authDebug(`serializing ${user.email}`);
+  done(null, user);
+});
+
+passport.deserializeUser((id, done) => {
+  authDebug(`deserializing --v`);
+  authDebug(id);
+  done(null, id);
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -22,6 +57,25 @@ app.use(logger("dev"));
 app.use(express.urlencoded());
 //static resources
 app.use(express.static(path.join(__dirname, "public")));
+
+//sessions
+app.use(
+  session({
+    genid: (req) => {
+      const id = uid.sync(24);
+      debug(`no session id found. generating id: ${id}`);
+      return id;
+    },
+    store: new FileStore({ logFn: () => {} }), //this is to avoid those messages that appear when file store is empty
+    secret: process.env.secret,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+//authentication
+app.use(passport.initialize());
+app.use(passport.session());
 
 //routes
 app.use("/", indexRouter);

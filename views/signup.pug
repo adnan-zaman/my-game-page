@@ -7,7 +7,7 @@ block scripts
 
 block content
     h1 Welcome to My Game Page
-    form(id='login-form' method='post' action='/' novalidate='true')
+    form(id='login-form' method='post' action='/signup' novalidate='true')
         div
             label(for='email') Email:
             input(id='email' name='email' type='email' required=true value=email_value)
@@ -15,5 +15,5 @@ block content
             label(for='password') Password:
             input(id='password' name='password' type='text' required=true value=password_value) 
         div
-            button(type='submit') LOGIN
-        div.form-error= (error) ? error.message || error.msg : ''
+            button(type='submit') SIGNUP
+        div.form-error= (error) ? error.message : ''

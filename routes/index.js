@@ -1,32 +1,32 @@
 const express = require("express");
+
+//middleware and controllers
 const indexController = require("../controllers/indexController");
-const { body } = require("express-validator");
-const router = express.Router();
+const validators = require("../middleware/validators");
+const passport = require("passport");
 
 const debug = require("debug")("index");
 
-router.get("/", indexController.index_get);
+const router = express.Router();
+
+/* routes */
+router.get("/", indexController.loginGet);
 router.post(
   "/",
-  [
-    body("email")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Email is required")
-      .escape()
-      .isEmail()
-      .withMessage("Email is not a valid email address.")
-      .normalizeEmail(),
+  validators.emailValidator(),
+  validators.passwordValidator(),
+  indexController.loginFormErrorHandler,
+  passport.authenticate("local"),
+  indexController.loginSuccess,
+  indexController.loginFail
+);
 
-    body("password")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Password is required.")
-      .escape(),
-  ],
-  indexController.index_post
+router.get("/signup", indexController.signup_get);
+router.post(
+  "/signup",
+  emailValidator(),
+  passwordValidator(true),
+  indexController.signup_post
 );
 
 router.get("/users", (req, res) => {

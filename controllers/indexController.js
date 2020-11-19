@@ -1,27 +1,47 @@
-const { validationResult } = require("express-validator");
 const passport = require("passport");
+
+const { validationResult } = require("express-validator");
 const { UserNotFoundError, IncorrectPasswordError } = require("../errors");
+
 const debug = require("debug")("index");
 const authDebug = require("debug")("passport");
 
 exports.index_get = function (req, res) {
   debug("GET");
   debug(`session id: ${req.sessionID}`);
+  debug(`isAuth: ${req.isAuthenticated()}`);
+  debug(`user: ${req.user}`);
   if (req.isAuthenticated()) return res.redirect("/users");
-  res.render("login.pug");
+  res.render("login");
+};
+
+exports.loginGet = function (req, res) {
+  debug("GET");
+  debug(`session id: ${req.sessionID}`);
+  debug(`isAuth: ${req.isAuthenticated()}`);
+  debug(`user: ${req.user}`);
+  if (req.isAuthenticated()) return res.redirect("/users");
+  res.render("login");
+};
+
+exports.index_post_form_errors = function (req, res, next) {
+  debug("post form errors");
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.locals.error = errors.array()[0];
+    res.locals.email_value = req.body.email;
+    res.locals.password_value = req.body.password;
+    debug(Object.getOwnPropertyNames(res.locals.error));
+    return res.render("login");
+  }
+
+  next();
 };
 
 exports.index_post = function (req, res, next) {
   debug(`POST`);
   debug(`session id: ${req.sessionID}`);
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    res.locals.error_msg = errors.array()[0].msg;
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
-    return res.render("login");
-  }
 
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -31,7 +51,7 @@ exports.index_post = function (req, res, next) {
         err instanceof UserNotFoundError ||
         err instanceof IncorrectPasswordError
       ) {
-        res.locals.error_msg = err.message;
+        res.locals.error = err;
         res.locals.email_value = req.body.email;
         res.locals.password_value = req.body.password;
         return res.render("login");
@@ -48,4 +68,12 @@ exports.index_post = function (req, res, next) {
       res.redirect("/users");
     });
   })(req, res, next);
+};
+
+exports.signup_get = function (req, res, next) {
+  res.render("signup");
+};
+
+exports.signup_post = function (req, res, next) {
+  res.send("signup");
 };

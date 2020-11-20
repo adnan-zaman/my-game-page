@@ -21,12 +21,13 @@ router.post(
   indexController.loginFail
 );
 
-router.get("/signup", indexController.signup_get);
+router.get("/signup", indexController.signupGet);
 router.post(
   "/signup",
   validators.emailValidator(),
   validators.passwordValidator(true),
-  indexController.signup_post
+  indexController.signupPost,
+  passport.authenticate("local", { successRedirect: "/users" })
 );
 
 router.get("/users", (req, res) => {

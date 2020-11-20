@@ -16,4 +16,4 @@ block content
             input(id='password' name='password' type='text' required=true value=password_value) 
         div
             button(type='submit') SIGNUP
-        div.form-error= (error) ? error.message : ''
+        div.form-error= (error) ? error.msg || error.message : ''

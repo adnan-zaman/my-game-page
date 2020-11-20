@@ -24,8 +24,8 @@ router.post(
 router.get("/signup", indexController.signup_get);
 router.post(
   "/signup",
-  emailValidator(),
-  passwordValidator(true),
+  validators.emailValidator(),
+  validators.passwordValidator(true),
   indexController.signup_post
 );
 

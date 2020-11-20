@@ -13,7 +13,7 @@ exports.emailValidator = function () {
     .trim()
     .not()
     .isEmpty()
-    .withMessage("Email is required")
+    .withMessage("Email is required.")
     .escape()
     .isEmail()
     .withMessage("Email is not a valid email address.")

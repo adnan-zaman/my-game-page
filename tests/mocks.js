@@ -2,25 +2,14 @@
  * Contains mock objects to be used during testing
  *
  */
+const sinon = require("sinon");
 
 class MockResponse {
   constructor() {
     this.locals = {};
-    this.sendPath = null;
-    this.renderPath = null;
-    this.redirectPath = null;
-  }
-
-  send(path) {
-    this.sendPath = path;
-  }
-
-  render(path) {
-    this.renderPath = path;
-  }
-
-  redirect(path) {
-    this.redirectPath = path;
+    this.send = sinon.fake();
+    this.render = sinon.fake();
+    this.redirect = sinon.fake();
   }
 }
 

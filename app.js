@@ -15,14 +15,21 @@ const LocalStrategy = require("passport-local");
 
 //node modules
 const path = require("path");
+const { promisify } = require("util");
 
 //debugging
 const debug = require("debug")("app");
 const authDebug = require("debug")("passport");
 const uid = require("uid-safe");
 
-//mocks
-const db = require("./mockdb");
+//db
+const db = require("./database");
+const dbConfig = {
+  password: process.env.dbpass,
+  user: process.env.dbuser,
+  host: "localhost",
+  database: "my_game_page_dev",
+};
 
 //errors
 const { UserNotFoundError, IncorrectPasswordError } = require("./errors");
@@ -34,15 +41,26 @@ const app = express();
 
 /* setting up passport */
 passport.use(
-  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    authDebug(`local strategy for ${email}`);
-    const user = db.findByColumn("email", email);
-    let error = null;
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      authDebug(`local strategy for ${email}`);
 
-    if (!user) error = new UserNotFoundError();
-    else if (user.password !== password) error = new IncorrectPasswordError();
-    return done(error, error ? null : user);
-  })
+      const s = `SELECT email,password FROM users WHERE email = ?`;
+      const connection = await db.createConnection();
+
+      try {
+        const results = await connection.query(s, [email]);
+        connection.end();
+        if (!results[0]) return done(new UserNotFoundError(), null);
+        if (results[0].password !== password)
+          return done(new IncorrectPasswordError(), null);
+        done(null, results[0]);
+      } catch (e) {
+        done(e, null);
+      }
+    }
+  )
 );
 
 passport.serializeUser((user, done) => {
@@ -50,10 +68,13 @@ passport.serializeUser((user, done) => {
   done(null, user.email);
 });
 
-passport.deserializeUser((id, done) => {
-  authDebug(`deserializing ${id}`);
-  const user = db.findByColumn("email", id);
-  done(null, user);
+passport.deserializeUser((email, done) => {
+  authDebug(`deserializing ${email}`);
+  const connection = db.createConnection();
+  const s = `SELECT * FROM users WHERE email = ?`;
+  const results = await connection.query(s, [email]);
+  connection.end();
+  done(null, results[0]);
 });
 
 // view engine setup

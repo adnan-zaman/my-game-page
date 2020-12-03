@@ -2,7 +2,7 @@ const assert = require("assert").strict;
 const { MockResponse } = require("./mocks");
 const sinon = require("sinon");
 
-const { body, check } = require("express-validator");
+const { body } = require("express-validator");
 const {
   UserNotFoundError,
   IncorrectPasswordError,

@@ -4,7 +4,7 @@ const {
   IncorrectPasswordError,
   UserAlreadyExistsError,
 } = require("../errors");
-const db = require("../mockdb");
+const db = require("../database");
 
 const debug = require("debug")("index");
 const authDebug = require("debug")("passport");

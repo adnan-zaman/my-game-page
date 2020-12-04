@@ -47,7 +47,7 @@ passport.use(
       authDebug(`local strategy for ${email}`);
 
       const s = `SELECT email,password FROM users WHERE email = ?`;
-      const connection = await db.createConnection();
+      const connection =  db.createConnection();
 
       try {
         const results = await connection.query(s, [email]);

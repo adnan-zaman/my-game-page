@@ -8,7 +8,7 @@ const {
   IncorrectPasswordError,
   UserAlreadyExistsError,
 } = require("../errors");
-const db = require("../mockdb");
+const db = require("../database");
 
 const indexController = require("../controllers/indexController");
 
@@ -128,15 +128,18 @@ describe("GET /signup", function () {
 /*
  * (POST /signup) -> (emailValidator) -> (passwordValidator) -> (signupPost) -> (passport.authenticate) -> (redirect)
  */
-describe("POST /signup", function () {
-  beforeEach(function () {
+describe("POST /signup", async function () {
+  beforeEach(async function () {
     this.res = new MockResponse();
     this.req = { body: {} };
     this.nextFake = sinon.fake();
+    this.connection = db.createConnection();
+    await this.connection.query("CALL PopulateTestData();");
   });
 
-  afterEach(function () {
-    db.resetToDefault();
+  afterEach(async function () {
+    await this.connection.query("CALL ClearTestData()");
+    this.connection.end();
   });
 
   describe("signupPost", function () {
@@ -162,8 +165,11 @@ describe("POST /signup", function () {
       assert.strictEqual(this.nextFake.callCount, 0);
     });
 
-    it("should render signup with UserAlreadyExistsError if user already exists", function () {
-      const existingUser = db.findById(1);
+    it("should render signup with UserAlreadyExistsError if user already exists", async function () {
+      //get first user
+      const existingUser = await this.connection.query(
+        "SELECT * FROM users LIMIT 1"
+      )[0];
       this.req.body.email = existingUser.email;
       this.req.body.password = existingUser.password;
       indexController.signupPost(this.req, this.res);
@@ -178,7 +184,7 @@ describe("POST /signup", function () {
     });
 
     it("should call next middleware on valid input", async function () {
-      this.req.body.email = "test@abc.com";
+      this.req.body.email = "unique@abc.com";
       this.req.body.password = "pass1";
       //valid input
       const mockValidation = body("email").custom((value) => true);
@@ -188,14 +194,18 @@ describe("POST /signup", function () {
       assert.strictEqual(this.nextFake.called, true);
     });
 
-    it("should update database on valid input", function () {
-      this.req.body.email = "test@abc.com";
+    it("should update database on valid input", async function () {
+      this.req.body.email = "unique@abc.com";
       this.req.body.password = "pass1";
 
       indexController.signupPost(this.req, this.res, this.nextFake);
 
-      const newUser = db.findByColumn("email", "test@abc.com");
-      assert.strictEqual(newUser.email, "test@abc.com");
+      const newUser = await this.connection.query(
+        "SELECT * FROM USERS WHERE email = ?",
+        ["unique@abc.com"]
+      )[0];
+      assert.strictEqual(newUser.email, "unique@abc.com");
+      console.log("hupendup");
       assert.strictEqual(newUser.password, "pass1");
     });
   });

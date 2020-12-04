@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --recursive './tests/*.test.js'",
+    "test": "powershell $ENV:SECRET='abcdefg'; $ENV:DB='my_game_page_test'; $ENV:DBUSER='root'; $ENV:DBPASS='password'; $ENV:DBPORT='3306'; mocha --recursive './tests/*.test.js'",
     "devstart": "powershell $ENV:DEBUG='mygamepage:* index app passport'; $ENV:SECRET='abcdefg'; $ENV:DB='my_game_page_dev'; $ENV:DBUSER='root'; $ENV:DBPASS='password'; $ENV:DBPORT='3306';  nodemon --ignore sessions ./bin/www;"
   },
   "dependencies": {

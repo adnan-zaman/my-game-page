@@ -12,7 +12,7 @@ const config = {
   database: process.env.db,
 };
 
-exports.createConnection = async () => {
+exports.createConnection = () => {
   const connection = mysql.createConnection(config);
 
   //replace connection methods with promisified versions

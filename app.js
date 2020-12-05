@@ -24,12 +24,6 @@ const uid = require("uid-safe");
 
 //db
 const db = require("./database");
-const dbConfig = {
-  password: process.env.dbpass,
-  user: process.env.dbuser,
-  host: "localhost",
-  database: "my_game_page_dev",
-};
 
 //errors
 const { UserNotFoundError, IncorrectPasswordError } = require("./errors");
@@ -46,16 +40,18 @@ passport.use(
     async (email, password, done) => {
       authDebug(`local strategy for ${email}`);
 
-      const s = `SELECT email,password FROM users WHERE email = ?`;
-      const connection =  db.createConnection();
+      const connection = db.createConnection();
 
       try {
-        const results = await connection.query(s, [email]);
+        const results = await connection.query("CALL GetUser(?)", [email]);
+        //querying a stored procedure returns [RowDataPacket[], Packet]
+        const potentialUser = results[0][0];
+        //todo: what do I do if ending connection errors out
         connection.end();
-        if (!results[0]) return done(new UserNotFoundError(), null);
-        if (results[0].password !== password)
+        if (!potentialUser) return done(new UserNotFoundError(), null);
+        if (potentialUser.password !== password)
           return done(new IncorrectPasswordError(), null);
-        done(null, results[0]);
+        done(null, potentialUser);
       } catch (e) {
         done(e, null);
       }
@@ -68,13 +64,16 @@ passport.serializeUser((user, done) => {
   done(null, user.email);
 });
 
-passport.deserializeUser((email, done) => {
+passport.deserializeUser(async (email, done) => {
   authDebug(`deserializing ${email}`);
   const connection = db.createConnection();
-  const s = `SELECT * FROM users WHERE email = ?`;
-  const results = await connection.query(s, [email]);
-  connection.end();
-  done(null, results[0]);
+  try {
+    const results = await connection.query("CALL GetUser(?)", [email]);
+    connection.end();
+    done(null, results[0][0]);
+  } catch (e) {
+    done(e, null);
+  }
 });
 
 // view engine setup

@@ -167,12 +167,13 @@ describe("POST /signup", async function () {
 
     it("should render signup with UserAlreadyExistsError if user already exists", async function () {
       //get first user
-      const existingUser = await this.connection.query(
+      const results = await this.connection.query(
         "SELECT * FROM users LIMIT 1"
-      )[0];
+      );
+      const existingUser = results[0];
       this.req.body.email = existingUser.email;
       this.req.body.password = existingUser.password;
-      indexController.signupPost(this.req, this.res);
+      await indexController.signupPost(this.req, this.res);
 
       assert.strictEqual(
         this.res.locals.error instanceof UserAlreadyExistsError,
@@ -189,7 +190,7 @@ describe("POST /signup", async function () {
       //valid input
       const mockValidation = body("email").custom((value) => true);
       await mockValidation(this.req, this.res, sinon.fake());
-      indexController.signupPost(this.req, this.res, this.nextFake);
+      await indexController.signupPost(this.req, this.res, this.nextFake);
 
       assert.strictEqual(this.nextFake.called, true);
     });
@@ -198,15 +199,19 @@ describe("POST /signup", async function () {
       this.req.body.email = "unique@abc.com";
       this.req.body.password = "pass1";
 
-      indexController.signupPost(this.req, this.res, this.nextFake);
+      await indexController.signupPost(this.req, this.res, this.nextFake);
 
-      const newUser = await this.connection.query(
-        "SELECT * FROM USERS WHERE email = ?",
-        ["unique@abc.com"]
-      )[0];
+      const results = await this.connection.query("CALL GetUser(?)", [
+        "unique@abc.com",
+      ]);
+
+      const newUser = results[0][0];
+
+      console.log(this.res);
+      console.log(this.res.render.calledWith("signup"));
+
       assert.strictEqual(newUser.email, "unique@abc.com");
-      console.log("hupendup");
-      assert.strictEqual(newUser.password, "pass1");
+      assert.strictEqual(newUser.password, "password1");
     });
   });
 });

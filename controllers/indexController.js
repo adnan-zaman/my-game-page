@@ -52,9 +52,10 @@ exports.signupGet = function (req, res, next) {
   res.render("signup");
 };
 
-exports.signupPost = function (req, res, next) {
+exports.signupPost = async function (req, res, next) {
   const errors = validationResult(req);
 
+  //errors during validation/sanitization middlware
   if (!errors.isEmpty()) {
     res.locals.error = errors.array()[0];
     res.locals.email_value = req.body.email;
@@ -62,13 +63,23 @@ exports.signupPost = function (req, res, next) {
     return res.render("signup");
   }
 
-  if (db.findByColumn("email", req.body.email)) {
-    res.locals.error = new UserAlreadyExistsError();
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
-    return res.render("signup");
-  }
+  try {
+    const conn = db.createConnection();
+    const results = await conn.query("CALL GetUser(?)", [req.body.email]);
+    const potentialUser = results[0][0];
 
-  db.add({ email: req.body.email, password: req.body.password });
-  next();
+    //user already exists
+    if (potentialUser) {
+      res.locals.error = new UserAlreadyExistsError();
+      res.locals.email_value = req.body.email;
+      res.locals.password_value = req.body.password;
+      return res.render("signup");
+    }
+    await conn.query("CALL AddUser(?,?)", [req.body.email, req.body.password]);
+
+    conn.end();
+    next();
+  } catch (e) {
+    next(e);
+  }
 };

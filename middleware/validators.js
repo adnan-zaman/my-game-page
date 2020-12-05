@@ -15,6 +15,8 @@ exports.emailValidator = function () {
     .isEmpty()
     .withMessage("Email is required.")
     .escape()
+    .isLength({ max: 50 })
+    .withMessage("Email is too long")
     .isEmail()
     .withMessage("Email is not a valid email address.")
     .normalizeEmail();
@@ -36,7 +38,9 @@ exports.passwordValidator = function (signup = false) {
   if (signup)
     base = base
       .isLength({ min: 8 })
-      .withMessage("Password must be minimum 8 characters long.");
+      .withMessage("Password must be minimum 8 characters long.")
+      .isLength({ max: 50 })
+      .withMessage("Password is too long.");
 
   return base.escape();
 };

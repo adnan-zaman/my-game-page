@@ -1,0 +1,2 @@
+get /signup
+on signup uses old cookie instead of new

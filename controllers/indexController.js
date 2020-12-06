@@ -54,7 +54,6 @@ exports.signupGet = function (req, res, next) {
 
 exports.signupPost = async function (req, res, next) {
   const errors = validationResult(req);
-
   //errors during validation/sanitization middlware
   if (!errors.isEmpty()) {
     res.locals.error = errors.array()[0];
@@ -73,10 +72,10 @@ exports.signupPost = async function (req, res, next) {
       res.locals.error = new UserAlreadyExistsError();
       res.locals.email_value = req.body.email;
       res.locals.password_value = req.body.password;
+      conn.end();
       return res.render("signup");
     }
     await conn.query("CALL AddUser(?,?)", [req.body.email, req.body.password]);
-
     conn.end();
     next();
   } catch (e) {

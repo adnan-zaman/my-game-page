@@ -7,7 +7,7 @@ DELIMITER $$
 ## Data retrival procedures
 
 # Get a user
-# @param 	userEmail 	user's email
+# @param 	userEmail 	users email
 CREATE PROCEDURE GetUser(
 	IN userEmail VARCHAR(50)
 )
@@ -21,8 +21,8 @@ END$$
 ## Data manipulation procedures
 
 # Add a user to database
-# @param	userEmail	new user's email
-# @param	userPass	new user's password
+# @param	userEmail	new users email
+# @param	userPass	new users password
 CREATE PROCEDURE AddUser(
 	IN userEmail VARCHAR(50),
     IN userPass VARCHAR(50)
@@ -39,9 +39,12 @@ END$$
 CREATE PROCEDURE SetupTables()
 BEGIN
 	CREATE TABLE IF NOT EXISTS users(
-		id INT PRIMARY KEY AUTO_INCREMENT,
-		email VARCHAR(50) UNIQUE NOT NULL,
-		password VARCHAR(50) UNIQUE NOT NULL
+		id INT AUTO_INCREMENT,
+		email VARCHAR(50) NOT NULL,
+		password VARCHAR(50) NOT NULL,
+        
+        CONSTRAINT PK_Users PRIMARY KEY(id),
+        CONSTRAINT UQ_Users_Email UNIQUE(email)
 	);
 END$$
 

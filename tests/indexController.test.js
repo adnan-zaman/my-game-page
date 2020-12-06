@@ -186,7 +186,7 @@ describe("POST /signup", async function () {
 
     it("should call next middleware on valid input", async function () {
       this.req.body.email = "unique@abc.com";
-      this.req.body.password = "pass1";
+      this.req.body.password = "password1";
       //valid input
       const mockValidation = body("email").custom((value) => true);
       await mockValidation(this.req, this.res, sinon.fake());
@@ -197,7 +197,7 @@ describe("POST /signup", async function () {
 
     it("should update database on valid input", async function () {
       this.req.body.email = "unique@abc.com";
-      this.req.body.password = "pass1";
+      this.req.body.password = "password1";
 
       await indexController.signupPost(this.req, this.res, this.nextFake);
 
@@ -206,9 +206,6 @@ describe("POST /signup", async function () {
       ]);
 
       const newUser = results[0][0];
-
-      console.log(this.res);
-      console.log(this.res.render.calledWith("signup"));
 
       assert.strictEqual(newUser.email, "unique@abc.com");
       assert.strictEqual(newUser.password, "password1");

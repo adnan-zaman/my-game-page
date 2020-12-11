@@ -64,9 +64,13 @@ BEGIN
 		
 		CONSTRAINT PK_FavoriteGames PRIMARY KEY(uid, gid),
 		CONSTRAINT FK_FavoriteGames_Uid FOREIGN KEY(uid)
-			REFERENCES users(id),
+			REFERENCES users(id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
 		CONSTRAINT FK_FavoriteGames_Gid FOREIGN KEY(gid)
 			REFERENCES games(id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
 	);
 END$$
 
@@ -103,6 +107,11 @@ CREATE PROCEDURE ClearTestData()
 BEGIN
 	DELETE FROM users
     WHERE id > 0;
+    
+    DELETE FROM games
+    WHERE id > 0;
+    
+    #all FavoriteGames will be deleted due to referential integrity
 END$$
 
 DELIMITER ;

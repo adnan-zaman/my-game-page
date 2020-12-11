@@ -27,14 +27,10 @@ router.post(
   validators.emailValidator(),
   validators.passwordValidator(true),
   indexController.signupPost,
-  passport.authenticate("local", { successRedirect: "/users" })
+  passport.authenticate("local"),
+  (req, res) => {
+    res.redirect(`/user/${req.user.id}`);
+  }
 );
-
-router.get("/users", (req, res) => {
-  if (req.isUnauthenticated()) return res.redirect("/");
-  res.locals.name = req.user.email;
-  res.locals.password = req.user.password;
-  res.render("success");
-});
 
 module.exports = router;

@@ -15,7 +15,6 @@ const LocalStrategy = require("passport-local");
 
 //node modules
 const path = require("path");
-const { promisify } = require("util");
 
 //debugging
 const debug = require("debug")("app");
@@ -29,7 +28,8 @@ const db = require("./database");
 const { UserNotFoundError, IncorrectPasswordError } = require("./errors");
 
 //routers
-const indexRouter = require("./routes/index");
+const indexRouter = require("./routes/indexRouter");
+const userRouter = require("./routes/userRouter");
 
 const app = express();
 
@@ -110,6 +110,7 @@ app.use(passport.session());
 
 //routes
 app.use("/", indexRouter);
+app.use("/user", userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

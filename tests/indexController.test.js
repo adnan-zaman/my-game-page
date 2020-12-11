@@ -11,6 +11,7 @@ const {
 const db = require("../database");
 
 const indexController = require("../controllers/indexController");
+const usersController = require("../controllers/userController");
 
 describe("GET /", function () {
   describe("loginGet", function () {
@@ -25,10 +26,11 @@ describe("GET /", function () {
       assert.strictEqual(this.res.render.calledWith("login"), true);
     });
 
-    it("should redirect to /users if user is authenticated", function () {
+    it("should redirect to /users/:id if user is authenticated", function () {
       this.req.isAuthenticated = () => true;
+      this.req.user = { id: 1, email: "unique@abc.com", password: "password1" };
       indexController.loginGet(this.req, this.res);
-      assert.strictEqual(this.res.redirect.calledWith("/users"), true);
+      assert.strictEqual(this.res.redirect.calledWith("/user/1"), true);
     });
   });
 });
@@ -118,9 +120,17 @@ describe("GET /signup", function () {
       this.req = {};
     });
 
-    it("should render signup", function () {
+    it("should render signup if not authenticated", function () {
+      this.req.isAuthenticated = () => false;
       indexController.signupGet(this.req, this.res);
       assert.strictEqual(this.res.render.calledWith("signup"), true);
+    });
+
+    it("should redirect to /users/:id if user authenticated", function () {
+      this.req.isAuthenticated = () => true;
+      this.req.user = { id: 1, email: "unique@abc.com", password: "password1" };
+      indexController.signupGet(this.req, this.res);
+      assert.strictEqual(this.res.redirect.calledWith("/user/1"), true);
     });
   });
 });
@@ -210,5 +220,74 @@ describe("POST /signup", async function () {
       assert.strictEqual(newUser.email, "unique@abc.com");
       assert.strictEqual(newUser.password, "password1");
     });
+  });
+});
+
+/*
+ * (GET /users/:id) -> (getUserPage)
+ */
+describe("GET /user/:id", function () {
+  beforeEach(async function () {
+    this.res = new MockResponse();
+    this.req = { body: {}, params: {} };
+    this.nextFake = sinon.fake();
+    this.connection = db.createConnection();
+    await this.connection.query("CALL PopulateTestData();");
+  });
+
+  afterEach(async function () {
+    await this.connection.query("CALL ClearTestData()");
+    this.connection.end();
+  });
+
+  it("should send all info to display user page", async function () {
+    //user whose page is being displayed
+    const displayedUser = await (
+      await this.connection.query("CALL GetUser(?)", ["test@abc.com"])
+    )[0][0];
+
+    //user who is viewing page
+    const viewingUser = await (
+      await this.connection.query("CALL GetUser(?)", ["test2@abc.com"])
+    )[0][0];
+
+    this.req.params.id = displayedUser.id;
+    this.req.user = viewingUser;
+
+    usersController.getUserPage(this.req, this.res, this.nextFake);
+
+    assert.strictEqual(this.res.locals.username, "ProTester");
+    assert.strictEqual(this.res.locals.id, null);
+    assert.strictEqual(this.nextFake.callCount, 0);
+    assert.deepStrictEqual(res.locals.games, [
+      { name: "Game4", imgurl: "https://gameimg/game4.jpg" },
+      { name: "Game2", imgurl: "https://gameimg/game2.jpg" },
+      { name: "Game1", imgurl: "https://gameimg/game1.jpg" },
+      { name: "Game3", imgurl: "https://gameimg/game3.jpg" },
+      { name: "Game5", imgurl: "https://gameimg/game5.jpg" },
+    ]);
+  });
+
+  it("should send all info to display user page + user id if logged in", async function () {
+    //user whose page is being displayed & viewing
+    const user = await (
+      await this.connection.query("CALL GetUser(?)", ["test@abc.com"])
+    )[0][0];
+
+    this.req.params.id = user.id;
+    this.req.user = user;
+
+    usersController.getUserPage(this.req, this.res, this.nextFake);
+
+    assert.strictEqual(this.res.locals.username, "ProTester");
+    assert.strictEqual(this.res.locals.id, user.id);
+    assert.strictEqual(this.nextFake.callCount, 0);
+    assert.deepStrictEqual(res.locals.games, [
+      { name: "Game4", imgurl: "https://gameimg/game4.jpg" },
+      { name: "Game2", imgurl: "https://gameimg/game2.jpg" },
+      { name: "Game1", imgurl: "https://gameimg/game1.jpg" },
+      { name: "Game3", imgurl: "https://gameimg/game3.jpg" },
+      { name: "Game5", imgurl: "https://gameimg/game5.jpg" },
+    ]);
   });
 });

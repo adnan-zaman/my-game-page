@@ -10,10 +10,10 @@ const debug = require("debug")("index");
 const authDebug = require("debug")("passport");
 
 exports.loginGet = function (req, res) {
-  debug("GET");
+  debug("GET /");
   debug(`session id: ${req.sessionID}`);
 
-  if (req.isAuthenticated()) return res.redirect("/users");
+  if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
   res.render("login");
 };
 
@@ -49,10 +49,15 @@ exports.loginSuccess = function (req, res, next) {
 };
 
 exports.signupGet = function (req, res, next) {
+  debug("GET /signup");
+  debug(`session id: ${req.sessionID}`);
+  if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
   res.render("signup");
 };
 
 exports.signupPost = async function (req, res, next) {
+  debug("POST /signup");
+  debug(`session id: ${req.sessionID}`);
   const errors = validationResult(req);
   //errors during validation/sanitization middlware
   if (!errors.isEmpty()) {
@@ -76,6 +81,7 @@ exports.signupPost = async function (req, res, next) {
       return res.render("signup");
     }
     await conn.query("CALL AddUser(?,?)", [req.body.email, req.body.password]);
+    debug(`${req.body.email} added, about to authenticate`);
     conn.end();
     next();
   } catch (e) {

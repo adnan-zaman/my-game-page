@@ -10,7 +10,7 @@
     "setupDb": "cross-env DB=my_game_page_test DBUSER=root DBPASS=password DBPORT=3306",
     "runStart": "node ./bin/www",
     "runTest": "cross-env mocha --recursive ./tests/*.test.js",
-    "runDev": "cross-env DEBUG=mygamepage:* nodemon --ignore ./sessions ./bin/www"
+    "runDev": "cross-env DEBUG=mygamepage:*,index,passport,user nodemon --ignore ./sessions ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

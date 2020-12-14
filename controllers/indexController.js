@@ -68,8 +68,10 @@ exports.signupPost = async function (req, res, next) {
     return res.render("signup");
   }
 
+  let conn;
+
   try {
-    const conn = db.createConnection();
+    conn = db.createConnection();
     let results = await conn.query("CALL GetUserByEmail(?)", [req.body.email]);
     const potentialUserEmail = results[0][0];
     results = await conn.query("CALL GetUserByDisplayName(?)", [
@@ -85,7 +87,6 @@ exports.signupPost = async function (req, res, next) {
       res.locals.email_value = req.body.email;
       res.locals.password_value = req.body.password;
       res.locals.displayName_value = req.body.displayName;
-      conn.end();
       return res.render("signup");
     }
     await conn.query("CALL AddUser(?,?,?)", [
@@ -94,9 +95,11 @@ exports.signupPost = async function (req, res, next) {
       req.body.displayName,
     ]);
     debug(`${req.body.email} added, about to authenticate`);
-    conn.end();
+
     next();
   } catch (e) {
     next(e);
+  } finally {
+    if (conn) conn.end();
   }
 };

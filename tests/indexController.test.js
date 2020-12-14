@@ -27,7 +27,6 @@ describe("GET /", function () {
     });
 
     it("should redirect to /user/:id if user is authenticated", function () {
-      console.log(process.env.secret);
       this.req.isAuthenticated = () => true;
       this.req.user = {
         id: 1,
@@ -289,31 +288,42 @@ describe("GET /user/:id", function () {
 
   it("should send all info to display user page", async function () {
     //user whose page is being displayed
-    const displayedUser = await (
-      await this.connection.query("CALL GetUserByEmail(?)", ["test@abc.com"])
-    )[0][0];
+    let results = await this.connection.query("CALL GetUserByEmail(?)", [
+      "test@abc.com",
+    ]);
+    const displayedUser = results[0][0];
 
     //user who is viewing page
-    const viewingUser = await (
-      await this.connection.query("CALL GetUserByEmail(?)", ["test2@abc.com"])
-    )[0][0];
+    results = await this.connection.query("CALL GetUserByEmail(?)", [
+      "test2@abc.com",
+    ]);
+    const viewingUser = results[0][0];
 
     this.req.params.id = displayedUser.id;
     this.req.user = viewingUser;
 
-    usersController.getUserPage(this.req, this.res, this.nextFake);
+    await usersController.getUserPage(this.req, this.res, this.nextFake);
 
     assert.strictEqual(this.res.locals.displayName, "ProTester");
     assert.strictEqual(this.res.locals.id, null);
     assert.strictEqual(this.nextFake.callCount, 0);
     assert.strictEqual(this.res.render.calledWith("userPage"), true);
-    assert.deepStrictEqual(res.locals.games, [
-      { id: 4, name: "Game4", imgurl: "https://gameimg/game4.jpg" },
-      { id: 2, name: "Game2", imgurl: "https://gameimg/game2.jpg" },
-      { id: 1, name: "Game1", imgurl: "https://gameimg/game1.jpg" },
-      { id: 3, name: "Game3", imgurl: "https://gameimg/game3.jpg" },
-      { id: 5, name: "Game5", imgurl: "https://gameimg/game5.jpg" },
-    ]);
+
+    //expected order of game ids
+    //we do this because we can't deepStrictEqual objects because
+    //returned objects are RowDataPackets and we only care about
+    //its values
+    const expectedOrder = [4, 2, 1, 3, 5];
+    assert.strictEqual(this.res.locals.games.length, expectedOrder.length);
+    for (let i = 0; i < expectedOrder.length; i++) {
+      const id = expectedOrder[i];
+      assert.strictEqual(this.res.locals.games[i].id, id);
+      assert.strictEqual(this.res.locals.games[i].name, `Game${id}`);
+      assert.strictEqual(
+        this.res.locals.games[i].imgurl,
+        `https://gameimg/game${id}.jpg`
+      );
+    }
   });
 
   it("should send all info to display user page + user id if logged in", async function () {
@@ -325,19 +335,27 @@ describe("GET /user/:id", function () {
     this.req.params.id = user.id;
     this.req.user = user;
 
-    usersController.getUserPage(this.req, this.res, this.nextFake);
+    await usersController.getUserPage(this.req, this.res, this.nextFake);
 
     assert.strictEqual(this.res.locals.displayName, "ProTester");
     assert.strictEqual(this.res.locals.id, user.id);
     assert.strictEqual(this.nextFake.callCount, 0);
     assert.strictEqual(this.res.render.calledWith("userPage"), true);
-    assert.deepStrictEqual(res.locals.games, [
-      { id: 4, name: "Game4", imgurl: "https://gameimg/game4.jpg" },
-      { id: 2, name: "Game2", imgurl: "https://gameimg/game2.jpg" },
-      { id: 1, name: "Game1", imgurl: "https://gameimg/game1.jpg" },
-      { id: 3, name: "Game3", imgurl: "https://gameimg/game3.jpg" },
-      { id: 5, name: "Game5", imgurl: "https://gameimg/game5.jpg" },
-    ]);
+    //expected order of game ids
+    //we do this because we can't deepStrictEqual objects because
+    //returned objects are RowDataPackets and we only care about
+    //its values
+    const expectedOrder = [4, 2, 1, 3, 5];
+    assert.strictEqual(this.res.locals.games.length, expectedOrder.length);
+    for (let i = 0; i < expectedOrder.length; i++) {
+      const id = expectedOrder[i];
+      assert.strictEqual(this.res.locals.games[i].id, id);
+      assert.strictEqual(this.res.locals.games[i].name, `Game${id}`);
+      assert.strictEqual(
+        this.res.locals.games[i].imgurl,
+        `https://gameimg/game${id}.jpg`
+      );
+    }
   });
 
   it("should return 404 on user that doesn't exist", async function () {
@@ -351,7 +369,7 @@ describe("GET /user/:id", function () {
       err = e;
     };
 
-    usersController.getUserPage(this.req, this.res, this.nextFake);
+    await usersController.getUserPage(this.req, this.res, this.nextFake);
     assert.strictEqual(err.status, 404);
   });
 
@@ -366,7 +384,7 @@ describe("GET /user/:id", function () {
       err = e;
     };
 
-    usersController.getUserPage(this.req, this.res, this.nextFake);
+    await usersController.getUserPage(this.req, this.res, this.nextFake);
     assert.strictEqual(err.status, 404);
   });
 });

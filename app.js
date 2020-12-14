@@ -40,22 +40,22 @@ passport.use(
     async (email, password, done) => {
       authDebug(`local strategy for ${email}`);
 
-      const connection = db.createConnection();
+      let conn = db.createConnection();
 
       try {
-        const results = await connection.query("CALL GetUserByEmail(?)", [
-          email,
-        ]);
+        conn = db.createConnection();
+        const results = await conn.query("CALL GetUserByEmail(?)", [email]);
         //querying a stored procedure returns [RowDataPacket[], Packet]
         const potentialUser = results[0][0];
-        //todo: what do I do if ending connection errors out
-        connection.end();
+
         if (!potentialUser) return done(new UserNotFoundError(), null);
         if (potentialUser.password !== password)
           return done(new IncorrectPasswordError(), null);
         done(null, potentialUser);
       } catch (e) {
         done(e, null);
+      } finally {
+        if (conn) conn.end();
       }
     }
   )
@@ -68,13 +68,15 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (email, done) => {
   authDebug(`deserializing ${email}`);
-  const connection = db.createConnection();
+  let conn;
   try {
-    const results = await connection.query("CALL GetUserByEmail(?)", [email]);
-    connection.end();
+    conn = db.createConnection();
+    const results = await conn.query("CALL GetUserByEmail(?)", [email]);
     done(null, results[0][0]);
   } catch (e) {
     done(e, null);
+  } finally {
+    if (conn) conn.end();
   }
 });
 

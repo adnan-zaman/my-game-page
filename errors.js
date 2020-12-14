@@ -29,8 +29,18 @@ class IncorrectPasswordError extends Error {
 
 class UserAlreadyExistsError extends Error {
   /** Represents an error where user enters the wrong password. */
-  constructor() {
-    super("This email is already in use.");
+  constructor(conflictType) {
+    super();
+    this.conflictType = conflictType.toUpperCase();
+    if (this.conflictType !== "EMAIL" && this.conflictType !== "DISPLAYNAME") {
+      this.conflictType = "OTHER";
+      this.message = "This user already exists.";
+    } else {
+      this.message = `This ${
+        this.conflictType === "EMAIL" ? "email" : "display name"
+      } is already in use.`;
+    }
+
     this.name = this.constructor.name;
   }
 }

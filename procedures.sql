@@ -8,13 +8,51 @@ DELIMITER $$
 
 # Get a user
 # @param 	userEmail 	users email
-CREATE PROCEDURE GetUser(
+CREATE PROCEDURE GetUserByEmail(
 	IN userEmail VARCHAR(50)
 )
 BEGIN
 	SELECT * 
     FROM users
     WHERE email = userEmail;
+END$$
+
+CREATE PROCEDURE GetUserByDisplayName(
+	IN userDisplayName VARCHAR(20)
+)
+BEGIN
+	SELECT * 
+    FROM users
+    WHERE displayName = userDisplayName;
+END$$
+
+CREATE PROCEDURE GetUserById(
+	IN userId INT
+)
+BEGIN
+	SELECT *
+    FROM users
+    WHERE id = userId;
+END$$
+
+#Returns game information for a user's favorite games
+#result set is in order from most favorite to least favorite
+CREATE PROCEDURE GetUsersFavoriteGameInfo(
+	IN userId INT
+)
+BEGIN
+	SELECT 
+		g.id, 
+		g.`name`,
+		g.imgurl
+	FROM
+		users u INNER JOIN
+		favoriteGames f 
+		ON u.id = f.uid INNER JOIN
+		games g
+		ON g.id = f.gid
+	WHERE u.id = userId
+	ORDER BY f.`rank` ASC;
 END$$
 
 
@@ -25,11 +63,12 @@ END$$
 # @param	userPass	new users password
 CREATE PROCEDURE AddUser(
 	IN userEmail VARCHAR(50),
-    IN userPass VARCHAR(50)
+    IN userPass VARCHAR(50),
+    IN userDisplayName VARCHAR(20)
 )
 BEGIN
-	INSERT INTO users(email, `password`)
-    VALUES(userEmail, userPass);
+	INSERT INTO users(email, `password`, displayName)
+    VALUES(userEmail, userPass, userDisplayName);
 END$$
 
 
@@ -42,10 +81,12 @@ BEGIN
 		id INT AUTO_INCREMENT,
 		email VARCHAR(50) NOT NULL,
 		`password` VARCHAR(50) NOT NULL,
+        displayName VARCHAR(20) NOT NULL,
         
         CONSTRAINT PK_Users PRIMARY KEY(id),
         CONSTRAINT UQ_Users_Email UNIQUE(email),
-        CONSTRAINT CK_Users_Password CHECK(CHAR_LENGTH(`password`) >= 8)
+        CONSTRAINT CK_Users_Password CHECK(CHAR_LENGTH(`password`) >= 8),
+        CONSTRAINT UQ_Users_DisplayName UNIQUE(displayName)
 	);
     
     CREATE TABLE IF NOT EXISTS games(
@@ -79,11 +120,11 @@ CREATE PROCEDURE PopulateTestData()
 BEGIN
 	CALL SetupTables();
     CALL ClearTestData();
-    INSERT INTO users(id, email, `password`)
+    INSERT INTO users(id, email, `password`, displayName)
 	VALUES
-		(1, 'test@abc.com', 'password1'),
-		(2, 'test2@abc.com', 'password2'),
-		(3, 'test3@abc.com', 'password3');
+		(1, 'test@abc.com', 'password1', 'ProTester'),
+		(2, 'test2@abc.com', 'password2', 'CoolTester'),
+		(3, 'test3@abc.com', 'password3', 'WowTester');
         
     INSERT INTO games(id, `name`, imgurl)
 	VALUES

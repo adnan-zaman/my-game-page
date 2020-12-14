@@ -25,6 +25,7 @@ router.get("/signup", indexController.signupGet);
 router.post(
   "/signup",
   validators.emailValidator(),
+  validators.displayNameValidator(),
   validators.passwordValidator(true),
   indexController.signupPost,
   passport.authenticate("local"),

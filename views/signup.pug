@@ -9,10 +9,13 @@ block content
     h1 Welcome to My Game Page
     form(id='login-form' method='post' action='/signup' novalidate='true')
         div
-            label(for='email') Email:
+            label(for='email') Email*:
             input(id='email' name='email' type='email' required=true value=email_value)
         div
-            label(for='password') Password:
+            label(for='displayName') Display Name*:
+            input(id='displayName' name='displayName' type='text' required=true value=displayName_value)
+        div
+            label(for='password') Password*:
             input(id='password' name='password' type='text' required=true value=password_value) 
         div
             button(type='submit') SIGNUP

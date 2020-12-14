@@ -64,23 +64,35 @@ exports.signupPost = async function (req, res, next) {
     res.locals.error = errors.array()[0];
     res.locals.email_value = req.body.email;
     res.locals.password_value = req.body.password;
+    res.locals.displayName_value = req.body.displayName;
     return res.render("signup");
   }
 
   try {
     const conn = db.createConnection();
-    const results = await conn.query("CALL GetUser(?)", [req.body.email]);
-    const potentialUser = results[0][0];
+    let results = await conn.query("CALL GetUserByEmail(?)", [req.body.email]);
+    const potentialUserEmail = results[0][0];
+    results = await conn.query("CALL GetUserByDisplayName(?)", [
+      req.body.displayName,
+    ]);
+    const potentialUserDisplayName = results[0][0];
 
     //user already exists
-    if (potentialUser) {
-      res.locals.error = new UserAlreadyExistsError();
+    if (potentialUserEmail || potentialUserDisplayName) {
+      res.locals.error = new UserAlreadyExistsError(
+        potentialUserEmail ? "EMAIL" : "DISPLAYNAME"
+      );
       res.locals.email_value = req.body.email;
       res.locals.password_value = req.body.password;
+      res.locals.displayName_value = req.body.displayName;
       conn.end();
       return res.render("signup");
     }
-    await conn.query("CALL AddUser(?,?)", [req.body.email, req.body.password]);
+    await conn.query("CALL AddUser(?,?,?)", [
+      req.body.email,
+      req.body.password,
+      req.body.displayName,
+    ]);
     debug(`${req.body.email} added, about to authenticate`);
     conn.end();
     next();

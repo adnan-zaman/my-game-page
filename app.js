@@ -43,7 +43,9 @@ passport.use(
       const connection = db.createConnection();
 
       try {
-        const results = await connection.query("CALL GetUser(?)", [email]);
+        const results = await connection.query("CALL GetUserByEmail(?)", [
+          email,
+        ]);
         //querying a stored procedure returns [RowDataPacket[], Packet]
         const potentialUser = results[0][0];
         //todo: what do I do if ending connection errors out
@@ -68,7 +70,7 @@ passport.deserializeUser(async (email, done) => {
   authDebug(`deserializing ${email}`);
   const connection = db.createConnection();
   try {
-    const results = await connection.query("CALL GetUser(?)", [email]);
+    const results = await connection.query("CALL GetUserByEmail(?)", [email]);
     connection.end();
     done(null, results[0][0]);
   } catch (e) {
@@ -114,7 +116,7 @@ app.use("/user", userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404, "Couldn't find page"));
+  next(createError(404, "That page doesn't exist"));
 });
 
 // error handler

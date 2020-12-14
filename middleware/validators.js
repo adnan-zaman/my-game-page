@@ -23,6 +23,22 @@ exports.emailValidator = function () {
 };
 
 /**
+ * Creates a validation/sanitization middleware for display name input
+ *
+ * @returns {ValidationChain}
+ */
+exports.displayNameValidator = function () {
+  return body("displayName")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Display name is required.")
+    .escape()
+    .isLength({ max: 20 })
+    .withMessage("Display name is too long");
+};
+
+/**
  * Creates a validation/sanitization middleware for password input
  *
  * @param {boolean} signup true if password is being sent as part of signup

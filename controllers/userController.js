@@ -6,8 +6,8 @@ const db = require("../database");
  * Renders a user's page
  */
 exports.getUserPage = async (req, res, next) => {
-  //currenly only except number ids
-  if (typeof req.params.id !== "number")
+  //currenly only except whole number ids
+  if (isNaN(Math.floor(Number(req.params.id))))
     return next(createError(404, "User does not exist"));
 
   let conn;
@@ -28,6 +28,9 @@ exports.getUserPage = async (req, res, next) => {
     //page settings or not
     res.locals.id =
       req.user && req.user.id === req.params.id ? req.params.id : null;
+    debug(req.user);
+    debug(req.params);
+    debug(res.locals);
     res.render("userPage");
   } catch (e) {
     return next(e);

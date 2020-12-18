@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "start": "cross-env npm run setupSecret npm run setupDb npm run runStart",
-    "devStart": "cross-env npm run setupSecret npm run setupDb npm run runDev",
+    "devStart": "cross-env npm run setupSecret npm run setupDb npm run setupApi npm run runDev",
     "test": "cross-env npm run setupSecret npm run setupDb npm run runTest",
     "setupSecret": "cross-env SECRET=abcdefg",
     "setupDb": "cross-env DB=my_game_page_test DBUSER=root DBPASS=password DBPORT=3306",
+    "setupApi": "cross-env CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9",
     "runStart": "node ./bin/www",
     "runTest": "cross-env mocha --recursive ./tests/*.test.js",
     "runDev": "cross-env DEBUG=mygamepage:*,index,passport,user nodemon --ignore ./sessions ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",

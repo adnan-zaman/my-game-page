@@ -44,7 +44,7 @@ BEGIN
 	SELECT 
 		g.id, 
 		g.`name`,
-		g.imgurl
+		g.coverurl
 	FROM
 		users u INNER JOIN
 		favoriteGames f 
@@ -92,7 +92,7 @@ BEGIN
     CREATE TABLE IF NOT EXISTS games(
 		id INT AUTO_INCREMENT,
 		`name` VARCHAR(50) NOT NULL,
-		imgurl VARCHAR(150) NOT NULL DEFAULT('https://imgs.default.jpg'),
+		coverurl VARCHAR(150) NOT NULL DEFAULT('https://imgs.default.jpg'),
 		
 		CONSTRAINT PK_Games PRIMARY KEY(id)
 	);
@@ -126,7 +126,7 @@ BEGIN
 		(2, 'test2@abc.com', 'password2', 'CoolTester'),
 		(3, 'test3@abc.com', 'password3', 'WowTester');
         
-    INSERT INTO games(id, `name`, imgurl)
+    INSERT INTO games(id, `name`, coverurl)
 	VALUES
 		(1, 'Game1', 'https://gameimg/game1.jpg'),
         (2, 'Game2', 'https://gameimg/game2.jpg'),

@@ -320,7 +320,7 @@ describe("GET /user/:id", function () {
       assert.strictEqual(this.res.locals.games[i].id, id);
       assert.strictEqual(this.res.locals.games[i].name, `Game${id}`);
       assert.strictEqual(
-        this.res.locals.games[i].imgurl,
+        this.res.locals.games[i].coverurl,
         `https://gameimg/game${id}.jpg`
       );
     }
@@ -352,7 +352,7 @@ describe("GET /user/:id", function () {
       assert.strictEqual(this.res.locals.games[i].id, id);
       assert.strictEqual(this.res.locals.games[i].name, `Game${id}`);
       assert.strictEqual(
-        this.res.locals.games[i].imgurl,
+        this.res.locals.games[i].coverurl,
         `https://gameimg/game${id}.jpg`
       );
     }

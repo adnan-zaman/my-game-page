@@ -22,10 +22,10 @@ const authDebug = require("debug")("passport");
 const uid = require("uid-safe");
 
 //db
-const db = require("./database");
+const db = require("./core/database");
 
 //errors
-const { UserNotFoundError, IncorrectPasswordError } = require("./errors");
+const { UserNotFoundError, IncorrectPasswordError } = require("./core/errors");
 
 //routers
 const indexRouter = require("./routes/indexRouter");

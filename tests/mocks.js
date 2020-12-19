@@ -10,6 +10,7 @@ class MockResponse {
     this.send = sinon.fake();
     this.render = sinon.fake();
     this.redirect = sinon.fake();
+    this.json = sinon.fake();
   }
 }
 

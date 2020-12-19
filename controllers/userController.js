@@ -1,6 +1,6 @@
 const createError = require("http-errors");
 const debug = require("debug")("user");
-const db = require("../database");
+const db = require("../core/database");
 
 /**
  * Renders a user's page

@@ -3,8 +3,8 @@ const {
   UserNotFoundError,
   IncorrectPasswordError,
   UserAlreadyExistsError,
-} = require("../errors");
-const db = require("../database");
+} = require("../core/errors");
+const db = require("../core/database");
 
 const debug = require("debug")("index");
 const authDebug = require("debug")("passport");

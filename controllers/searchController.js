@@ -5,31 +5,24 @@ const getHeaders = require("../core/getHeaders");
 module.exports = async function (req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.json(errors.array()[0].msg);
+    return res.json(errors.array()[0].msg);
   }
 
-  await axios.post(
-    "https://api.igdb.com/v4/games",
-    `search "${req.params.query}"; fields name, cover.url; offset ${
-      req.params.page * 10
-    };`,
-    { headers: getHeaders() }
-  );
+  try {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/games",
+      `search "${req.params.query}"; fields name, cover.url; offset ${
+        req.params.page * 10
+      };`,
+      { headers: await getHeaders() }
+    );
+
+    const searchResults = response.data.map(function (elt) {
+      const coverurl = elt.cover ? elt.cover.url : "https://imgs.default.jpg";
+      return { id: elt.id, name: elt.name, coverurl };
+    });
+    res.json(searchResults);
+  } catch (e) {
+    res.json(e.message);
+  }
 };
-
-/*
-(s, p)
-check for errors
-if errors
-    send errors.array[0].msg
-
-
-axios.post \games search s; fields name, cover.url; offset p * 10;
-
-arr = res.map elt
-    return elt.id, elt.name, elt.cover.url
-
-res.send arr
-
-
-*/

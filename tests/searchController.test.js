@@ -22,6 +22,7 @@ describe("GET /api/search", function () {
     const mockValidation = param("query")
       .custom((value) => false)
       .withMessage("Invalid query.");
+    await mockValidation(this.req, this.res, sinon.fake());
     await searchController(this.req, this.res);
     assert.strictEqual(this.res.json.calledWith("Invalid query."), true);
   });
@@ -47,15 +48,16 @@ describe("GET /api/search", function () {
     //get data manually to compare with searchController
     let response = await axios.post(
       "https://api.igdb.com/v4/games",
-      `search "zelda"; fields name, cover.url; offset 30`,
+      `search "zelda"; fields name, cover.url; offset 30;`,
       {
         headers: this.headers,
       }
     );
     const expected = response.data.map(function (elt) {
-      return { id: elt.id, name: elt.name, coverurl: elt.cover.url };
+      const coverurl = elt.cover ? elt.cover.url : "https://imgs.default.jpg";
+      return { id: elt.id, name: elt.name, coverurl };
     });
-    this.req.params = { query: "zelda", page: "4" };
+    this.req.params = { query: "zelda", page: "3" };
     await searchController(this.req, this.res);
     assert.strictEqual(this.res.json.calledWith(expected), true);
   });

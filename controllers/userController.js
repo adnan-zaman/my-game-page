@@ -1,5 +1,5 @@
 const createError = require("http-errors");
-const debug = require("debug")("user");
+const debug = require("debug")("mygamepage-user");
 const db = require("../core/database");
 
 /**
@@ -27,10 +27,8 @@ exports.getUserPage = async (req, res, next) => {
     //send along id. this allows frontend to know whether to display
     //page settings or not
     res.locals.id =
-      req.user && req.user.id === req.params.id ? req.params.id : null;
-    debug(req.user);
-    debug(req.params);
-    debug(res.locals);
+      req.user && req.user.id == req.params.id ? req.user.id : null;
+
     res.render("userPage");
   } catch (e) {
     return next(e);

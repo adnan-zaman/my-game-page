@@ -4,7 +4,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const passport = require("passport");
 
-const debug = require("debug")("user");
+const debug = require("debug")("mygamepage-user");
 
 const router = express.Router();
 

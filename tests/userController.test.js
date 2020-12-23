@@ -34,7 +34,7 @@ describe("GET /user/:id", function () {
     ]);
     const viewingUser = results[0][0];
 
-    this.req.params.id = displayedUser.id;
+    this.req.params.id = "" + displayedUser.id;
     this.req.user = viewingUser;
 
     await userController.getUserPage(this.req, this.res, this.nextFake);
@@ -67,7 +67,7 @@ describe("GET /user/:id", function () {
       await this.connection.query("CALL GetUserByEmail(?)", ["test@abc.com"])
     )[0][0];
 
-    this.req.params.id = user.id;
+    this.req.params.id = "" + user.id;
     this.req.user = user;
 
     await userController.getUserPage(this.req, this.res, this.nextFake);

@@ -5,7 +5,7 @@ const indexController = require("../controllers/indexController");
 const validators = require("../middleware/validators");
 const passport = require("passport");
 
-const debug = require("debug")("index");
+const debug = require("debug")("mygamepage-index");
 
 const router = express.Router();
 

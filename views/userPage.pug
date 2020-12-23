@@ -1,4 +1,31 @@
 extends webpage.pug
 
+block styles
+    link(rel="stylesheet" href="../stylesheets/style.css")
+
+block scripts
+    script(src='../javascripts/game-search.js' defer=true) 
+    script. 
+        let games = !{JSON.stringify(games)};
+
 block content
-    h1 #{displayName}
+    div
+        h1 #{displayName}
+        if id
+            button Change
+
+    div.game-list
+        ul
+            each val in games
+                div.game-container
+                    li= val.name
+                    button Remove
+        button#add-game Add
+
+    div#search-dialog
+        form#search-form
+            input(type="text")
+            button(type="submit") Search
+        div#search-results
+
+    

@@ -1,7 +1,7 @@
 /**
  * This module contains validation and sanitiation middleware
  */
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 /**
  * Creates a validation/sanitization middleware for email input
@@ -59,4 +59,26 @@ exports.passwordValidator = function (signup = false) {
       .withMessage("Password is too long.");
 
   return base.escape();
+};
+
+/**
+ * Creates a validation/sanitization middleware for game search queries
+ *
+ * @returns {ValidationChain}
+ */
+exports.queryValidator = function () {
+  return param("query").escape();
+};
+
+/**
+ * Creates a validation/sanitization middleware for page number
+ * during game search queries
+ *
+ * @returns {ValidationChain}
+ */
+exports.pageValidator = function () {
+  return param("page")
+    .trim()
+    .escape()
+    .if((value, { req }) => !isNaN(Number(value)));
 };

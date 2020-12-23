@@ -4,5 +4,21 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
+}
+
+div {
+  border: 1px solid black;
+}
+
+li {
+  list-style: none;
+}
+
+.game-container > * {
+  display: inline;
+}
+
+#search-dialog {
+  display: none;
 }

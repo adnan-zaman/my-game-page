@@ -4,7 +4,10 @@ const { validationResult } = require("express-validator");
 const debug = require("debug")("mygamepage-search");
 
 module.exports = async function (req, res, next) {
+  debug("enter search");
+  debug(req.params.page);
   const errors = validationResult(req);
+  debug(errors);
   if (!errors.isEmpty()) {
     return res.json(errors.array()[0].msg);
   }

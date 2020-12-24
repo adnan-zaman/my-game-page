@@ -2,6 +2,7 @@
  * This module contains validation and sanitiation middleware
  */
 const { body, param } = require("express-validator");
+const debug = require("debug")("mygamepage-validators");
 
 /**
  * Creates a validation/sanitization middleware for email input
@@ -80,5 +81,6 @@ exports.pageValidator = function () {
   return param("page")
     .trim()
     .escape()
-    .if((value, { req }) => !isNaN(Number(value)));
+    .isInt({ min: 0 })
+    .withMessage("Invalid page number");
 };

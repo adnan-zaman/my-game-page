@@ -82,5 +82,5 @@ exports.pageValidator = function () {
     .trim()
     .escape()
     .isInt({ min: 0 })
-    .withMessage("Invalid page number");
+    .withMessage("Invalid page number.");
 };

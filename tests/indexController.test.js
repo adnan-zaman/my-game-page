@@ -149,16 +149,14 @@ describe("GET /signup", function () {
  * (POST /signup) -> (emailValidator) -> (displayNameValidator) -> (passwordValidator) -> (signupPost) -> (passport.authenticate) -> (redirect)
  */
 describe("POST /signup", async function () {
-  beforeEach(async function () {
+  beforeEach(function () {
     this.res = new MockResponse();
     this.req = { body: {} };
     this.nextFake = sinon.fake();
-    this.connection = db.createConnection();
-    await this.connection.query("CALL PopulateTestData();");
   });
 
-  afterEach(async function () {
-    this.connection.end();
+  afterEach(function () {
+    db.resetFakes();
   });
 
   describe("signupPost", function () {
@@ -190,14 +188,15 @@ describe("POST /signup", async function () {
     });
 
     it("should render signup with UserAlreadyExistsError if email already exists", async function () {
-      //get first user
-      const results = await this.connection.query(
-        "SELECT * FROM users LIMIT 1"
-      );
-      const existingUser = results[0];
-      this.req.body.email = existingUser.email;
-      this.req.body.password = existingUser.password;
+      this.req.body.email = "exist@abc.com";
+      this.req.body.password = "password1";
       this.req.body.displayName = "UniqueName";
+      db.getUserByEmail = sinon.fake.resolves({
+        id: 99,
+        email: this.req.body.email,
+        password: this.req.body.password,
+        displayName: this.req.body.displayName,
+      });
 
       await indexController.signupPost(this.req, this.res);
 
@@ -206,21 +205,22 @@ describe("POST /signup", async function () {
         true
       );
       assert.strictEqual(this.res.locals.error.conflictType, "EMAIL");
-      assert.strictEqual(this.res.locals.email_value, existingUser.email);
-      assert.strictEqual(this.res.locals.password_value, existingUser.password);
+      assert.strictEqual(this.res.locals.email_value, "exist@abc.com");
+      assert.strictEqual(this.res.locals.password_value, "password1");
       assert.strictEqual(this.res.locals.displayName_value, "UniqueName");
       assert.strictEqual(this.res.render.calledWith("signup"), true);
     });
 
     it("should render signup with UserAlreadyExistsError if display name already exists", async function () {
-      //get first user
-      const results = await this.connection.query(
-        "SELECT * FROM users LIMIT 1"
-      );
-      const existingUser = results[0];
-      this.req.body.email = "unique@abc.com";
-      this.req.body.password = existingUser.password;
-      this.req.body.displayName = existingUser.displayName;
+      this.req.body.email = "exist@abc.com";
+      this.req.body.password = "password1";
+      this.req.body.displayName = "UniqueName";
+      db.getUserByDisplayName = sinon.fake.resolves({
+        id: 99,
+        email: this.req.body.email,
+        password: this.req.body.password,
+        displayName: this.req.body.displayName,
+      });
 
       await indexController.signupPost(this.req, this.res);
 
@@ -229,12 +229,9 @@ describe("POST /signup", async function () {
         true
       );
       assert.strictEqual(this.res.locals.error.conflictType, "DISPLAYNAME");
-      assert.strictEqual(this.res.locals.email_value, "unique@abc.com");
-      assert.strictEqual(this.res.locals.password_value, existingUser.password);
-      assert.strictEqual(
-        this.res.locals.displayName_value,
-        existingUser.displayName
-      );
+      assert.strictEqual(this.res.locals.email_value, "exist@abc.com");
+      assert.strictEqual(this.res.locals.password_value, "password1");
+      assert.strictEqual(this.res.locals.displayName_value, "UniqueName");
       assert.strictEqual(this.res.render.calledWith("signup"), true);
     });
 
@@ -257,15 +254,14 @@ describe("POST /signup", async function () {
 
       await indexController.signupPost(this.req, this.res, this.nextFake);
 
-      const results = await this.connection.query("CALL GetUserByEmail(?)", [
-        "unique@abc.com",
-      ]);
-
-      const newUser = results[0][0];
-
-      assert.strictEqual(newUser.email, "unique@abc.com");
-      assert.strictEqual(newUser.password, "password1");
-      assert.strictEqual(newUser.displayName, "UniqueTester");
+      assert.strictEqual(
+        db.addUser.calledWithExactly(
+          "unique@abc.com",
+          "password1",
+          "UniqueTester"
+        ),
+        true
+      );
     });
   });
 });

@@ -1,20 +1,45 @@
 const searchDialogBox = document.getElementById("search-dialog");
-document.getElementById("add-game").addEventListener("click", openSearch);
-document.getElementById("search-form").addEventListener("submit", gameSearch);
 const searchResultsContainer = document.getElementById("search-results");
+
+let currQuery = "";
+let currPage = 0;
+
+document.getElementById("add-game").addEventListener("click", openSearch);
+document.getElementById("search-form").addEventListener("submit", newSearch);
+
+document.getElementById("search-prev").addEventListener("click", () => {
+  currPage = Math.max(0, currPage - 1);
+  callApiAndPopulate();
+});
+
+document.getElementById("search-next").addEventListener("click", () => {
+  currPage++;
+  callApiAndPopulate();
+});
 
 function openSearch(e) {
   e.preventDefault();
   searchDialogBox.style.display = "block";
 }
 
-async function gameSearch(e) {
+function newSearch(e) {
   e.preventDefault();
-  //clear results
+  currQuery = e.target.elements[0].value;
+  currpage = 0;
+  console.log(currQuery);
+  console.log(currPage);
+  callApiAndPopulate();
+}
+
+async function callApiAndPopulate() {
   searchResultsContainer.textContent = "";
-  const query = e.target.elements[0].value;
-  const response = await fetch(`http://localhost:3000/api/search/${query}/0`);
+  console.log("calling api");
+  const response = await fetch(
+    `http://localhost:3000/api/search/${currQuery}/${currPage}`
+  );
+  console.log("lets convert");
   const searchResults = await response.json();
+  console.log(searchResults);
   for (const game of searchResults) {
     const container = document.createElement("div");
     container.id = "game-" + game.id;

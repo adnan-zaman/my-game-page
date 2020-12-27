@@ -10,7 +10,7 @@ const getHeaders = require("../core/getHeaders");
 
 // GET -> queryValidator -> pageValidator -> searchController
 describe("GET /api/search", function () {
-  this.timeout(5000);
+  this.timeout(15000);
   beforeEach(async function () {
     this.res = new MockResponse();
     this.req = { app };
@@ -23,7 +23,11 @@ describe("GET /api/search", function () {
       .withMessage("Invalid query.");
     await mockValidation(this.req, this.res, sinon.fake());
     await searchController(this.req, this.res);
-    assert.strictEqual(this.res.json.calledWith("Invalid query."), true);
+    assert.strictEqual(this.res.status.firstArg, 400);
+    assert.strictEqual(
+      this.res.json.calledWith({ message: "Invalid query." }),
+      true
+    );
   });
 
   it("should send data on proper input", async function () {

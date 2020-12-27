@@ -10,19 +10,15 @@ exports.getUserPage = async (req, res, next) => {
   if (isNaN(Math.floor(Number(req.params.id))))
     return next(createError(404, "User does not exist"));
 
-  let conn;
   try {
-    conn = db.createConnection();
-    let results = await conn.query("CALL GetUserById(?)", [req.params.id]);
-    if (results[0].length === 0) throw createError(404, "User does not exist");
+    const user = await db.getUserById(req.params.id);
+    if (!user) throw createError(404, "User does not exist");
 
-    res.locals.displayName = results[0][0].displayName;
+    res.locals.displayName = user.displayName;
 
-    results = await conn.query("CALL GetUsersFavoriteGameInfo(?)", [
-      req.params.id,
-    ]);
+    const favoriteGames = await db.getUsersFavoriteGames(req.params.id);
 
-    res.locals.games = results[0];
+    res.locals.games = favoriteGames;
     //if the user viewing the page is also the owner of the page
     //send along id. this allows frontend to know whether to display
     //page settings or not
@@ -32,7 +28,5 @@ exports.getUserPage = async (req, res, next) => {
     res.render("userPage");
   } catch (e) {
     return next(e);
-  } finally {
-    if (conn) conn.end();
   }
 };

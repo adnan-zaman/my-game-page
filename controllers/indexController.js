@@ -45,7 +45,7 @@ exports.loginFail = function (err, req, res, next) {
 };
 
 exports.loginSuccess = function (req, res, next) {
-  res.send("good");
+  res.redirect(`/user/${req.user.id}`);
 };
 
 exports.signupGet = function (req, res, next) {
@@ -68,16 +68,11 @@ exports.signupPost = async function (req, res, next) {
     return res.render("signup");
   }
 
-  let conn;
-
   try {
-    conn = db.createConnection();
-    let results = await conn.query("CALL GetUserByEmail(?)", [req.body.email]);
-    const potentialUserEmail = results[0][0];
-    results = await conn.query("CALL GetUserByDisplayName(?)", [
-      req.body.displayName,
-    ]);
-    const potentialUserDisplayName = results[0][0];
+    const potentialUserEmail = await db.getUserByEmail(req.body.email);
+    const potentialUserDisplayName = await db.getUserByDisplayName(
+      req.body.displayName
+    );
 
     //user already exists
     if (potentialUserEmail || potentialUserDisplayName) {
@@ -89,17 +84,11 @@ exports.signupPost = async function (req, res, next) {
       res.locals.displayName_value = req.body.displayName;
       return res.render("signup");
     }
-    await conn.query("CALL AddUser(?,?,?)", [
-      req.body.email,
-      req.body.password,
-      req.body.displayName,
-    ]);
+    await db.addUser(req.body.email, req.body.password, req.body.displayName);
     debug(`${req.body.email} added, about to authenticate`);
 
     next();
   } catch (e) {
     next(e);
-  } finally {
-    if (conn) conn.end();
   }
 };

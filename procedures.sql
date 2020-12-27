@@ -132,7 +132,13 @@ BEGIN
         (2, 'Game2', 'https://gameimg/game2.jpg'),
         (3, 'Game3', 'https://gameimg/game3.jpg'),
         (4, 'Game4', 'https://gameimg/game4.jpg'),
-        (5, 'Game5', 'https://gameimg/game5.jpg');
+        (5, 'Game5', 'https://gameimg/game5.jpg'),
+        (989, 'Halo 3: ODST', '//images.igdb.com/igdb/image/upload/t_thumb/co1xhh.jpg'),
+		(26845, 'Fire Emblem: Three Houses', '//images.igdb.com/igdb/image/upload/t_thumb/co1n8t.jpg'),
+		(36550, 'Yakuza: Like a Dragon', '//images.igdb.com/igdb/image/upload/t_thumb/co2em9.jpg'),
+		(26758, 'Super Mario Odyssey', '//images.igdb.com/igdb/image/upload/t_thumb/co1mxf.jpg'),
+		(27959, 'Shin Megami Tensei: Strange Journey Redux', '//images.igdb.com/igdb/image/upload/t_thumb/co26i2.jpg'),
+		(3225, "No Man's Sky", '//images.igdb.com/igdb/image/upload/t_thumb/co1k01.jpg');
         
 	INSERT INTO favoriteGames(uid, gid, `rank`)
 	VALUES

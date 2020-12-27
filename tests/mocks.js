@@ -11,6 +11,7 @@ class MockResponse {
     this.render = sinon.fake();
     this.redirect = sinon.fake();
     this.json = sinon.fake();
+    this.status = sinon.fake.returns(this);
   }
 }
 

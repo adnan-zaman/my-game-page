@@ -40,23 +40,14 @@ passport.use(
     { usernameField: "email" },
     async (email, password, done) => {
       authDebug(`local strategy for ${email}`);
-
-      let conn = db.createConnection();
-
       try {
-        conn = db.createConnection();
-        const results = await conn.query("CALL GetUserByEmail(?)", [email]);
-        //querying a stored procedure returns [RowDataPacket[], Packet]
-        const potentialUser = results[0][0];
-
+        const potentialUser = await db.getUserByEmail(email);
         if (!potentialUser) return done(new UserNotFoundError(), null);
         if (potentialUser.password !== password)
           return done(new IncorrectPasswordError(), null);
         done(null, potentialUser);
       } catch (e) {
         done(e, null);
-      } finally {
-        if (conn) conn.end();
       }
     }
   )
@@ -69,15 +60,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (email, done) => {
   authDebug(`deserializing ${email}`);
-  let conn;
   try {
-    conn = db.createConnection();
-    const results = await conn.query("CALL GetUserByEmail(?)", [email]);
-    done(null, results[0][0]);
+    const user = await db.getUserByEmail(email);
+    done(null, user);
   } catch (e) {
     done(e, null);
-  } finally {
-    if (conn) conn.end();
   }
 });
 
@@ -91,6 +78,8 @@ app.set("view engine", "pug");
 app.use(logger("dev"));
 //parse url encoded post body
 app.use(express.urlencoded());
+//parse json post body
+app.use(express.json());
 //static resources
 app.use(express.static(path.join(__dirname, "public")));
 

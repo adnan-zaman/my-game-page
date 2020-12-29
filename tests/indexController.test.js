@@ -153,10 +153,11 @@ describe("POST /signup", async function () {
     this.res = new MockResponse();
     this.req = { body: {} };
     this.nextFake = sinon.fake();
+    this.db = sinon.stub(db);
   });
 
   afterEach(function () {
-    db.resetFakes();
+    sinon.restore();
   });
 
   describe("signupPost", function () {
@@ -191,7 +192,7 @@ describe("POST /signup", async function () {
       this.req.body.email = "exist@abc.com";
       this.req.body.password = "password1";
       this.req.body.displayName = "UniqueName";
-      db.getUserByEmail = sinon.fake.resolves({
+      this.db.getUserByEmail.resolves({
         id: 99,
         email: this.req.body.email,
         password: this.req.body.password,
@@ -215,7 +216,7 @@ describe("POST /signup", async function () {
       this.req.body.email = "exist@abc.com";
       this.req.body.password = "password1";
       this.req.body.displayName = "UniqueName";
-      db.getUserByDisplayName = sinon.fake.resolves({
+      this.db.getUserByDisplayName.resolves({
         id: 99,
         email: this.req.body.email,
         password: this.req.body.password,
@@ -255,7 +256,7 @@ describe("POST /signup", async function () {
       await indexController.signupPost(this.req, this.res, this.nextFake);
 
       assert.strictEqual(
-        db.addUser.calledWithExactly(
+        this.db.addUser.calledWithExactly(
           "unique@abc.com",
           "password1",
           "UniqueTester"

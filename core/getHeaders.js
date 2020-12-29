@@ -38,10 +38,8 @@ async function getToken(req) {
 }
 
 /**
- * Get headers required to use IGDB API
- *
- * @returns {object} object containing Accept, Client-ID annd Authorization
- * headers to be used by IGDB API.
+ * Middleware that adds headers required to use IGDB API
+ * to request as apiHeaders
  */
 module.exports = async function getHeaders(req, res, next) {
   const token = await getToken(req);
@@ -53,3 +51,5 @@ module.exports = async function getHeaders(req, res, next) {
   };
   next();
 };
+
+module.exports.getHeaders = module.exports;

@@ -13,10 +13,11 @@ describe("GET /user/:id", function () {
     this.res = new MockResponse();
     this.req = { body: {}, params: {} };
     this.nextFake = sinon.fake();
+    this.db = sinon.stub(db);
   });
 
   afterEach(function () {
-    db.resetFakes();
+    sinon.restore();
   });
 
   it("should send all info to display user page", async function () {
@@ -43,8 +44,8 @@ describe("GET /user/:id", function () {
       { id: 4, name: "game4", coverurl: "http://test.jpg" },
       { id: 5, name: "game5", coverurl: "http://test.jpg" },
     ];
-    db.getUsersFavoriteGames = sinon.fake.resolves(expectedGames);
-    db.getUserById = sinon.fake.resolves(displayedUser);
+    this.db.getUsersFavoriteGames.resolves(expectedGames);
+    this.db.getUserById.resolves(displayedUser);
 
     this.req.params.id = "" + displayedUser.id;
     this.req.user = viewingUser;
@@ -77,8 +78,8 @@ describe("GET /user/:id", function () {
       { id: 4, name: "game4", coverurl: "http://test.jpg" },
       { id: 5, name: "game5", coverurl: "http://test.jpg" },
     ];
-    db.getUsersFavoriteGames = sinon.fake.resolves(expectedGames);
-    db.getUserById = sinon.fake.resolves(user);
+    this.db.getUsersFavoriteGames.resolves(expectedGames);
+    this.db.getUserById.resolves(user);
 
     await userController.getUserPage(this.req, this.res, this.nextFake);
 

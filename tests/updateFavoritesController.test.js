@@ -44,7 +44,12 @@ describe("PUT /api/favorites/:userId", function () {
     });
   });
 
-  describe("checkGames", function () {});
+  describe("checkGames", function () {
+    it("should call IGDB api for games database doesn't have", async function () {});
+    it("shouldn't call IGDB api for games database does have", async function () {});
+    it("should add all games retrieved from api to req", async function () {});
+    it("should throw error if any games don't exist in api", async function () {});
+  });
 
   describe("addGames", function () {});
 

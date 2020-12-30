@@ -71,6 +71,7 @@ exports.getUserByEmail = async function (email) {
   try {
     conn = createConnection();
     const results = await conn.query("CALL GetUserByEmail(?)", [email]);
+    debug(results[0]);
     return results[0][0];
   } catch (e) {
     if (conn) conn.end();
@@ -116,4 +117,14 @@ exports.getUsersFavoriteGames = async function (userId) {
     if (conn) conn.end();
     throw e;
   }
+};
+
+/**
+ * Gets a game by id
+ *
+ * @param {int} gameId game id
+ * @return the requested game
+ */
+exports.getGameByid = async function (gameId) {
+  return undefined;
 };

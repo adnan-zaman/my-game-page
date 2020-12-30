@@ -42,6 +42,7 @@ passport.use(
       authDebug(`local strategy for ${email}`);
       try {
         const potentialUser = await db.getUserByEmail(email);
+        authDebug(potentialUser);
         if (!potentialUser) return done(new UserNotFoundError(), null);
         if (potentialUser.password !== password)
           return done(new IncorrectPasswordError(), null);

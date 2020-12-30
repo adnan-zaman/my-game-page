@@ -35,10 +35,8 @@ describe("PUT /api/favorites/:userId", function () {
       );
       assert.strictEqual(this.res.status.calledWith(400), true);
       assert.strictEqual(
-        this.res.json.calledWith(
-          { message: "No duplicate elements allowed." },
-          true
-        )
+        this.res.json.calledWith({ message: "No duplicate elements allowed." }),
+        true
       );
     });
 
@@ -51,10 +49,10 @@ describe("PUT /api/favorites/:userId", function () {
       );
       assert.strictEqual(this.res.status.calledWith(400), true);
       assert.strictEqual(
-        this.res.json.calledWith(
-          { message: "Max length of favorite games is 5." },
-          true
-        )
+        this.res.json.calledWith({
+          message: "Max length of favorite games is 5.",
+        }),
+        true
       );
     });
   });
@@ -62,17 +60,19 @@ describe("PUT /api/favorites/:userId", function () {
   describe("checkGames", function () {
     it("should call IGDB api for games database doesn't have", async function () {
       this.req.body = [1, 10, 200, 210, 119];
-      db.getGameByid.callsFake((id) => {
+      db.getGameById.callsFake((id) => {
         return { id, name: `game${id}`, coverurl: `http://game${id}.jpg` };
       });
-      db.getGameByid.withArgs(210).resolves(undefined);
-      axiost.post.resolves([
-        {
-          id: 210,
-          name: "game210",
-          cover: { id: 2101, url: "http://game210.jpg" },
-        },
-      ]);
+      db.getGameById.withArgs(210).resolves(undefined);
+      axios.post.resolves({
+        data: [
+          {
+            id: 210,
+            name: "game210",
+            cover: { id: 2101, url: "http://game210.jpg" },
+          },
+        ],
+      });
 
       await updateFavesController.checkGames(this.req, this.res, this.nextFake);
       const apiQuery = axios.post.args[0][1];
@@ -82,16 +82,18 @@ describe("PUT /api/favorites/:userId", function () {
     });
     it("shouldn't call IGDB api for games database does have", async function () {
       this.req.body = [1, 10, 200, 210, 119];
-      db.getGameByid.callsFake((id) => {
+      db.getGameById.callsFake((id) => {
         return { id, name: `game${id}`, coverurl: `http://game${id}.jpg` };
       });
-      axiost.post.resolves([
-        {
-          id: 210,
-          name: "game210",
-          cover: { id: 2101, url: "http://game210.jpg" },
-        },
-      ]);
+      axios.post.resolves({
+        data: [
+          {
+            id: 210,
+            name: "game210",
+            cover: { id: 2101, url: "http://game210.jpg" },
+          },
+        ],
+      });
 
       await updateFavesController.checkGames(this.req, this.res, this.nextFake);
 
@@ -99,11 +101,11 @@ describe("PUT /api/favorites/:userId", function () {
     });
     it("should add all games retrieved from api to req", async function () {
       this.req.body = [15, 18, 2029, 1, 99999];
-      db.getGameByid.callsFake((id) => {
+      db.getGameById.callsFake((id) => {
         return { id, name: `game${id}`, coverurl: `http://game${id}.jpg` };
       });
-      db.getGameByid.withArgs(2029).resolves(undefined);
-      db.getGameByid.withArgs(99999).resolves(undefined);
+      db.getGameById.withArgs(2029).resolves(undefined);
+      db.getGameById.withArgs(99999).resolves(undefined);
       const expectedAdded = [
         {
           id: 99999,
@@ -117,8 +119,8 @@ describe("PUT /api/favorites/:userId", function () {
         },
       ];
 
-      axiost.post.onFirstCall().resolves([expectedAdded[0]]);
-      axiost.post.onSecondCall().resolves([expectedAdded[1]]);
+      axios.post.onFirstCall().resolves({ data: [expectedAdded[0]] });
+      axios.post.onSecondCall().resolves({ data: [expectedAdded[1]] });
 
       await updateFavesController.checkGames(this.req, this.res, this.nextFake);
 
@@ -135,27 +137,31 @@ describe("PUT /api/favorites/:userId", function () {
     it("should throw error if any games don't exist in api", async function () {
       this.req.body = [25, 4, 4102, 528491, 13];
 
-      db.getGameByid.callsFake((id) => {
+      db.getGameById.callsFake((id) => {
         return { id, name: `game${id}`, coverurl: `http://game${id}.jpg` };
       });
 
-      db.getGameByid.withArgs(4102).resolves(undefined);
-      db.getGameByid.withArgs(4).resolves(undefined);
+      db.getGameById.withArgs(4102).resolves(undefined);
+      db.getGameById.withArgs(4).resolves(undefined);
 
-      axiost.post.onFirstCall().resolves([
-        {
-          id: 4,
-          name: "game4",
-          cover: { id: 4, url: "http://game4.jpg" },
-        },
-      ]);
-      axios.post.onSecondCall().resolves([]);
+      axios.post.onFirstCall().resolves({
+        data: [
+          {
+            id: 4,
+            name: "game4",
+            cover: { id: 4, url: "http://game4.jpg" },
+          },
+        ],
+      });
+      axios.post.onSecondCall().resolves({ data: [] });
 
       await updateFavesController.checkGames(this.req, this.res, this.nextFake);
 
       assert.strictEqual(this.res.status.calledWith(400), true);
       assert.strictEqual(
-        this.res.json.calledWith("One of the requested games do not exist"),
+        this.res.json.calledWith({
+          message: "One of the requested games do not exist.",
+        }),
         true
       );
       assert.strictEqual(this.nextFake.callCount, 0);

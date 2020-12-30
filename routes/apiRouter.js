@@ -4,7 +4,11 @@ const router = express.Router();
 const getHeaders = require("../core/getHeaders");
 const searchController = require("../controllers/searchController");
 const updateFavesController = require("../controllers/updateFavoritesController");
-const { queryValidator, pageValidator } = require("../middleware/validators");
+const {
+  queryValidator,
+  pageValidator,
+  intArrayValidator,
+} = require("../middleware/validators");
 
 router.use(getHeaders);
 
@@ -21,15 +25,15 @@ router.put("/test", (req, res) => {
   res.send("dumb");
 });
 
-// router.get(
-//   "/favorites/:userId",
-//   auth(),
-//   intArrayValidator(),
-//   catchErrors(),
-//   updateFavesController.favoritesValidator,
-//   updateFavesController.checkGames,
-//   updateFavesController.addGames,
-//   updateFavesController.updateFavorites
-// );
+router.put(
+  "/favorites/:userId",
+  auth(),
+  intArrayValidator(),
+  catchErrors(),
+  updateFavesController.favoritesValidator,
+  updateFavesController.checkGames,
+  updateFavesController.addGames,
+  updateFavesController.updateFavorites
+);
 
 module.exports = router;

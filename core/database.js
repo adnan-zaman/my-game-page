@@ -125,6 +125,6 @@ exports.getUsersFavoriteGames = async function (userId) {
  * @param {int} gameId game id
  * @return the requested game
  */
-exports.getGameByid = async function (gameId) {
+exports.getGameById = async function (gameId) {
   return undefined;
 };

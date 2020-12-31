@@ -6,8 +6,9 @@ const db = require("../core/database");
  * Renders a user's page
  */
 exports.getUserPage = async (req, res, next) => {
+  const flooredId = Math.floor(Number(req.params.id));
   //currenly only except whole number ids
-  if (isNaN(Math.floor(Number(req.params.id))))
+  if (isNaN(flooredId) || flooredId !== Number(req.params.id))
     return next(createError(404, "User does not exist"));
 
   try {

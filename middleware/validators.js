@@ -84,3 +84,17 @@ exports.pageValidator = function () {
     .isInt({ min: 0 })
     .withMessage("Invalid page number.");
 };
+
+exports.intArrayValidator = function () {
+  return body()
+    .isArray()
+    .withMessage("Request body must be an array.")
+    .custom((arr) => {
+      for (const i of arr) {
+        const floored = Math.floor(i);
+        if (isNaN(floored) || floored !== i)
+          throw new Error("All elements of array must be integers.");
+      }
+      return true;
+    });
+};

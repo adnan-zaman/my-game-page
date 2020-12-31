@@ -128,3 +128,19 @@ exports.getUsersFavoriteGames = async function (userId) {
 exports.getGameById = async function (gameId) {
   return undefined;
 };
+
+exports.addGame = async function (id, name, coverurl) {
+  return undefined;
+};
+
+exports.addFavoriteGame = async function (userId, gameId, rank) {
+  return undefined;
+};
+
+exports.changeFavoriteGameRank = async function (userId, gameId, rank) {
+  return undefined;
+};
+
+exports.removeFavoriteGame = async function (userId, gameId) {
+  return undefined;
+};

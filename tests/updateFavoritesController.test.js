@@ -15,6 +15,7 @@ describe("PUT /api/favorites/:userId", function () {
         "Client-ID": "abcde",
         Authorization: "Bearer 12345",
       },
+      params: { userId: "13" },
     };
     this.nextFake = sinon.fake();
     sinon.stub(axios, "post");
@@ -186,7 +187,7 @@ describe("PUT /api/favorites/:userId", function () {
       await updateFavesController.addGames(this.req, this.res, this.nextFake);
 
       assert.strictEqual(
-        this.db.addGame.calledWithExactly(
+        db.addGame.calledWithExactly(
           99999,
           "game99999",
           "http://game99999.jpg"
@@ -194,11 +195,7 @@ describe("PUT /api/favorites/:userId", function () {
         true
       );
       assert.strictEqual(
-        this.db.addGame.calledWithExactly(
-          2029,
-          "game2029",
-          "http://game2029.jpg"
-        ),
+        db.addGame.calledWithExactly(2029, "game2029", "http://game2029.jpg"),
         true
       );
       assert.strictEqual(this.nextFake.callCount, 1);
@@ -206,48 +203,46 @@ describe("PUT /api/favorites/:userId", function () {
     it("should not call db if there are no games to add", async function () {
       this.req.gamesToAdd = [];
 
-      assert.strictEqual(this.db.addGame.callCount, 0);
+      await updateFavesController.addGames(this.req, this.res, this.nextFake);
+
+      assert.strictEqual(db.addGame.callCount, 0);
       assert.strictEqual(this.nextFake.callCount, 1);
     });
   });
 
   describe("updateFavorites", function () {
-    beforeEach(function () {
-      this.req.params = { userId: 13 };
-    });
-
     it("should change ranks for existing favorite games", async function () {
-      this.req.body = [1, 10, 35, 47, 9021];
-      this.db.GetUsersFavoriteGames.resolves([
+      this.req.body = [1, 10, 9021, 35, 47];
+      db.getUsersFavoriteGames.resolves([
         { id: 1, name: "game1", coverurl: "http://game1.jpg" },
         { id: 10, name: "game10", coverurl: "http://game10.jpg" },
-        { id: 9021, name: "game9021", coverurl: "http://game9021.jpg" },
         { id: 35, name: "game35", coverurl: "http://game35.jpg" },
         { id: 47, name: "game47", coverurl: "http://game47.jpg" },
+        { id: 9021, name: "game9021", coverurl: "http://game9021.jpg" },
       ]);
 
       await updateFavesController.updateFavorites(this.req, this.res);
 
-      assert.strictEqual(db.ChangeFavoriteGameRank.callCount, 3);
-      assert.strictEqual(db.AddFavoriteGame.callCount, 0);
-      assert.strictEqual(db.RemoveFavoriteGame.callCount, 0);
+      assert.strictEqual(db.changeFavoriteGameRank.callCount, 3);
+      assert.strictEqual(db.addFavoriteGame.callCount, 0);
+      assert.strictEqual(db.removeFavoriteGame.callCount, 0);
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 9021, 3),
+        db.changeFavoriteGameRank.calledWithExactly(13, 9021, 3),
         true
       );
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 35, 4),
+        db.changeFavoriteGameRank.calledWithExactly(13, 35, 4),
         true
       );
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 47, 5),
+        db.changeFavoriteGameRank.calledWithExactly(13, 47, 5),
         true
       );
     });
 
     it("should add games that werent favorite games before", async function () {
       this.req.body = [1, 10, 35, 47, 9021];
-      this.db.GetUsersFavoriteGames.resolves([
+      db.getUsersFavoriteGames.resolves([
         { id: 1, name: "game1", coverurl: "http://game1.jpg" },
         { id: 10, name: "game10", coverurl: "http://game10.jpg" },
         { id: 35, name: "game35", coverurl: "http://game35.jpg" },
@@ -256,61 +251,64 @@ describe("PUT /api/favorites/:userId", function () {
 
       await updateFavesController.updateFavorites(this.req, this.res);
 
-      assert.strictEqual(db.ChangeFavoriteGameRank.callCount, 0);
-      assert.strictEqual(db.AddFavoriteGame.callCount, 1);
-      assert.strictEqual(db.RemoveFavoriteGame.callCount, 0);
+      assert.strictEqual(db.changeFavoriteGameRank.callCount, 0);
+      assert.strictEqual(db.addFavoriteGame.callCount, 1);
+      assert.strictEqual(db.removeFavoriteGame.callCount, 0);
+
       assert.strictEqual(
-        db.AddFavoriteGame.calledWithExactly(13, 9021, 5),
+        db.addFavoriteGame.calledWithExactly(13, 9021, 5),
         true
       );
     });
 
     it("should remove games that are no longer favorite", async function () {
       this.req.body = [];
-      this.db.GetUsersFavoriteGames.resolves([
+      db.getUsersFavoriteGames.resolves([
         { id: 1, name: "game1", coverurl: "http://game1.jpg" },
       ]);
 
       await updateFavesController.updateFavorites(this.req, this.res);
 
-      assert.strictEqual(db.ChangeFavoriteGameRank.callCount, 0);
-      assert.strictEqual(db.AddFavoriteGame.callCount, 0);
-      assert.strictEqual(db.RemoveFavoriteGame.callCount, 1);
-      assert.strictEqual(db.RemoveFavoriteGame.calledWithExactly(13, 1), true);
+      assert.strictEqual(db.changeFavoriteGameRank.callCount, 0);
+      assert.strictEqual(db.addFavoriteGame.callCount, 0);
+      assert.strictEqual(db.removeFavoriteGame.callCount, 1);
+
+      assert.strictEqual(db.removeFavoriteGame.calledWithExactly(13, 1), true);
     });
 
     it("should handle all three cases at the same time", async function () {
-      this.req.body = [1, 24, 19, 7854, 84012];
-      this.db.GetUsersFavoriteGames.resolves([
-        { id: 10, name: "game10", coverurl: "http://game10.jpg" },
-        { id: 19, name: "game24", coverurl: "http://game24.jpg" },
-        { id: 24, name: "game1", coverurl: "http://game1.jpg" },
+      this.req.body = [10, 19, 24, 84012];
+      db.getUsersFavoriteGames.resolves([
+        { id: 1, name: "game1", coverurl: "http://game11.jpg" },
+        { id: 24, name: "game24", coverurl: "http://game24.jpg" },
+        { id: 19, name: "game19", coverurl: "http://game19.jpg" },
+        { id: 7854, name: "game7854", coverurl: "http://game7854.jpg" },
         { id: 84012, name: "game84012", coverurl: "http://game84012.jpg" },
       ]);
 
       await updateFavesController.updateFavorites(this.req, this.res);
 
-      assert.strictEqual(db.ChangeFavoriteGameRank.callCount, 3);
+      assert.strictEqual(db.changeFavoriteGameRank.callCount, 3);
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 19, 2),
+        db.changeFavoriteGameRank.calledWithExactly(13, 19, 2),
         true
       );
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 24, 3),
+        db.changeFavoriteGameRank.calledWithExactly(13, 24, 3),
         true
       );
       assert.strictEqual(
-        db.ChangeFavoriteGameRank.calledWithExactly(13, 84012, 4),
+        db.changeFavoriteGameRank.calledWithExactly(13, 84012, 4),
         true
       );
 
-      assert.strictEqual(db.AddFavoriteGame.callCount, 1);
-      assert.strictEqual(db.AddFavoriteGame.calledWithExactly(13, 10, 1), true);
+      assert.strictEqual(db.addFavoriteGame.callCount, 1);
+      assert.strictEqual(db.addFavoriteGame.calledWithExactly(13, 10, 1), true);
 
-      assert.strictEqual(db.RemoveFavoriteGame.callCount, 2);
-      assert.strictEqual(db.RemoveFavoriteGame.calledWithExactly(13, 1), true);
+      assert.strictEqual(db.removeFavoriteGame.callCount, 2);
+      assert.strictEqual(db.removeFavoriteGame.calledWithExactly(13, 1), true);
       assert.strictEqual(
-        db.RemoveFavoriteGame.calledWithExactly(13, 7854),
+        db.removeFavoriteGame.calledWithExactly(13, 7854),
         true
       );
     });

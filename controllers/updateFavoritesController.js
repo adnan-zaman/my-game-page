@@ -1,30 +1,16 @@
-/*
-    -call ChangeFavoriteGameRank(uid, gid, newRank)
-    questions to consider
-      when games swap places
-      when games are removed
-      when games are added
-
-      hash = {}
-      oldFaveGames = GetUsersFaveGames(req.params.id)
- 
-      for i=0 -> req.body.len
-        if !hash[req.body[i]]
-          AddFaveGame(:id, req.body[i], i+1)
-        else if hash[req.body[i]] !== i+1
-          ChangeFaveGameRank(:id, req.body[i], i+1)
-          del hash[req.body[i]]
-
-      for gid in hash.keys
-        RemoveFaveGame(:id, gid);
-
-  */
-
 const debug = require("debug")("mygamepage-updateFavorites");
 
 const axios = require("axios");
 const db = require("../core/database");
 
+/**
+ * Middleware that validates that given array of game ids
+ * adhere to constraints
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express respone object
+ * @param {Function} next express next
+ */
 exports.favoritesValidator = function (req, res, next) {
   if (req.body.length > 5)
     return res
@@ -43,24 +29,16 @@ exports.favoritesValidator = function (req, res, next) {
   next();
 };
 
-/*
-    dbRequests = []
-    req.body.forEach => dbReq.push(GetGameById(gid));
-    dbResults = await Promise.all(dbReq)
-
-    apiReqs = []
-    for i=0 -> dbRes.len
-        if !dbRes[i]
-            apiReqs.push(axios.post, where req.body[i])
-
-    apiRes = await Promise.all(apiReqs)
-    
-    req.gamesToAdd = [];
-    foreach res in apiRes
-        if res.data.len === 0
-            error
-        gamesToAdd.push(res.data[0])
-*/
+/**
+ * Middleware that queries IGDB api for games
+ * that arent in database. All games that arent already
+ * in the database are added to the request in an array
+ * as gamesToAdd
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express respone object
+ * @param {Function} next express next
+ */
 exports.checkGames = async function (req, res, next) {
   const dbRequests = [];
   //query db for each game
@@ -98,4 +76,61 @@ exports.checkGames = async function (req, res, next) {
   }
 
   next();
+};
+
+/**
+ * Middleware that takes array of games provided by
+ * checkGames and adds them to the database.
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express respone object
+ * @param {Function} next express next
+ */
+exports.addGames = async function (req, res, next) {
+  for (const game of req.gamesToAdd) {
+    db.addGame(game.id, game.name, game.cover.url);
+  }
+  next();
+};
+
+/**
+ * Middleware that updates users favorite game information
+ * in the database.
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express respone object
+ * @param {Function} next express next
+ */
+exports.updateFavorites = async function (req, res) {
+  const userId = Number(req.params.userId);
+  const oldFaveGames = {};
+  const oldGames = await db.getUsersFavoriteGames();
+  //keep a dictionary(game.id -> rank) of users previous favorite games
+  for (let i = 0; i < oldGames.length; i++) {
+    oldFaveGames[oldGames[i].id] = i + 1;
+  }
+
+  for (let i = 0; i < req.body.length; i++) {
+    //req.body contains game ids ordered by rank
+    //if oldFaveGames doesnt have and id, we're adding a new fave game
+    //i+1 because ranks start at 1 rather than 0
+    if (!oldFaveGames[req.body[i]])
+      db.addFavoriteGame(userId, req.body[i], i + 1);
+    //if oldFaveGames contains the id but the rank is different
+    //we need to change an existing fave game's rank
+    else if (oldFaveGames[req.body[i]] !== i + 1) {
+      db.changeFavoriteGameRank(userId, req.body[i], i + 1);
+    }
+    //delete every id that was a favorite game before and is still a
+    //favorite game now
+    if (oldFaveGames[req.body[i]]) delete oldFaveGames[req.body[i]];
+  }
+
+  //we deleted every id that existed in oldFaveGames and in req.body
+  //any ids that still remain are ids that used to be the users favorite games
+  //but are now no longer on the list
+  for (const gameId in oldFaveGames) {
+    db.removeFavoriteGame(userId, Number(gameId));
+  }
+  return res.json("OK");
 };

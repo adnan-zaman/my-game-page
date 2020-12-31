@@ -19,21 +19,15 @@ router.get(
   searchController
 );
 
-router.put("/test", (req, res) => {
-  console.log(req.body);
-  console.log(req.body.games);
-  res.send("dumb");
-});
-
-router.put(
-  "/favorites/:userId",
-  auth(),
-  intArrayValidator(),
-  catchErrors(),
-  updateFavesController.favoritesValidator,
-  updateFavesController.checkGames,
-  updateFavesController.addGames,
-  updateFavesController.updateFavorites
-);
+// router.put(
+//   "/favorites/:userId",
+//   auth(),
+//   intArrayValidator(),
+//   catchErrors(),
+//   updateFavesController.favoritesValidator,
+//   updateFavesController.checkGames,
+//   updateFavesController.addGames,
+//   updateFavesController.updateFavorites
+// );
 
 module.exports = router;

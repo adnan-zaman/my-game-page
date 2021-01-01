@@ -51,5 +51,3 @@ module.exports = async function getHeaders(req, res, next) {
   };
   next();
 };
-
-module.exports.getHeaders = module.exports;

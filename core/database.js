@@ -122,25 +122,76 @@ exports.getUsersFavoriteGames = async function (userId) {
 /**
  * Gets a game by id
  *
- * @param {int} gameId game id
+ * @param {Number} gameId game id
  * @return the requested game
  */
 exports.getGameById = async function (gameId) {
-  return undefined;
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL GetGameById(?)", [gameId]);
+    return results[0][0];
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
 };
 
-exports.addGame = async function (id, name, coverurl) {
-  return undefined;
+exports.addGame = async function (gameId, name, coverurl) {
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL AddGame(?, ?, ?)", [
+      gameId,
+      name,
+      coverurl,
+    ]);
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
 };
 
 exports.addFavoriteGame = async function (userId, gameId, rank) {
-  return undefined;
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL AddFavoriteGame(?, ? ,?)", [
+      userId,
+      gameId,
+      rank,
+    ]);
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
 };
 
 exports.changeFavoriteGameRank = async function (userId, gameId, rank) {
-  return undefined;
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL ChangeFavoriteGameRank(?, ? ,?)", [
+      userId,
+      gameId,
+      rank,
+    ]);
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
 };
 
 exports.removeFavoriteGame = async function (userId, gameId) {
-  return undefined;
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL RemoveFavoriteGame(?, ?)", [
+      userId,
+      gameId,
+    ]);
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
 };

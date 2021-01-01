@@ -44,7 +44,7 @@ exports.checkGames = async function (req, res, next) {
   //query db for each game
   req.body.forEach((gid) => dbRequests.push(db.getGameById(gid)));
   const dbResponses = await Promise.all(dbRequests);
-
+  debug(`req.body ${req.body}`);
   const apiRequests = [];
   //query api for all games not in db
   for (let i = 0; i < dbResponses.length; i++) {
@@ -54,15 +54,16 @@ exports.checkGames = async function (req, res, next) {
     if (!dbResponses[i])
       apiRequests.push(
         axios.post(
-          "http://api.igdb.com/v4/games",
-          `fields name, cover.url; where id = ${req.body[i]}`,
-          req.apiHeaders
+          "https://api.igdb.com/v4/games",
+          `fields name, cover.url; where id = ${req.body[i]};`,
+          { headers: req.apiHeaders }
         )
       );
   }
-
+  debug("called all gidb");
   const apiResponses = await Promise.all(apiRequests);
   req.gamesToAdd = [];
+  debug("got all gidb");
 
   //add games retreived from api to req
   for (const response of apiResponses) {
@@ -88,7 +89,7 @@ exports.checkGames = async function (req, res, next) {
  */
 exports.addGames = async function (req, res, next) {
   for (const game of req.gamesToAdd) {
-    db.addGame(game.id, game.name, game.cover.url);
+    db.addGame(game.id, game.name, game.cover ? game.cover.url : null);
   }
   next();
 };
@@ -104,7 +105,7 @@ exports.addGames = async function (req, res, next) {
 exports.updateFavorites = async function (req, res) {
   const userId = Number(req.params.userId);
   const oldFaveGames = {};
-  const oldGames = await db.getUsersFavoriteGames();
+  const oldGames = await db.getUsersFavoriteGames(userId);
   //keep a dictionary(game.id -> rank) of users previous favorite games
   for (let i = 0; i < oldGames.length; i++) {
     oldFaveGames[oldGames[i].id] = i + 1;

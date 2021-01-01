@@ -1,7 +1,7 @@
 /**
  * This module contains validation and sanitiation middleware
  */
-const { body, param } = require("express-validator");
+const { body, param, validationResult } = require("express-validator");
 const debug = require("debug")("mygamepage-validators");
 
 /**
@@ -97,4 +97,12 @@ exports.intArrayValidator = function () {
       }
       return true;
     });
+};
+
+exports.catchValidatorErrors = function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(errors.array()[0].msg);
+  }
+  next();
 };

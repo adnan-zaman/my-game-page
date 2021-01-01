@@ -6,6 +6,7 @@ let currPage = 0;
 
 document.getElementById("add-game").addEventListener("click", openSearch);
 document.getElementById("search-form").addEventListener("submit", newSearch);
+document.getElementById("change").addEventListener("click", changeFaveGames);
 
 document.getElementById("search-prev").addEventListener("click", () => {
   currPage = Math.max(0, currPage - 1);
@@ -54,5 +55,21 @@ async function callApiAndPopulate() {
     container.appendChild(gameImg);
 
     searchResultsContainer.appendChild(container);
+  }
+}
+
+async function changeFaveGames() {
+  const newFaves = [98381, 1738, 143, 8730, 99012];
+  try {
+    const response = await fetch(`http://localhost:3000/api/favorites/${id}`, {
+      method: "PUT",
+      credentials: "same-origin",
+      body: JSON.stringify(newFaves),
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (e) {
+    console.log("err");
   }
 }

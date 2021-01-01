@@ -7,6 +7,7 @@ block scripts
     script(src='../javascripts/game-search.js' defer=true) 
     script. 
         let games = !{JSON.stringify(games)};
+        let id = #{id}
 
 block content
     div
@@ -20,7 +21,9 @@ block content
                 div.game-container
                     li= val.name
                     button Remove
-        button#add-game Add
+        if id
+            button#add-game Add
+            button#change Change
 
     div#search-dialog
         form#search-form

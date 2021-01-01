@@ -8,6 +8,7 @@ const {
   queryValidator,
   pageValidator,
   intArrayValidator,
+  catchValidatorErrors,
 } = require("../middleware/validators");
 const { validationResult } = require("express-validator");
 
@@ -20,17 +21,35 @@ router.get(
   searchController
 );
 
+// router.put(
+//   "/favorites/:userId",
+//   (req, res, next) => {
+//     console.log(req.body);
+//     next();
+//   },
+//   intArrayValidator(),
+//   catchValidatorErrors,
+//   (req, res) => res.json("good")
+// );
+
 router.put(
   "/favorites/:userId",
-  intArrayValidator(),
   (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array()[0].msg);
-    }
+    const id = Math.floor(Number(req.params.userId));
+    if (isNaN(id))
+      return status(400).json({ message: "userId must be an integer." });
+    if (!req.user || req.user.id !== id)
+      return res
+        .status(401)
+        .json({ message: "Need to establish session before usage." });
     next();
   },
-  (req, res) => res.json("OK")
+  intArrayValidator(),
+  catchValidatorErrors,
+  updateFavesController.favoritesValidator,
+  updateFavesController.checkGames,
+  updateFavesController.addGames,
+  updateFavesController.updateFavorites
 );
 // router.put(
 //   "/favorites/:userId",

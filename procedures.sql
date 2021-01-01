@@ -35,6 +35,15 @@ BEGIN
     WHERE id = userId;
 END$$
 
+CREATE PROCEDURE GetGameById(
+	IN gameId INT
+)
+BEGIN
+	SELECT *
+    FROM games
+    WHERE id = gameId;
+END$$
+
 #Returns game information for a user's favorite games
 #result set is in order from most favorite to least favorite
 CREATE PROCEDURE GetUsersFavoriteGameInfo(
@@ -69,6 +78,51 @@ CREATE PROCEDURE AddUser(
 BEGIN
 	INSERT INTO users(email, `password`, displayName)
     VALUES(userEmail, userPass, userDisplayName);
+END$$
+
+CREATE PROCEDURE AddGame(
+	IN gameId INT,
+    IN gameName VARCHAR(50),
+    IN gameCoverUrl VARCHAR(150)
+)
+BEGIN
+	IF (gameCoverurl IS NULL) THEN		
+		INSERT INTO games(id, `name`)
+		VALUES(gameId, gameName);
+	ELSE
+		INSERT INTO games(id, `name`, coverurl)
+		VALUES(gameId, gameName, gameCoverurl);
+	END IF;
+END$$
+
+CREATE PROCEDURE AddFavoriteGame(
+	IN userId INT,
+    IN gameId INT,
+    IN gameRank INT
+)
+BEGIN
+	INSERT INTO favoriteGames(uid, gid, `rank`)
+    VALUES(userId, gameId, gameRank);
+END$$
+
+CREATE PROCEDURE RemoveFavoriteGame(
+	IN userId INT,
+    IN gameId INT
+)
+BEGIN
+	DELETE FROM favoriteGames
+    WHERE (uid,gid) = (userId, gameId);
+END$$
+
+CREATE PROCEDURE ChangeFavoriteGameRank(
+	IN userId INT,
+    IN gameId INT,
+    IN gameRank INT
+)
+BEGIN
+	UPDATE favoritegames
+	SET `rank` = gameRank
+	WHERE (uid,gid) = (userId,gameId);
 END$$
 
 

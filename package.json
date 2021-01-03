@@ -11,7 +11,7 @@
     "setupApi": "cross-env CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9",
     "runStart": "node ./bin/www",
     "runTest": "cross-env  NODE_ENV=test mocha --recursive ./tests/*.test.js" ,
-    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions ./bin/www"
+    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./bin/www "
  
   },
   "dependencies": {

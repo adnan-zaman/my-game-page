@@ -19,6 +19,10 @@ li {
   display: inline;
 }
 
-#search-dialog {
+#search-box {
+  display: none;
+}
+
+#cancel-edit-favorite-games-btn {
   display: none;
 }

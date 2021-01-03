@@ -4,10 +4,13 @@ block styles
     link(rel="stylesheet" href="../stylesheets/style.css")
 
 block scripts
-    script(src='../javascripts/game-search.js' defer=true) 
-    script. 
-        let games = !{JSON.stringify(games)};
-        let id = #{id}
+    script(src='/javascripts/game-search.js' defer=true) 
+    script(type='module' src='/javascripts/editFavoriteGames.mjs')
+    script.       
+        const globals = {
+            favoriteGames: !{JSON.stringify(games)},
+            id: !{id ? id : "null"}
+        }
 
 block content
     div
@@ -15,22 +18,24 @@ block content
         if id
             button Change
 
-    div.game-list
-        ul
+    div#favorite-games-list-box
+        ul#favorite-games-list
             each val in games
-                div.game-container
-                    li= val.name
-                    button Remove
+                li
+                    div.game-container(data-gameid= val.id)
+                        img(src=val.coverurl)
+                        p= val.name
+                    
+                    
         if id
-            button#add-game Add
-            button#change Change
-
-    div#search-dialog
-        form#search-form
-            input(type="text")
-            button(type="submit") Search
-        button#search-prev= '<'
-        button#search-next= '>'
-        div#search-results
+            button#edit-favorite-games-btn Change
+            button#cancel-edit-favorite-games-btn Cancel
+            div#search-box
+                form#search-form
+                    input(type="text")
+                    button(type="submit") Search
+                button#search-prev= '<'
+                button#search-next= '>'
+                div#search-results
 
     

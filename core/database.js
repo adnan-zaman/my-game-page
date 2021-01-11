@@ -111,7 +111,7 @@ exports.getUsersFavoriteGames = async function (userId) {
     const results = await conn.query("CALL GetUsersFavoriteGameInfo(?)", [
       userId,
     ]);
-    debug(results[0]);
+    //debug(results[0]);
     return results[0];
   } catch (e) {
     if (conn) conn.end();

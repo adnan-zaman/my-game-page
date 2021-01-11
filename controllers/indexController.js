@@ -6,15 +6,23 @@ const {
 } = require("../core/errors");
 const db = require("../core/database");
 
-const debug = require("debug")("index");
-const authDebug = require("debug")("passport");
+const debug = require("debug")("mygamepage-index");
+const authDebug = require("debug")("mygamepage-passport");
 
 exports.loginGet = function (req, res) {
-  debug("GET /");
-  debug(`session id: ${req.sessionID}`);
+  // debug("GET /");
+  // debug(`session id: ${req.sessionID}`);
 
-  if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
-  res.render("login");
+  //debug("in loginget");
+
+  //if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
+  //return res.send("good");
+
+  debug(res.nextApp);
+
+  return res.nextApp.render(req, res, "/a");
+
+  //res.render("login");
 };
 
 exports.loginFormErrorHandler = function (req, res, next) {
@@ -52,7 +60,9 @@ exports.signupGet = function (req, res, next) {
   debug("GET /signup");
   debug(`session id: ${req.sessionID}`);
   if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
-  res.render("signup");
+  //res.render("signup");
+  res.locals.inp = "a";
+  res.nextApp.render(req, res, "/signup", res.locals);
 };
 
 exports.signupPost = async function (req, res, next) {

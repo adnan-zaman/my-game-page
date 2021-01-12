@@ -10,19 +10,12 @@ const debug = require("debug")("mygamepage-index");
 const authDebug = require("debug")("mygamepage-passport");
 
 exports.loginGet = function (req, res) {
-  // debug("GET /");
-  // debug(`session id: ${req.sessionID}`);
+  debug("GET /");
+  debug(`session id: ${req.sessionID}`);
 
-  //debug("in loginget");
+  if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
 
-  //if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
-  //return res.send("good");
-
-  debug(res.nextApp);
-
-  return res.nextApp.render(req, res, "/a");
-
-  //res.render("login");
+  res.render("login");
 };
 
 exports.loginFormErrorHandler = function (req, res, next) {

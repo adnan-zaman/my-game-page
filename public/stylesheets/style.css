@@ -18,3 +18,7 @@ li {
 .game-container > * {
   display: inline;
 }
+
+*[ondrop] {
+  border-color: red;
+}

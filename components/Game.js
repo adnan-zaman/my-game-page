@@ -1,21 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 
+/**
+ *
+ * A component representing a single game
+ *
+ * @param {object} props
+ */
+
 export default function Game(props) {
-  const [clicked, setClicked] = useState(false);
-  const [y, setY] = useState(0);
-
-  //   console.log(`i am ${props.gameName} and I am clicked: ${clicked}`);
-
-  //   function moveFunc(e) {
-  //     e.preventDefault();
-  //     if (clicked) setY(y + e.movementY);
-  //   }
-
   function stopDrag(e) {
     e.preventDefault();
     e.stopPropagation();
   }
-
+  //given to div's children so only the game-container
+  //is draggable
   const undraggable = {
     draggable: "false",
     onDragStart: stopDrag,
@@ -38,19 +36,11 @@ export default function Game(props) {
         {...undraggable}
       />
       <p {...undraggable}>{props.gameName}</p>
-      {props.isEditing && <button {...undraggable}>Delete</button>}
+      {props.isEditing && (
+        <button {...undraggable} onClick={() => props.onDelete(props.gameId)}>
+          Delete
+        </button>
+      )}
     </div>
   );
 }
-
-// onMouseDown={(e) => {
-//     e.preventDefault();
-//     setClicked(true);
-//   }}
-//   onMouseUp={() => setClicked(false)}
-//   onMouseMove={moveFunc}
-// style={{
-//     position: "relative",
-//     top: `${y}px`,
-//     borderColor: clicked ? "red" : "black",
-//   }}

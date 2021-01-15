@@ -15,7 +15,7 @@ exports.loginGet = function (req, res) {
 
   if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
 
-  res.render("login");
+  res.nextApp.render(req, res, "/login");
 };
 
 exports.loginFormErrorHandler = function (req, res, next) {

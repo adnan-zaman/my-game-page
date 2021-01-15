@@ -131,8 +131,6 @@ export default function UserPage(props) {
     }
   }
 
-  console.log(displayedFavoriteGames);
-
   //get a list of Game components corresponding to favorite games
   //each is given a data-index attribute that corresponds to
   //what position in the list they are. this will be used during

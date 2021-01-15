@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function GameSearchBox(props) {}","map":{"version":3,"sources":["C:/Users/adnan/web-dev/my-game-page/components/GameSearchBox.js"],"names":["GameSearchBox","props"],"mappings":"AAAA,eAAe,SAASA,aAAT,CAAuBC,KAAvB,EAA8B,CAAE","sourcesContent":["export default function GameSearchBox(props) {}\r\n"]},"metadata":{},"sourceType":"module"}

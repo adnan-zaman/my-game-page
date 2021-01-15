@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import Game from "../components/Game";
+import GameSearchBox from "../components/GameSearchBox";
 
 /**
  *
@@ -103,14 +104,16 @@ export default function UserPage(props) {
   return (
     <>
       <h1>{props.displayName}</h1>
-      <div className="favorite-games-list">{favoriteGamesList}</div>
-      {props.id &&
-        (!isEditing ? (
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-        ) : (
-          isEditing && <button onClick={rollbackChanges}>Cancel</button>
-        ))}
-      {}
+      <div>
+        <div className="favorite-games-list">{favoriteGamesList}</div>
+        {props.id &&
+          (!isEditing ? (
+            <button onClick={() => setIsEditing(true)}>Edit</button>
+          ) : (
+            isEditing && <button onClick={rollbackChanges}>Cancel</button>
+          ))}
+      </div>
+      {isEditing && <GameSearchBox />}
     </>
   );
 }

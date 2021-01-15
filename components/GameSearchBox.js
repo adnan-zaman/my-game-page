@@ -13,12 +13,28 @@ export default function GameSearchBox(props) {
   //used to determine whether its first render or not
   const firstRender = useRef(true);
 
+  function startDragGame(e, game) {
+    e.stopPropagation();
+    e.dataTransfer.setData("application/json", JSON.stringify(game));
+  }
+
+  //dragover handler is needed to make element
+  //draggable
+  function dragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+  }
+
   const displayedSearchResults = searchResults.map((game) => (
     <Game
       key={game.id}
       gameId={game.id}
       gameName={game.name}
       gameCoverUrl={game.coverurl}
+      draggable={true}
+      onDragStart={(e) => startDragGame(e, game)}
+      onDragOver={dragOver}
     />
   ));
 

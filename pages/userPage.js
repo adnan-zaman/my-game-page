@@ -16,7 +16,7 @@ export default function UserPage(props) {
   const [favoriteGames, setFavoriteGames] = useState(props.games);
   //the user's favorite game as currently displayed. these may differ
   //from actual favorite games during editing
-  const [displayedFavoriteGames, setdisplayedFavoriteGames] = useState(
+  const [displayedFavoriteGames, setDisplayedFavoriteGames] = useState(
     favoriteGames
   );
   //whether or not user is editing favorite games
@@ -53,12 +53,41 @@ export default function UserPage(props) {
     e.preventDefault();
     e.stopPropagation();
     const newFaveGames = [...displayedFavoriteGames];
-    const i = Number(e.target.dataset.index);
-    const j = Number(e.dataTransfer.getData("text/plain"));
-    const temp = newFaveGames[i];
-    newFaveGames[i] = newFaveGames[j];
-    newFaveGames[j] = temp;
-    setdisplayedFavoriteGames(newFaveGames);
+    const newGame = e.dataTransfer.getData("application/json");
+    //index of game that was dropped on
+    const dropTarget = Number(e.target.dataset.index);
+    //dataTransfer will contain a js object if the game being dragged
+    //is from search results, meaning a new game is being added
+    //to favorite games
+    if (newGame) {
+      const newGameAsObject = JSON.parse(newGame);
+      //we replace elements as we go, eventually we an element to newFaveGames[newFaveGames.length]
+      //this increases the length and the loop goes on forever
+      //so we keep the length of the list before we start
+      const length = newFaveGames.length;
+      let holder = newGameAsObject;
+      for (let i = 0; i <= length; i++) {
+        if (newFaveGames[i] && newFaveGames[i].id === newGameAsObject.id)
+          return;
+        if (i >= dropTarget) {
+          const temp = newFaveGames[i];
+          newFaveGames[i] = holder;
+          holder = temp;
+        }
+      }
+    }
+    //if there is no js object, then the game being dragged is an already
+    //existing game so we just swap places
+    else {
+      //the game that was being dragged
+      const draggedGame = Number(e.dataTransfer.getData("text/plain"));
+      const temp = newFaveGames[dropTarget];
+      newFaveGames[dropTarget] = newFaveGames[draggedGame];
+      newFaveGames[draggedGame] = temp;
+    }
+
+    setDisplayedFavoriteGames(newFaveGames);
+    console.log("set");
   }
 
   /**
@@ -67,7 +96,7 @@ export default function UserPage(props) {
    * @param {number} gameId the id of game to be deleted
    */
   function deleteGame(gameId) {
-    setdisplayedFavoriteGames(
+    setDisplayedFavoriteGames(
       displayedFavoriteGames.filter((game) => game.id !== gameId)
     );
   }
@@ -77,9 +106,11 @@ export default function UserPage(props) {
    * to actual favorite games.
    */
   function rollbackChanges() {
-    setdisplayedFavoriteGames(favoriteGames);
+    setDisplayedFavoriteGames(favoriteGames);
     setIsEditing(false);
   }
+
+  console.log(displayedFavoriteGames);
 
   //get a list of Game components corresponding to favorite games
   //each is given a data-index attribute that corresponds to

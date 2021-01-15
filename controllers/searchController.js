@@ -22,7 +22,7 @@ module.exports = async function (req, res, next) {
     );
 
     const searchResults = response.data.map(function (elt) {
-      const coverurl = elt.cover ? elt.cover.url : "https://imgs.default.jpg";
+      const coverurl = elt.cover ? elt.cover.url : "/images/default-game.png";
       return { id: elt.id, name: elt.name, coverurl };
     });
 

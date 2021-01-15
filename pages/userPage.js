@@ -65,11 +65,14 @@ export default function UserPage(props) {
       //this increases the length and the loop goes on forever
       //so we keep the length of the list before we start
       const length = newFaveGames.length;
+      //game to be added in
       let holder = newGameAsObject;
       for (let i = 0; i <= length; i++) {
         if (newFaveGames[i] && newFaveGames[i].id === newGameAsObject.id)
           return;
+        //start swapping from dropTarget onwards
         if (i >= dropTarget) {
+          //put holder into the list, take what was there and put into holder
           const temp = newFaveGames[i];
           newFaveGames[i] = holder;
           holder = temp;
@@ -87,7 +90,6 @@ export default function UserPage(props) {
     }
 
     setDisplayedFavoriteGames(newFaveGames);
-    console.log("set");
   }
 
   /**
@@ -108,6 +110,25 @@ export default function UserPage(props) {
   function rollbackChanges() {
     setDisplayedFavoriteGames(favoriteGames);
     setIsEditing(false);
+  }
+
+  async function saveChanges() {
+    const faveGameIds = displayedFavoriteGames.map((game) => game.id);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/favorites/${props.id}`,
+        {
+          method: "PUT",
+          credentials: "same-origin",
+          body: JSON.stringify(faveGameIds),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      setIsEditing(false);
+      setFavoriteGames(displayedFavoriteGames);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   console.log(displayedFavoriteGames);
@@ -141,7 +162,10 @@ export default function UserPage(props) {
           (!isEditing ? (
             <button onClick={() => setIsEditing(true)}>Edit</button>
           ) : (
-            isEditing && <button onClick={rollbackChanges}>Cancel</button>
+            <>
+              <button onClick={rollbackChanges}>Cancel</button>
+              <button onClick={saveChanges}>Save</button>
+            </>
           ))}
       </div>
       {isEditing && <GameSearchBox />}

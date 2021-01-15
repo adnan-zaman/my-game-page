@@ -33,6 +33,8 @@ export default function Game(props) {
       <img
         src={props.gameCoverUrl}
         alt={`Cover art for ${props.gameName}`}
+        height={90}
+        width={90}
         {...undraggable}
       />
       <p {...undraggable}>{props.gameName}</p>

@@ -25,7 +25,7 @@ exports.loginFormErrorHandler = function (req, res, next) {
     res.locals.error = errors.array()[0];
     res.locals.email_value = req.body.email;
     res.locals.password_value = req.body.password;
-    return res.render("login");
+    return res.nextApp.render(req, res, "/login");
   }
 
   next();
@@ -39,7 +39,7 @@ exports.loginFail = function (err, req, res, next) {
     res.locals.error = err;
     res.locals.email_value = req.body.email;
     res.locals.password_value = req.body.password;
-    return res.render("login");
+    return res.nextApp.render(req, res, "/login");
   }
   //non-usage related error
   return next(err);

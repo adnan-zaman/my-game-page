@@ -1,22 +1,36 @@
 import React, { useState } from "react";
 import Form from "../components/Form";
-import { TextField } from "../components/FormFields";
+import { EmailField, PasswordField } from "../components/FormFields";
 
 export default function Login(props) {
-  const [errorMessage, setErrorMessage] = useState("");
+  console.log(props);
+  const [errorMessage, setErrorMessage] = useState(
+    props.error && (props.error.message || props.error.msg)
+  );
 
   function handleSubmit(e, errorInfo) {
     if (errorInfo) {
       setErrorMessage(errorInfo.message);
-      errorInfo.element.focus();
       e.preventDefault();
     }
   }
 
   return (
     <>
-      <h1>Login</h1>
-      <Form id="login-form" onSubmit={handleSubmit}></Form>
+      <h1>Welcome to My Game Page</h1>
+      <h2>Login</h2>
+      <Form id="login-form" onSubmit={handleSubmit} method="post" action="/">
+        <EmailField
+          name="email"
+          required={true}
+          value={props.email_value || ""}
+        />
+        <PasswordField
+          name="password"
+          required={true}
+          value={props.password_value || ""}
+        />
+      </Form>
       {errorMessage && <p>{errorMessage}</p>}
     </>
   );

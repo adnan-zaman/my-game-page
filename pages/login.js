@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from "../components/Form";
 import { TextField } from "../components/FormFields";
 
 export default function Login(props) {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  function handleSubmit(e, errorInfo) {
+    if (errorInfo) {
+      setErrorMessage(errorInfo.message);
+      errorInfo.element.focus();
+      e.preventDefault();
+    }
+  }
+
   return (
     <>
-      <h1>hi guys</h1>
-      <Form>
-        <TextField value="duder" />
-        <TextField value="rooder" />
-        <TextField value="awoor" />
-        <TextField value="loler" />
-      </Form>
+      <h1>Login</h1>
+      <Form id="login-form" onSubmit={handleSubmit}></Form>
+      {errorMessage && <p>{errorMessage}</p>}
     </>
   );
 }

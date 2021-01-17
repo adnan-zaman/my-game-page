@@ -3,11 +3,16 @@ import Game from "./Game";
 
 export default function GameSearchBox(props) {
   //search term in search bar
-  const [searchTerm, setSearchTerm] = useState("");
+  const [displayedSearchTerm, setDisplayedSearchTerm] = useState("");
+  //the actual underlying search term regardless of whats typed
+  //clicking next/prev will change pages for this value
+  //clicking search button will change this value
+  const [searchTerm, setSearchTerm] = useState(displayedSearchTerm);
   //page of search results
   const [searchPage, setSearchPage] = useState(undefined);
   //list of objects that will be retrieved from search api
   const [searchResults, setSearchResults] = useState([]);
+  const startSearch = useRef(false);
   const [loading, setLoading] = useState(false);
 
   //used to determine whether its first render or not
@@ -38,43 +43,59 @@ export default function GameSearchBox(props) {
     />
   ));
 
+  /**
+   * Updates displayed search term
+   * @param {Event} e
+   */
   function handleChange(e) {
-    setSearchTerm(e.target.value);
+    setDisplayedSearchTerm(e.target.value);
   }
 
+  /**
+   * Sets searchTerm to displayedSearchTerm
+   * and fetches search results.
+   *
+   * @param {Event} e
+   */
   function handleSearch(e) {
     e.preventDefault();
-    if (searchTerm === "") return;
-    setPageNumber(0);
+    if (displayedSearchTerm === "") return;
+    setSearchTerm(displayedSearchTerm);
+    setSearchPage(0);
+    fetchAndPopulateSearchResults(displayedSearchTerm, 0);
   }
 
-  function setPageNumber(pageNumber) {
+  /**
+   * Changes page number for searchTerm
+   * (not displayedSearchTerm) and fetches search
+   * results.
+   *
+   * @param {number} pageNumber new page number
+   */
+  function changePage(pageNumber) {
     if (pageNumber < 0) return;
     setSearchPage(pageNumber);
+    fetchAndPopulateSearchResults(searchTerm, pageNumber);
   }
 
-  async function fetchAndPopulateSearchResults() {
+  /**
+   * Fetches a search from the API and populates page
+   * with search results. This function needs to be called
+   * with a search term and page manually instead of relying on
+   * checking state as reading state immediately after setting it
+   * will return stale values. So, we give it the fresh values manually.
+   *
+   * @param {string} term search term
+   * @param {number} page search page number
+   */
+  async function fetchAndPopulateSearchResults(term, page) {
     setLoading(true);
-    const query = `http://localhost:3000/api/search/${searchTerm}/${searchPage}`;
+    const query = `http://localhost:3000/api/search/${term}/${page}`;
     const response = await fetch(query);
     const results = await response.json();
     setSearchResults(results);
     setLoading(false);
   }
-
-  //whenever page number changes, new search results are fetched
-  //needs to be done in useEffect because useState doesnt change
-  //values immediately, accessing searchPage after render ensures
-  //we have new value
-  useEffect(() => {
-    //dont want fetchAndPopulateSearchResults() being
-    //called on first render
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    fetchAndPopulateSearchResults();
-  }, [searchPage]);
 
   return (
     <div>
@@ -83,16 +104,13 @@ export default function GameSearchBox(props) {
           <label htmlFor="game-search-bar">Name of Game:</label>
           <input
             id="game-search-bar"
-            value={searchTerm}
+            value={displayedSearchTerm + 1}
             onChange={handleChange}
           ></input>
           <button type="submit">Search</button>
           {searchPage >= 0 && (
             <>
-              <button
-                type="button"
-                onClick={() => setPageNumber(searchPage - 1)}
-              >
+              <button type="button" onClick={() => changePage(searchPage - 1)}>
                 Prev
               </button>
               <label htmlFor="page-number">Page:</label>
@@ -101,10 +119,7 @@ export default function GameSearchBox(props) {
                 disabled={true}
                 value={searchPage}
               ></input>
-              <button
-                type="button"
-                onClick={() => setPageNumber(searchPage + 1)}
-              >
+              <button type="button" onClick={() => changePage(searchPage + 1)}>
                 Next
               </button>
             </>

@@ -207,7 +207,7 @@ export function PasswordField(props) {
  * @returns {array} [HtmlElement, validityState]
  */
 function getElementAndValidityState(elementId) {
-  const element = document.querySelector(`#${elementId}`);
+  const element = document.querySelector(`[id='${elementId}']`);
   const validityState = element.validity;
   return [element, validityState];
 }

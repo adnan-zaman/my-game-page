@@ -53,9 +53,8 @@ exports.signupGet = function (req, res, next) {
   debug("GET /signup");
   debug(`session id: ${req.sessionID}`);
   if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
-  //res.render("signup");
-  res.locals.inp = "a";
-  res.nextApp.render(req, res, "/signup", res.locals);
+
+  res.nextApp.render(req, res, "/signup");
 };
 
 exports.signupPost = async function (req, res, next) {
@@ -68,7 +67,7 @@ exports.signupPost = async function (req, res, next) {
     res.locals.email_value = req.body.email;
     res.locals.password_value = req.body.password;
     res.locals.displayName_value = req.body.displayName;
-    return res.render("signup");
+    return res.nextApp.render(req, res, "/signup");
   }
 
   try {
@@ -85,7 +84,7 @@ exports.signupPost = async function (req, res, next) {
       res.locals.email_value = req.body.email;
       res.locals.password_value = req.body.password;
       res.locals.displayName_value = req.body.displayName;
-      return res.render("signup");
+      return res.nextApp.render(req, res, "/signup");
     }
     await db.addUser(req.body.email, req.body.password, req.body.displayName);
     debug(`${req.body.email} added, about to authenticate`);

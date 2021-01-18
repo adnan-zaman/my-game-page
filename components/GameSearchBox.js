@@ -104,7 +104,7 @@ export default function GameSearchBox(props) {
           <label htmlFor="game-search-bar">Name of Game:</label>
           <input
             id="game-search-bar"
-            value={displayedSearchTerm + 1}
+            value={displayedSearchTerm}
             onChange={handleChange}
           ></input>
           <button type="submit">Search</button>
@@ -117,7 +117,7 @@ export default function GameSearchBox(props) {
               <input
                 id="page-number"
                 disabled={true}
-                value={searchPage}
+                value={searchPage + 1}
               ></input>
               <button type="button" onClick={() => changePage(searchPage + 1)}>
                 Next

@@ -55,7 +55,7 @@ describe("GET /user/:id", function () {
     assert.strictEqual(this.res.locals.displayName, "first");
     assert.strictEqual(this.res.locals.id, null);
     assert.strictEqual(this.nextFake.callCount, 0);
-    assert.strictEqual(this.res.render.calledWith("userPage"), true);
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/userPage");
     assert.deepStrictEqual(this.res.locals.games, expectedGames);
   });
 
@@ -86,7 +86,7 @@ describe("GET /user/:id", function () {
     assert.strictEqual(this.res.locals.displayName, "first");
     assert.strictEqual(this.res.locals.id, 1);
     assert.strictEqual(this.nextFake.callCount, 0);
-    assert.strictEqual(this.res.render.calledWith("userPage"), true);
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/userPage");
     assert.deepStrictEqual(this.res.locals.games, expectedGames);
   });
 

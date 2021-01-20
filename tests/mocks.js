@@ -8,7 +8,7 @@ class MockResponse {
   constructor() {
     this.locals = {};
     this.send = sinon.fake();
-    this.render = sinon.fake();
+    this.nextApp = { render: sinon.fake() };
     this.redirect = sinon.fake();
     this.json = sinon.fake();
     this.status = sinon.fake.returns(this);

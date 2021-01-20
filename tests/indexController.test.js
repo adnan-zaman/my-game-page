@@ -23,7 +23,7 @@ describe("GET /", function () {
     it("should render login if user not authenticated", function () {
       this.req.isAuthenticated = () => false;
       indexController.loginGet(this.req, this.res);
-      assert.strictEqual(this.res.render.calledWith("login"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/login");
     });
 
     it("should redirect to /user/:id if user is authenticated", function () {
@@ -73,7 +73,7 @@ describe("POST /", function () {
         this.res.locals.password_value,
         this.req.body.password
       );
-      assert.strictEqual(this.res.render.calledWith("login"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/login");
       assert.strictEqual(this.nextFake.callCount, 0);
     });
 
@@ -98,7 +98,7 @@ describe("POST /", function () {
         this.res.locals.password_value,
         this.req.body.password
       );
-      assert.strictEqual(this.res.render.calledWith("login"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/login");
     });
 
     it("should render login on IncorrectPasswordError", function () {
@@ -111,7 +111,7 @@ describe("POST /", function () {
         this.res.locals.password_value,
         this.req.body.password
       );
-      assert.strictEqual(this.res.render.calledWith("login"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/login");
     });
 
     it("should pass error to next handler on any other error", function () {
@@ -133,7 +133,7 @@ describe("GET /signup", function () {
     it("should render signup if not authenticated", function () {
       this.req.isAuthenticated = () => false;
       indexController.signupGet(this.req, this.res);
-      assert.strictEqual(this.res.render.calledWith("signup"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/signup");
     });
 
     it("should redirect to /users/:id if user authenticated", function () {
@@ -184,7 +184,7 @@ describe("POST /signup", async function () {
         this.res.locals.password_value,
         this.req.body.password
       );
-      assert.strictEqual(this.res.render.calledWith("signup"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/signup");
       assert.strictEqual(this.nextFake.callCount, 0);
     });
 
@@ -209,7 +209,7 @@ describe("POST /signup", async function () {
       assert.strictEqual(this.res.locals.email_value, "exist@abc.com");
       assert.strictEqual(this.res.locals.password_value, "password1");
       assert.strictEqual(this.res.locals.displayName_value, "UniqueName");
-      assert.strictEqual(this.res.render.calledWith("signup"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/signup");
     });
 
     it("should render signup with UserAlreadyExistsError if display name already exists", async function () {
@@ -233,7 +233,7 @@ describe("POST /signup", async function () {
       assert.strictEqual(this.res.locals.email_value, "exist@abc.com");
       assert.strictEqual(this.res.locals.password_value, "password1");
       assert.strictEqual(this.res.locals.displayName_value, "UniqueName");
-      assert.strictEqual(this.res.render.calledWith("signup"), true);
+      assert.strictEqual(this.res.nextApp.render.lastArg, "/signup");
     });
 
     it("should call next middleware on valid input", async function () {

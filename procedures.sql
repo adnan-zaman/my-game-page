@@ -146,7 +146,7 @@ BEGIN
     CREATE TABLE IF NOT EXISTS games(
 		id INT AUTO_INCREMENT,
 		`name` VARCHAR(50) NOT NULL,
-		coverurl VARCHAR(150) NOT NULL DEFAULT('https://imgs.default.jpg'),
+		coverurl VARCHAR(150) NOT NULL DEFAULT('/images/default-game.png'),
 		
 		CONSTRAINT PK_Games PRIMARY KEY(id)
 	);

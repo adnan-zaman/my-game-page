@@ -3,7 +3,17 @@
  * from internal errors (http errors, database errors etc.)
  */
 
-class UserNotFoundError extends Error {
+class BaseCustomError extends Error {
+  constructor(message) {
+    super(message);
+  }
+
+  toJSON() {
+    return { message: this.message, name: this.name };
+  }
+}
+
+class UserNotFoundError extends BaseCustomError {
   /**
    * Represents an error where a given user couldn't be found.
    *
@@ -19,7 +29,7 @@ class UserNotFoundError extends Error {
   }
 }
 
-class IncorrectPasswordError extends Error {
+class IncorrectPasswordError extends BaseCustomError {
   /** Represents an error where user enters the wrong password. */
   constructor() {
     super("Incorrect password.");
@@ -27,7 +37,7 @@ class IncorrectPasswordError extends Error {
   }
 }
 
-class UserAlreadyExistsError extends Error {
+class UserAlreadyExistsError extends BaseCustomError {
   /** Represents an error where user enters the wrong password. */
   constructor(conflictType) {
     super();

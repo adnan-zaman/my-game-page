@@ -19,10 +19,6 @@ li {
   display: inline;
 }
 
-#search-box {
-  display: none;
-}
-
-#cancel-edit-favorite-games-btn {
-  display: none;
+*[ondrop] {
+  border-color: red;
 }

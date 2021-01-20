@@ -4,8 +4,13 @@
 
 /* imports */
 
-//middleware
+//app
 const express = require("express");
+const next = require("next");
+
+const { parse } = require("url");
+
+//middleware
 const logger = require("morgan");
 const createError = require("http-errors");
 const session = require("express-session");
@@ -33,6 +38,8 @@ const userRouter = require("./routes/userRouter");
 const apiRouter = require("./routes/apiRouter");
 
 const app = express();
+const nextApp = next({ dev: true });
+const nextHandler = nextApp.getRequestHandler();
 
 /* setting up passport */
 passport.use(
@@ -89,7 +96,7 @@ app.use(
   session({
     genid: (req) => {
       const id = uid.sync(24);
-      debug(`no session id found. generating id: ${id}`);
+      //debug(`no session id found. generating id: ${id}`);
       return id;
     },
     store: new FileStore({ logFn: () => {} }), //this is to avoid those messages that appear when file store is empty
@@ -103,10 +110,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//routes
+//add next to res so all controllers
+//will have access to it to render pages
+app.use((req, res, next) => {
+  res.nextApp = nextApp;
+  next();
+});
+
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api", apiRouter);
+app.all("*", nextHandler);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -124,4 +138,8 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+//start the app
+nextApp.prepare().then(() => {
+  debug("listening");
+  app.listen(process.env.port || 3000);
+});

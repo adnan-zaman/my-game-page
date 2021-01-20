@@ -3,7 +3,6 @@ const sinon = require("sinon");
 const { param } = require("express-validator");
 const axios = require("axios");
 const assert = require("assert").strict;
-const app = require("../app");
 
 const searchController = require("../controllers/searchController");
 

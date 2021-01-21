@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 /**
  * FormFields are meant to be used with the Form component.
@@ -10,6 +10,33 @@ import { useState, useRef, useEffect } from "react";
  * the Form component will take control of the FormField's value state.
  *
  */
+
+/**
+ * Common layout template that FormFields use
+ * @param {object} props expected props:
+ * - FormField's label should be first child
+ * - FormField's control should be second child
+ *
+ */
+function FormFieldTemplate(props) {
+  const children = React.Children.toArray(props.children);
+  //preserve existing css classes + add bootstrap classes
+  const label = React.cloneElement(children[0], {
+    className: (children[0].className || "") + " col-form-label col-md-1",
+  });
+  const control = React.cloneElement(children[1], {
+    className: (children[1].className || "") + " form-control",
+  });
+
+  return (
+    <div className="container-md mb-3">
+      <div className="row">
+        {label}
+        <div className="col-md-11">{control}</div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * General text input field.
@@ -56,8 +83,8 @@ export function TextField(props) {
   }
 
   return (
-    <>
-      <label htmlFor={inputId}>{props.label}: </label>
+    <FormFieldTemplate>
+      <label htmlFor={inputId}>{props.label}</label>
       <input
         id={inputId}
         name={props.name}
@@ -67,7 +94,7 @@ export function TextField(props) {
         minLength={minLength}
         maxLength={maxLength}
       />
-    </>
+    </FormFieldTemplate>
   );
 }
 
@@ -123,8 +150,8 @@ export function EmailField(props) {
   }
 
   return (
-    <>
-      <label htmlFor={inputId}>{labelName}: </label>
+    <FormFieldTemplate>
+      <label htmlFor={inputId}>{labelName}</label>
       <input
         id={inputId}
         name={props.name}
@@ -135,7 +162,7 @@ export function EmailField(props) {
         minLength={minLength}
         maxLength={maxLength}
       />
-    </>
+    </FormFieldTemplate>
   );
 }
 
@@ -183,8 +210,8 @@ export function PasswordField(props) {
   }
 
   return (
-    <>
-      <label htmlFor={inputId}>{labelName}: </label>
+    <FormFieldTemplate>
+      <label htmlFor={inputId}>{labelName}</label>
       <input
         id={inputId}
         name={props.name}
@@ -195,7 +222,7 @@ export function PasswordField(props) {
         minLength={minLength}
         maxLength={maxLength}
       />
-    </>
+    </FormFieldTemplate>
   );
 }
 

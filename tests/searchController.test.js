@@ -1,4 +1,4 @@
-const { MockResponse } = require("./mocks");
+const { MockResponse, MockRequest } = require("./mocks");
 const sinon = require("sinon");
 const { param } = require("express-validator");
 const axios = require("axios");
@@ -10,15 +10,7 @@ const searchController = require("../controllers/searchController");
 describe("GET /api/search", function () {
   beforeEach(function () {
     this.res = new MockResponse();
-    this.req = {
-      getApiHeaders: function () {
-        return {
-          Accept: "application/json",
-          "Client-ID": "abcde",
-          Authorization: "Bearer 12345",
-        };
-      },
-    };
+    this.req = new MockRequest();
     sinon.stub(axios, "post");
   });
 

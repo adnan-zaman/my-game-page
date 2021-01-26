@@ -11,7 +11,6 @@ const {
 } = require("../middleware/validators");
 const { validationResult } = require("express-validator");
 
-let id = 1;
 //all api requests use same headers, add convienience function to req
 router.use((req, res, next) => {
   req.getApiHeaders = () => {
@@ -19,7 +18,6 @@ router.use((req, res, next) => {
       Accept: "application/json",
       "Client-ID": process.env.clientid,
       Authorization: `Bearer ${process.env.accesstoken}`,
-      TestId: id++,
     };
   };
   next();

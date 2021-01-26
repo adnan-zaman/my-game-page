@@ -12,36 +12,7 @@ module.exports = async function (req, res, next) {
   }
 
   debug("valid input");
-  //testing, dlete later
-  try {
-    const response = await axios.post(
-      "https://api.igdb.com/v4/games",
-      `search "${req.params.query}"; fields name, cover.url; offset ${
-        req.params.page * 10
-      };`,
-      { headers: req.getApiHeaders() }
-    );
 
-    for (let i = 0; i < 50; i++)
-      axios.post(
-        "https://api.igdb.com/v4/games",
-        `search "${req.params.query}"; fields name, cover.url; offset ${
-          req.params.page * 10
-        };`,
-        { headers: req.getApiHeaders() }
-      );
-
-    const searchResults = response.data.map(function (elt) {
-      const coverurl = elt.cover ? elt.cover.url : "/images/default-game.png";
-      return { id: elt.id, name: elt.name, coverurl };
-    });
-
-    res.json(searchResults);
-  } catch (e) {
-    res.json(e.message);
-  }
-
-  return;
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",

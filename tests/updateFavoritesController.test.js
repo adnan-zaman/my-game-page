@@ -1,4 +1,4 @@
-const { MockResponse } = require("./mocks");
+const { MockResponse, MockRequest } = require("./mocks");
 const sinon = require("sinon");
 const assert = require("assert").strict;
 const axios = require("axios");
@@ -9,14 +9,9 @@ const db = require("../core/database");
 describe("PUT /api/favorites/:userId", function () {
   beforeEach(function () {
     this.res = new MockResponse();
-    this.req = {
-      apiHeaders: {
-        Accept: "application/json",
-        "Client-ID": "abcde",
-        Authorization: "Bearer 12345",
-      },
-      params: { userId: "13" },
-    };
+    this.req = new MockRequest();
+    this.req.params = { userId: "13" };
+
     this.nextFake = sinon.fake();
     sinon.stub(axios, "post");
     sinon.stub(db);

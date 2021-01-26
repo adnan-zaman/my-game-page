@@ -7,6 +7,7 @@
 //app
 const express = require("express");
 const next = require("next");
+//set up axios interceptors
 require("./core/setupAxios");
 
 const { parse } = require("url");

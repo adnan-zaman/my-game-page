@@ -56,7 +56,7 @@ exports.checkGames = async function (req, res, next) {
         axios.post(
           "https://api.igdb.com/v4/games",
           `fields name, cover.url; where id = ${req.body[i]};`,
-          { headers: req.apiHeaders }
+          { headers: req.getApiHeaders() }
         )
       );
   }

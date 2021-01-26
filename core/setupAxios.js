@@ -19,7 +19,8 @@ let refreshingToken = false;
 const pendingRequests = [];
 
 axios.interceptors.response.use(
-  (response) => response, //if there is a proper response, send as usual
+  //if there is a proper response, send as usual
+  (response) => response,
   //if there's an error, deal with it
   (err) => {
     const {
@@ -56,6 +57,19 @@ axios.interceptors.response.use(
       });
 
       return newPromise;
+    }
+    //too many requests
+    else if (status === 429) {
+      //try again 1 second later
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(
+            axios.post(config.url, config.data, { headers: config.headers })
+          );
+        }, 1000);
+      });
+    } else {
+      return Promise.reject(err);
     }
   }
 );

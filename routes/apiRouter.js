@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const getHeaders = require("../core/getHeaders");
 const searchController = require("../controllers/searchController");
 const updateFavesController = require("../controllers/updateFavoritesController");
 const {
@@ -12,8 +11,17 @@ const {
 } = require("../middleware/validators");
 const { validationResult } = require("express-validator");
 
+let id = 1;
+//all api requests use same headers, add convienience function to req
 router.use((req, res, next) => {
-  req.getApiHeaders = getHeaders;
+  req.getApiHeaders = () => {
+    return {
+      Accept: "application/json",
+      "Client-ID": process.env.clientid,
+      Authorization: `Bearer ${process.env.accesstoken}`,
+      TestId: id++,
+    };
+  };
   next();
 });
 

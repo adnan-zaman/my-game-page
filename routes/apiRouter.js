@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const getHeaders = require("../core/getHeaders");
 const searchController = require("../controllers/searchController");
 const updateFavesController = require("../controllers/updateFavoritesController");
 const {
@@ -12,7 +11,17 @@ const {
 } = require("../middleware/validators");
 const { validationResult } = require("express-validator");
 
-router.use(getHeaders);
+//all api requests use same headers, add convienience function to req
+router.use((req, res, next) => {
+  req.getApiHeaders = () => {
+    return {
+      Accept: "application/json",
+      "Client-ID": process.env.clientid,
+      Authorization: `Bearer ${process.env.accesstoken}`,
+    };
+  };
+  next();
+});
 
 router.get(
   "/search/:query/:page",
@@ -20,17 +29,6 @@ router.get(
   pageValidator(),
   searchController
 );
-
-// router.put(
-//   "/favorites/:userId",
-//   (req, res, next) => {
-//     console.log(req.body);
-//     next();
-//   },
-//   intArrayValidator(),
-//   catchValidatorErrors,
-//   (req, res) => res.json("good")
-// );
 
 router.put(
   "/favorites/:userId",
@@ -51,15 +49,5 @@ router.put(
   updateFavesController.addGames,
   updateFavesController.updateFavorites
 );
-// router.put(
-//   "/favorites/:userId",
-//   auth(),
-//   intArrayValidator(),
-//   catchErrors(),
-//   updateFavesController.favoritesValidator,
-//   updateFavesController.checkGames,
-//   updateFavesController.addGames,
-//   updateFavesController.updateFavorites
-// );
 
 module.exports = router;

@@ -22,6 +22,8 @@ export default function UserPage(props) {
   //whether or not user is editing favorite games
   const [isEditing, setIsEditing] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   /**
    * Called when a Game is dragged. Adds
    * the Game's data-index attribute to
@@ -49,7 +51,7 @@ export default function UserPage(props) {
    *
    * @param {DragEvent} e
    */
-  function dropGame(e) {
+  function dropGameOnGame(e) {
     e.preventDefault();
     e.stopPropagation();
     const newFaveGames = [...displayedFavoriteGames];
@@ -93,6 +95,41 @@ export default function UserPage(props) {
   }
 
   /**
+   * The dragged game will be added to the
+   * end of the list
+   *
+   * @param {DragEvent} e
+   */
+  function dropGameOnContainer(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const newFaveGames = [...displayedFavoriteGames];
+    const newGame = e.dataTransfer.getData("application/json");
+    //dataTransfer will contain a js object if the game being dragged
+    //is from search results, meaning a new game is being added
+    //to favorite games
+    if (newGame) {
+      newFaveGames.push(JSON.parse(newGame));
+    }
+    //if there is no js object, then the game being dragged is an already
+    //existing game. dragged game is added to the end and rest are shifted up
+    else {
+      let newPos = Number(e.dataTransfer.getData("text/plain"));
+      let draggedGame = newFaveGames[newPos];
+      //shift everything towards the front
+      for (; newPos < newFaveGames.length - 1; newPos++)
+        newFaveGames[newPos] = newFaveGames[newPos + 1];
+
+      //add draggedGame back to the end
+      newFaveGames[newPos] = draggedGame;
+      console.log(newFaveGames);
+    }
+
+    setDisplayedFavoriteGames(newFaveGames);
+  }
+
+  /**
    * Deletes a game from displayedFavoriteGames.
    *
    * @param {number} gameId the id of game to be deleted
@@ -108,26 +145,30 @@ export default function UserPage(props) {
    * to actual favorite games.
    */
   function rollbackChanges() {
+    setErrorMessage("");
     setDisplayedFavoriteGames(favoriteGames);
     setIsEditing(false);
   }
 
   async function saveChanges() {
+    setErrorMessage("");
     const faveGameIds = displayedFavoriteGames.map((game) => game.id);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/favorites/${props.id}`,
-        {
-          method: "PUT",
-          credentials: "same-origin",
-          body: JSON.stringify(faveGameIds),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+
+    const response = await fetch(
+      `http://localhost:3000/api/favorites/${props.id}`,
+      {
+        method: "PUT",
+        credentials: "same-origin",
+        body: JSON.stringify(faveGameIds),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    if (response.ok) {
       setIsEditing(false);
       setFavoriteGames(displayedFavoriteGames);
-    } catch (e) {
-      console.log(e);
+    } else {
+      const error = await response.json();
+      setErrorMessage(error.message);
     }
   }
 
@@ -146,7 +187,7 @@ export default function UserPage(props) {
       draggable={isEditing + ""}
       onDragStart={isEditing ? startDragGame : undefined}
       onDragOver={isEditing ? dragOver : undefined}
-      onDrop={isEditing ? dropGame : undefined}
+      onDrop={isEditing ? dropGameOnGame : undefined}
       onDelete={deleteGame}
     />
   ));
@@ -155,7 +196,13 @@ export default function UserPage(props) {
     <>
       <h1>{props.displayName}</h1>
       <div>
-        <div className="favorite-games-list">{favoriteGamesList}</div>
+        <div
+          className="favorite-games-list"
+          onDrop={dropGameOnContainer}
+          onDragOver={isEditing ? dragOver : undefined}
+        >
+          {favoriteGamesList}
+        </div>
         {props.id &&
           (!isEditing ? (
             <button onClick={() => setIsEditing(true)}>Edit</button>
@@ -165,6 +212,7 @@ export default function UserPage(props) {
               <button onClick={saveChanges}>Save</button>
             </>
           ))}
+        {errorMessage && <span>{errorMessage}</span>}
       </div>
       {isEditing && <GameSearchBox />}
     </>

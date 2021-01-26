@@ -12,13 +12,14 @@ module.exports = async function (req, res, next) {
   }
 
   debug("valid input");
+
   try {
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
       `search "${req.params.query}"; fields name, cover.url; offset ${
         req.params.page * 10
       };`,
-      { headers: req.apiHeaders }
+      { headers: req.getApiHeaders() }
     );
 
     const searchResults = response.data.map(function (elt) {
@@ -28,6 +29,6 @@ module.exports = async function (req, res, next) {
 
     res.json(searchResults);
   } catch (e) {
-    res.json(e.message);
+    res.status(500).json({ message: "Internal error" });
   }
 };

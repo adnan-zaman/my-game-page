@@ -77,15 +77,23 @@ export default function Form(props) {
     props.onSubmit(e, null);
   }
   return (
-    <form
-      id={props.id}
-      onSubmit={validateAllFields}
-      noValidate={true}
-      action={props.action}
-      method={props.method}
-    >
-      {children}
-      <button type="submit">{props.submitBtnText || "Submit"}</button>
-    </form>
+    <>
+      <form
+        id={props.id}
+        onSubmit={validateAllFields}
+        noValidate={true}
+        action={props.action}
+        method={props.method}
+      >
+        {children}
+        <div className="container-md mb-3">
+          <div className="row">
+            <button className="btn btn-primary col-md-1" type="submit">
+              {props.submitBtnText || "Submit"}
+            </button>
+          </div>
+        </div>
+      </form>
+    </>
   );
 }

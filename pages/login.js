@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Form from "../components/Form";
 import { EmailField, PasswordField } from "../components/FormFields";
+import Link from "next/link";
 
 export default function Login(props) {
   const [errorMessage, setErrorMessage] = useState(
@@ -16,27 +17,34 @@ export default function Login(props) {
 
   return (
     <>
-      <h1>Welcome to My Game Page</h1>
-      <h2>Login</h2>
-      <Form
-        id="login-form"
-        submitBtnText="Login"
-        onSubmit={handleSubmit}
-        method="post"
-        action="/"
-      >
-        <EmailField
-          name="email"
-          required={true}
-          value={props.email_value || ""}
-        />
-        <PasswordField
-          name="password"
-          required={true}
-          value={props.password_value || ""}
-        />
-      </Form>
-      {errorMessage && <p>{errorMessage}</p>}
+      <h1>MyGamePage</h1>
+
+      <div>
+        <Form
+          id="login-form"
+          submitBtnText="Login"
+          onSubmit={handleSubmit}
+          method="post"
+          action="/"
+        >
+          <EmailField
+            name="email"
+            required={true}
+            value={props.email_value || ""}
+          />
+          <PasswordField
+            name="password"
+            required={true}
+            value={props.password_value || ""}
+          />
+        </Form>
+        <Link href="/signup">
+          <p>
+            Don't have an account? <a>Sign up here.</a>
+          </p>
+        </Link>
+        <p className="error-msg ">{errorMessage}</p>
+      </div>
     </>
   );
 }

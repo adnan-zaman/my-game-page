@@ -3,22 +3,27 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00b7ff;
-}
-
-div {
+/* div {
   border: 1px solid black;
+} */
+
+body > div > div {
+  border: 8px solid #290cad;
+  background-color: #cac1f3;
+  border-radius: 15px;
+  padding: 10px;
+  max-width: 780px;
 }
 
-li {
-  list-style: none;
+form * {
+  border: 0px solid black;
 }
 
-.game-container > * {
-  display: inline;
+.error-msg {
+  color: red;
 }
 
-*[ondrop] {
-  border-color: red;
+.favorite-games-list {
+  height: 700px;
+  overflow-y: scroll;
 }

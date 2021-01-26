@@ -15,4 +15,15 @@ class MockResponse {
   }
 }
 
+class MockRequest {
+  constructor() {
+    this.getApiHeaders = sinon.fake.returns({
+      Accept: "application/json",
+      "Client-ID": "abcde",
+      Authorization: "Bearer 12345",
+    });
+  }
+}
+
 exports.MockResponse = MockResponse;
+exports.MockRequest = MockRequest;

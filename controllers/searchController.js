@@ -18,7 +18,7 @@ module.exports = async function (req, res, next) {
       `search "${req.params.query}"; fields name, cover.url; offset ${
         req.params.page * 10
       };`,
-      { headers: req.apiHeaders }
+      { headers: req.getApiHeaders() }
     );
 
     const searchResults = response.data.map(function (elt) {

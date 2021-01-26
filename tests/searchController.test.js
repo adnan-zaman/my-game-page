@@ -11,10 +11,12 @@ describe("GET /api/search", function () {
   beforeEach(function () {
     this.res = new MockResponse();
     this.req = {
-      apiHeaders: {
-        Accept: "application/json",
-        "Client-ID": "abcde",
-        Authorization: "Bearer 12345",
+      getApiHeaders: function () {
+        return {
+          Accept: "application/json",
+          "Client-ID": "abcde",
+          Authorization: "Bearer 12345",
+        };
       },
     };
     sinon.stub(axios, "post");

@@ -12,7 +12,10 @@ const {
 } = require("../middleware/validators");
 const { validationResult } = require("express-validator");
 
-router.use(getHeaders);
+router.use((req, res, next) => {
+  req.getApiHeaders = getHeaders;
+  next();
+});
 
 router.get(
   "/search/:query/:page",
@@ -20,17 +23,6 @@ router.get(
   pageValidator(),
   searchController
 );
-
-// router.put(
-//   "/favorites/:userId",
-//   (req, res, next) => {
-//     console.log(req.body);
-//     next();
-//   },
-//   intArrayValidator(),
-//   catchValidatorErrors,
-//   (req, res) => res.json("good")
-// );
 
 router.put(
   "/favorites/:userId",
@@ -51,15 +43,5 @@ router.put(
   updateFavesController.addGames,
   updateFavesController.updateFavorites
 );
-// router.put(
-//   "/favorites/:userId",
-//   auth(),
-//   intArrayValidator(),
-//   catchErrors(),
-//   updateFavesController.favoritesValidator,
-//   updateFavesController.checkGames,
-//   updateFavesController.addGames,
-//   updateFavesController.updateFavorites
-// );
 
 module.exports = router;

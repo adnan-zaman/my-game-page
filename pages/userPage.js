@@ -51,7 +51,7 @@ export default function UserPage(props) {
    *
    * @param {DragEvent} e
    */
-  function dropGame(e) {
+  function dropGameOnGame(e) {
     e.preventDefault();
     e.stopPropagation();
     const newFaveGames = [...displayedFavoriteGames];
@@ -89,6 +89,41 @@ export default function UserPage(props) {
       const temp = newFaveGames[dropTarget];
       newFaveGames[dropTarget] = newFaveGames[draggedGame];
       newFaveGames[draggedGame] = temp;
+    }
+
+    setDisplayedFavoriteGames(newFaveGames);
+  }
+
+  /**
+   * The dragged game will be added to the
+   * end of the list
+   *
+   * @param {DragEvent} e
+   */
+  function dropGameOnContainer(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const newFaveGames = [...displayedFavoriteGames];
+    const newGame = e.dataTransfer.getData("application/json");
+    //dataTransfer will contain a js object if the game being dragged
+    //is from search results, meaning a new game is being added
+    //to favorite games
+    if (newGame) {
+      newFaveGames.push(JSON.parse(newGame));
+    }
+    //if there is no js object, then the game being dragged is an already
+    //existing game. dragged game is added to the end and rest are shifted up
+    else {
+      let newPos = Number(e.dataTransfer.getData("text/plain"));
+      let draggedGame = newFaveGames[newPos];
+      //shift everything towards the front
+      for (; newPos < newFaveGames.length - 1; newPos++)
+        newFaveGames[newPos] = newFaveGames[newPos + 1];
+
+      //add draggedGame back to the end
+      newFaveGames[newPos] = draggedGame;
+      console.log(newFaveGames);
     }
 
     setDisplayedFavoriteGames(newFaveGames);
@@ -152,7 +187,7 @@ export default function UserPage(props) {
       draggable={isEditing + ""}
       onDragStart={isEditing ? startDragGame : undefined}
       onDragOver={isEditing ? dragOver : undefined}
-      onDrop={isEditing ? dropGame : undefined}
+      onDrop={isEditing ? dropGameOnGame : undefined}
       onDelete={deleteGame}
     />
   ));
@@ -161,7 +196,13 @@ export default function UserPage(props) {
     <>
       <h1>{props.displayName}</h1>
       <div>
-        <div className="favorite-games-list">{favoriteGamesList}</div>
+        <div
+          className="favorite-games-list"
+          onDrop={dropGameOnContainer}
+          onDragOver={isEditing ? dragOver : undefined}
+        >
+          {favoriteGamesList}
+        </div>
         {props.id &&
           (!isEditing ? (
             <button onClick={() => setIsEditing(true)}>Edit</button>

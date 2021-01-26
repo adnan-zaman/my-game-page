@@ -22,3 +22,8 @@ form * {
 .error-msg {
   color: red;
 }
+
+.favorite-games-list {
+  height: 700px;
+  overflow-y: scroll;
+}

@@ -29,6 +29,6 @@ module.exports = async function (req, res, next) {
 
     res.json(searchResults);
   } catch (e) {
-    res.json(e.message);
+    res.status(500).json({ message: "Internal error" });
   }
 };

@@ -14,6 +14,7 @@ export default function GameSearchBox(props) {
   const [searchResults, setSearchResults] = useState([]);
   const startSearch = useRef(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   //used to determine whether its first render or not
   const firstRender = useRef(true);
@@ -89,11 +90,16 @@ export default function GameSearchBox(props) {
    * @param {number} page search page number
    */
   async function fetchAndPopulateSearchResults(term, page) {
+    setErrorMessage("");
     setLoading(true);
     const query = `http://localhost:3000/api/search/${term}/${page}`;
     const response = await fetch(query);
     const results = await response.json();
-    setSearchResults(results);
+    if (response.ok) {
+      setSearchResults(results);
+    } else {
+      setErrorMessage(results.message);
+    }
     setLoading(false);
   }
 
@@ -127,6 +133,7 @@ export default function GameSearchBox(props) {
         </form>
       </div>
       <div className="search-results">
+        {errorMessage && <p>{errorMessage}</p>}
         {loading && <p>Loading...</p>}
         {displayedSearchResults}
       </div>

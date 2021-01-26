@@ -22,6 +22,8 @@ export default function UserPage(props) {
   //whether or not user is editing favorite games
   const [isEditing, setIsEditing] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   /**
    * Called when a Game is dragged. Adds
    * the Game's data-index attribute to
@@ -108,26 +110,30 @@ export default function UserPage(props) {
    * to actual favorite games.
    */
   function rollbackChanges() {
+    setErrorMessage("");
     setDisplayedFavoriteGames(favoriteGames);
     setIsEditing(false);
   }
 
   async function saveChanges() {
+    setErrorMessage("");
     const faveGameIds = displayedFavoriteGames.map((game) => game.id);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/favorites/${props.id}`,
-        {
-          method: "PUT",
-          credentials: "same-origin",
-          body: JSON.stringify(faveGameIds),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+
+    const response = await fetch(
+      `http://localhost:3000/api/favorites/${props.id}`,
+      {
+        method: "PUT",
+        credentials: "same-origin",
+        body: JSON.stringify(faveGameIds),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    if (response.ok) {
       setIsEditing(false);
       setFavoriteGames(displayedFavoriteGames);
-    } catch (e) {
-      console.log(e);
+    } else {
+      const error = await response.json();
+      setErrorMessage(error.message);
     }
   }
 
@@ -165,6 +171,7 @@ export default function UserPage(props) {
               <button onClick={saveChanges}>Save</button>
             </>
           ))}
+        {errorMessage && <span>{errorMessage}</span>}
       </div>
       {isEditing && <GameSearchBox />}
     </>

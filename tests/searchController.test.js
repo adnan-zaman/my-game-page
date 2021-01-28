@@ -51,8 +51,10 @@ describe("GET /api/search", function () {
       this.igdb.getGames(0, 10)
     );
     await searchController(this.req, this.res);
-    const controllerResponse = this.res.json.args[0];
-    assert.strictEqual(controllerResponse.results, expectedSearchResults);
+
+    const controllerResponse = this.res.json.args[0][0];
+
+    assert.deepStrictEqual(controllerResponse.results, expectedSearchResults);
     assert.strictEqual(controllerResponse.hasNext, true);
   });
 
@@ -61,11 +63,11 @@ describe("GET /api/search", function () {
     axios.post.callsFake(this.igdb.gameSearch);
     this.req.params = { query: "zelda", page: "3" };
     const expectedSearchResults = formatSearchResults(
-      this.igdb.getGames(0, 30)
+      this.igdb.getGames(30, 10)
     );
     await searchController(this.req, this.res);
-    const controllerResponse = this.res.json.args[0];
-    assert.strictEqual(controllerResponse.results, expectedSearchResults);
+    const controllerResponse = this.res.json.args[0][0];
+    assert.deepStrictEqual(controllerResponse.results, expectedSearchResults);
     assert.strictEqual(controllerResponse.hasNext, true);
   });
 
@@ -74,11 +76,11 @@ describe("GET /api/search", function () {
     axios.post.callsFake(this.igdb.gameSearch);
     this.req.params = { query: "zelda", page: "4" };
     const expectedSearchResults = formatSearchResults(
-      this.igdb.getGames(0, 40)
+      this.igdb.getGames(40, 10)
     );
     await searchController(this.req, this.res);
-    const controllerResponse = this.res.json.args[0];
-    assert.strictEqual(controllerResponse.results, expectedSearchResults);
+    const controllerResponse = this.res.json.args[0][0];
+    assert.deepStrictEqual(controllerResponse.results, expectedSearchResults);
     assert.strictEqual(controllerResponse.hasNext, false);
   });
 
@@ -87,11 +89,11 @@ describe("GET /api/search", function () {
     axios.post.callsFake(this.igdb.gameSearch);
     this.req.params = { query: "zelda", page: "4" };
     const expectedSearchResults = formatSearchResults(
-      this.igdb.getGames(0, 40)
+      this.igdb.getGames(40, 10)
     );
     await searchController(this.req, this.res);
-    const controllerResponse = this.res.json.args[0];
-    assert.strictEqual(controllerResponse.results, expectedSearchResults);
+    const controllerResponse = this.res.json.args[0][0];
+    assert.deepStrictEqual(controllerResponse.results, expectedSearchResults);
     assert.strictEqual(controllerResponse.hasNext, false);
   });
 
@@ -100,11 +102,11 @@ describe("GET /api/search", function () {
     axios.post.callsFake(this.igdb.gameSearch);
     this.req.params = { query: "zelda", page: "1" };
     const expectedSearchResults = formatSearchResults(
-      this.igdb.getGames(0, 10)
+      this.igdb.getGames(10, 10)
     );
     await searchController(this.req, this.res);
-    const controllerResponse = this.res.json.args[0];
-    assert.strictEqual(controllerResponse.results, expectedSearchResults);
+    const controllerResponse = this.res.json.args[0][0];
+    assert.deepStrictEqual(controllerResponse.results, expectedSearchResults);
     assert.strictEqual(controllerResponse.hasNext, false);
   });
 });

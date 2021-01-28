@@ -45,6 +45,9 @@ class MockIgdb {
     for (const num of noCovers) {
       noCovers[num] = true;
     }
+
+    this.gameSearch = this.gameSearch.bind(this);
+    this.getGames = this.getGames.bind(this);
   }
 
   /**
@@ -56,6 +59,8 @@ class MockIgdb {
    * @param {string} url api request url
    * @param {string} data data string sent with url
    * @param {object} headers object with additional headers
+   *
+   * @returns an object that should accessed as if it were a response (ie, response.data contains results)
    */
   gameSearch(url, data, headers) {
     if (url !== "https://api.igdb.com/v4/games") throw Error("wrong endpoint");
@@ -66,18 +71,17 @@ class MockIgdb {
     for (const query of queries) {
       //look for offset or limit query
       //split query by space
-      //last element without last index (which is semicolon) is the number
-      //e.g "offset 10;" -> ["offset", "10;"] -> 10
+      //last element is the number
       if (query.indexOf("offset") > -1) {
         const terms = query.split(" ");
-        offset = Number(terms.substring(0, terms.length - 1));
+        offset = Number(terms[terms.length - 1]);
       } else if (query.indexOf("limit") > -1) {
         const terms = query.split(" ");
-        limit = Number(terms.substring(0, terms.length - 1));
+        limit = Number(terms[terms.length - 1]);
       }
     }
 
-    return this.getGames(offset, limit);
+    return { data: this.getGames(offset, limit) };
   }
 
   /**
@@ -87,6 +91,8 @@ class MockIgdb {
    * and MockIgdb.noCovers
    * @param {number} offset how many games to skip
    * @param {number} limit how many games to return
+   *
+   * @returns array of search results
    */
   getGames(offset, limit) {
     const games = [];

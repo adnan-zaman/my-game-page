@@ -1,7 +1,7 @@
 /**
  * This module contains validation and sanitiation middleware
  */
-const { body, param, validationResult } = require("express-validator");
+const { body, param, query, validationResult } = require("express-validator");
 const debug = require("debug")("mygamepage-validators");
 
 /**
@@ -63,22 +63,24 @@ exports.passwordValidator = function (signup = false) {
 };
 
 /**
- * Creates a validation/sanitization middleware for game search queries
+ * Creates a validation/sanitization middleware for search queries
  *
+ * @param {string} location where in the request to check (param [default], query etc.)
  * @returns {ValidationChain}
  */
-exports.queryValidator = function () {
-  return param("query").escape();
+exports.queryValidator = function (location = "param") {
+  const field = location === "param" ? param : query;
+  return field("query").escape();
 };
 
 /**
  * Creates a validation/sanitization middleware for page number
- * during game search queries
- *
+ * @param {string} location where in the request to check (param [default], query etc.)
  * @returns {ValidationChain}
  */
-exports.pageValidator = function () {
-  return param("page")
+exports.pageValidator = function (location = "param") {
+  const field = location === "param" ? param : query;
+  return field("page")
     .trim()
     .escape()
     .isInt({ min: 0 })
@@ -99,10 +101,29 @@ exports.intArrayValidator = function () {
     });
 };
 
-exports.catchValidatorErrors = function (req, res, next) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array()[0].msg);
-  }
-  next();
+/**
+ * Creates a middleware that checks errors created by express validators.
+ * Should be used after express validators. If there are errors,
+ * will respond with the given status and method (json response or displaying webpage).
+ * If there are no errors, will call next()
+ *
+ * @param {string} responseType how to respond to the error (json -> json response, page -> display error webpage)
+ * @param {num} status error code
+ *
+ * @returns {function} express middleware
+ */
+exports.catchValidatorErrors = function (responseType = "json", status = 400) {
+  return function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      if (responseType === "json")
+        return res.status(status).json(errors.array()[0].msg);
+      else if ((responseType = "page")) {
+        const err = errors.array()[0];
+        err.status = status;
+        return next(err);
+      }
+    }
+    next();
+  };
 };

@@ -23,6 +23,7 @@ class MockRequest {
       "Client-ID": "abcde",
       Authorization: "Bearer 12345",
     });
+    this.query = {};
   }
 }
 

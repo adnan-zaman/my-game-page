@@ -22,6 +22,10 @@ module.exports = async function (req, res, next) {
       { headers: req.getApiHeaders() }
     );
 
+    //a page shows 10 results and we query api for 20 (asking for 2 pages)
+    //if length is > 10, we have 2 pages worth, and so there is a next page
+    //otherwise we only have enough for 1 page (the one the user is asking for)
+    //and it is the last page
     const hasNext = response.data.length > 10;
     const results = response.data.slice(0, 10).map(function (elt) {
       const coverurl = elt.cover ? elt.cover.url : "/images/default-game.png";

@@ -6,16 +6,18 @@ const assert = require("assert").strict;
 
 const searchController = require("../controllers/searchController");
 
-//usage:
-//GET /api/search/{searchTerm}/{pageNumber}
+/*
+usage:
+GET /api/search/{searchTerm}/{pageNumber}
 
-//response:
-// {
-//   results: [{id, name, coverurl}, ...], -array of games
-//   hasNext: (boolean) -whether or not there is a next page
-// }
-//error:
-// {message: (string)}
+response:
+ {
+   results: [{id, name, coverurl}, ...], -array of games
+   hasNext: (boolean) -whether or not there is a next page
+ }
+error:
+ {message: (string)}
+*/
 
 // GET -> queryValidator -> pageValidator -> searchController
 describe("GET /api/search", function () {

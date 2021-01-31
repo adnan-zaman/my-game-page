@@ -12,9 +12,12 @@ export default function GameSearchBox(props) {
   const [searchPage, setSearchPage] = useState(undefined);
   //list of objects that will be retrieved from search api
   const [searchResults, setSearchResults] = useState([]);
-  const startSearch = useRef(false);
+  //whether or not search results are currently loading
   const [loading, setLoading] = useState(false);
+  //error message
   const [errorMessage, setErrorMessage] = useState("");
+  //whether or not there is a next page of search results
+  const [hasNext, setHasNext] = useState(true);
 
   //used to determine whether its first render or not
   const firstRender = useRef(true);
@@ -94,9 +97,10 @@ export default function GameSearchBox(props) {
     setLoading(true);
     const query = `http://localhost:3000/api/search/${term}/${page}`;
     const response = await fetch(query);
-    const results = await response.json();
+    const data = await response.json();
     if (response.ok) {
-      setSearchResults(results);
+      setSearchResults(data.results);
+      setHasNext(data.hasNext);
     } else {
       setErrorMessage(results.message);
     }
@@ -116,18 +120,28 @@ export default function GameSearchBox(props) {
           <button type="submit">Search</button>
           {searchPage >= 0 && (
             <>
-              <button type="button" onClick={() => changePage(searchPage - 1)}>
-                Prev
-              </button>
+              {searchPage > 0 && (
+                <button
+                  type="button"
+                  onClick={() => changePage(searchPage - 1)}
+                >
+                  Prev
+                </button>
+              )}
               <label htmlFor="page-number">Page:</label>
               <input
                 id="page-number"
                 disabled={true}
                 value={searchPage + 1}
               ></input>
-              <button type="button" onClick={() => changePage(searchPage + 1)}>
-                Next
-              </button>
+              {hasNext && (
+                <button
+                  type="button"
+                  onClick={() => changePage(searchPage + 1)}
+                >
+                  Next
+                </button>
+              )}
             </>
           )}
         </form>

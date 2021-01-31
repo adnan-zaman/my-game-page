@@ -195,3 +195,29 @@ exports.removeFavoriteGame = async function (userId, gameId) {
     throw e;
   }
 };
+
+/**
+ * Search for users by display name.
+ *
+ * @param {string} searchTerm search term
+ * @param {number} offset how many results to skip
+ * @param {number} limit how many results to return
+ *
+ * @returns {array} list of user objects of format {id, displayName}
+ */
+exports.searchUser = async function (searchTerm, offset, limit) {
+  let conn;
+  try {
+    conn = createConnection();
+    const results = await conn.query("CALL SearchUser(?, ?, ?)", [
+      searchTerm,
+      offset,
+      limit,
+    ]);
+
+    return results[0];
+  } catch (e) {
+    if (conn) conn.end();
+    throw e;
+  }
+};

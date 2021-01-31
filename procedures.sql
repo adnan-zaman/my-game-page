@@ -64,6 +64,25 @@ BEGIN
 	ORDER BY f.`rank` ASC;
 END$$
 
+# Search for a user by display name
+# @param 	searchName	the search term 
+# @param	offset		the number of results to skip
+# @param	limit		how many results to show
+# columns returned {id, displayName}
+CREATE PROCEDURE SearchUser(
+	IN searchName VARCHAR(50),
+    IN `offset` INT,
+    IN `limit` INT
+)
+BEGIN
+	SELECT id, displayName 
+    FROM users
+	WHERE displayName LIKE CONCAT('%', searchName, '%')
+	ORDER BY displayName ASC
+    LIMIT `offset`, `limit`;
+END$$
+
+
 
 ## Data manipulation procedures
 

@@ -23,5 +23,9 @@ steps:
   - script: ls
     displayName: "what is here"
 
+  - script: npm run dev
+    displayName: "devit itpu"
+
+
   - script: npx cypress run --record --key "befeb5d3-d92f-4361-918a-057fb5e57d65"
     displayName: "lets record"

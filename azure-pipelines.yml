@@ -19,3 +19,10 @@ steps:
     npm install
     npm run build
   displayName: 'npm install and build'
+
+- script: echo hellohello
+  displayName: 'hello'
+
+- script: npx cypress run --record --key "befeb5d3-d92f-4361-918a-057fb5e57d65"
+  displayName: 'lets record'
+

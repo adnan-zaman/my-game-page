@@ -23,8 +23,5 @@ steps:
   - script: npm run dev &
     displayName: "run dev"
 
-  - script: npx wait-on http://localhost:3000
-    displayName: "waiton"
-
-  - script: npx cypress run
+  - script: npm run rec
     displayName: "run cypress"

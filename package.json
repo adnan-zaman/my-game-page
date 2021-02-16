@@ -12,7 +12,8 @@
     "setupApi": "cross-env CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9",
     "runStart": "node ./bin/www",
     "runTest": "cross-env  NODE_ENV=test mocha --recursive ./tests/*.test.js",
-    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./app "
+    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./app ",
+    "rec": "cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65"
   },
   "dependencies": {
     "axios": "^0.21.0",

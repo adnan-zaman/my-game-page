@@ -143,6 +143,6 @@ app.use(function (err, req, res, next) {
 
 //start the app
 nextApp.prepare().then(() => {
-  debug("listening");
+  debug(`listening on ${process.env.port || 3000}`);
   app.listen(process.env.port || 3000);
 });

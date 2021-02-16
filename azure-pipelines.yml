@@ -20,8 +20,11 @@ steps:
       npm run build
     displayName: "npm install and build"
 
-  - script: npm run dev & npx wait-on http://localhost:3000
-    displayName: "run dev and waiton"
+  - script: npm run dev &
+    displayName: "run dev"
+
+  - script: npx wait-on http://localhost:3000
+    displayName: "waiton"
 
   - script: npx cypress run
     displayName: "run cypress"

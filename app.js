@@ -119,6 +119,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.head("*", (req, res) => res.send("OK"));
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api", apiRouter);

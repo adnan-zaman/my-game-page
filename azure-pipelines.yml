@@ -8,7 +8,8 @@ parameters:
     type: string
     default: cypress/integration/*
 
-trigger: none
+trigger: 
+  - azure-test
 
 pool:
   vmImage: ubuntu-latest

@@ -6,9 +6,8 @@
 parameters:
   - name: testFiles
     type: string
-    default: cypress/integration/*
 
-trigger: 
+trigger:
   - azure-test
 
 pool:

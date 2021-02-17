@@ -3,8 +3,12 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-trigger:
-  - main
+parameters:
+  - name: testFiles
+    type: string
+    default: cypress/integration/*
+
+trigger: none
 
 pool:
   vmImage: ubuntu-latest
@@ -20,8 +24,5 @@ steps:
       npm run build
     displayName: "npm install and build"
 
-  - script: npm run dev &
-    displayName: "run dev"
-
-  - script: npm run rec
+  - script: cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65 --spec ${{ parameters.testFiles }}
     displayName: "run cypress"

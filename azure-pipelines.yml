@@ -3,13 +3,14 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-trigger: none
+trigger:
+  - azure-test
 
 parameters:
   - name: testFiles
     displayName: Test Files
     type: string
-    default: "*"
+    default: "*/*"
 
 pool:
   vmImage: ubuntu-latest

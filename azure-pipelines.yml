@@ -24,10 +24,10 @@ steps:
   - script: npm install
     displayName: "npm install"
 
-  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65]
+  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65
     condition: eq(variables['build.reason'], 'IndividualCI')
     displayName: "run cypress. test files specified in cypress.json"
 
-  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65] --config "testFiles=${{ parameters.testFiles }}"
+  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65 --config "testFiles=${{ parameters.testFiles }}"
     condition: eq(variables['build.reason'], 'Manual')
     displayName: "run cypress. test files specified manually"

@@ -9,7 +9,10 @@ parameters:
   - name: testFiles
     displayName: Test Files
     type: object
-    default: [ string ]
+    default: 
+      - doop
+      - shpoop
+      - hadoop
 
 pool:
   vmImage: ubuntu-latest

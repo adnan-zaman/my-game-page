@@ -3,12 +3,14 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-parameters:
-  - name: testFiles
-    type: string
-
 trigger:
   - azure-test
+
+parameters:
+  - name: testFiles
+    displayName: Test Files
+    type: array
+    default: []
 
 pool:
   vmImage: ubuntu-latest
@@ -22,5 +24,10 @@ steps:
   - script: npm install
     displayName: "npm install"
 
-  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65 --spec ${{ parameters.testFiles }}
-    displayName: "run cypress"
+  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65]
+    condition: eq(Build.Reason, "IndividualCI")
+    displayName: "run cypress. test files specified in cypress.json"
+
+  - script: npx cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65] --config "testFiles=${{ parameters.testFiles }}"
+    condition: eq(Build.Reason, "Manual")
+    displayName: "run cypress. test files specified manually"

@@ -29,7 +29,7 @@ steps:
     env: 
       CYPRESS-RECORD-KEY: $(RECORD-KEY)
 
-  - script: npx cypress run --record --key $CYPRESS-RECORD-KEY --config "testFiles=[${{ parameters.testFiles }}]"
+  - script: echo $CYPRESS-RECORD-KEY
     condition: eq(variables['build.reason'], 'Manual')
     displayName: "run cypress. test files specified manually"
     env: 

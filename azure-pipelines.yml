@@ -8,8 +8,8 @@ trigger: none
 parameters:
   - name: testFiles
     displayName: Test Files
-    type: object
-    default: '*'
+    type: string
+    default: "*"
 
 pool:
   vmImage: ubuntu-latest

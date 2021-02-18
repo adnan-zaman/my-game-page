@@ -16,8 +16,8 @@ pool:
 
 steps:
 
-  - script: echo $CYPRESS-RECORD-KEY
+  - script: echo $RECKEY
     condition: eq(variables['build.reason'], 'Manual')
     displayName: "run cypress. test files specified manually"
     env: 
-      CYPRESS-RECORD-KEY: $(RECORD-KEY)
+      RECKEY: $(RECORD-KEY)

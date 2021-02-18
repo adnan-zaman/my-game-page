@@ -10,7 +10,7 @@ parameters:
   - name: testFiles
     displayName: Test Files
     type: object
-    default: []
+    default: "*"
 
 pool:
   vmImage: ubuntu-latest

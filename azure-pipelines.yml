@@ -16,7 +16,7 @@ pool:
 
 steps:
 
-  - script: echo wow$RECKEY
+  - script: echo $RECKEY | cut -c1-6
     condition: eq(variables['build.reason'], 'Manual')
     displayName: "run cypress. test files specified manually"
     env: 

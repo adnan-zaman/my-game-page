@@ -23,13 +23,13 @@ steps:
   - script: npm install
     displayName: "npm install"
 
-  - script: npx cypress run --record --key $(CYPRESS-RECORD-KEY)
+  - script: npx cypress run --record --key $CYPRESS-RECORD-KEY
     condition: eq(variables['build.reason'], 'IndividualCI')
     displayName: "run cypress. test files specified in cypress.json"
     env: 
       CYPRESS-RECORD-KEY: $(RECORD-KEY)
 
-  - script: npx cypress run --record --key $(CYPRESS-RECORD-KEY) --config "testFiles=[${{ parameters.testFiles }}]"
+  - script: npx cypress run --record --key $CYPRESS-RECORD-KEY --config "testFiles=[${{ parameters.testFiles }}]"
     condition: eq(variables['build.reason'], 'Manual')
     displayName: "run cypress. test files specified manually"
     env: 

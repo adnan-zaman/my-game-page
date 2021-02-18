@@ -9,7 +9,7 @@ trigger:
 parameters:
   - name: testFiles
     displayName: Test Files
-    type: array
+    type: object
     default: []
 
 pool:

@@ -10,7 +10,7 @@ parameters:
   - name: testFiles
     displayName: Test Files
     type: string
-    default: "*/*"
+    default: "**/*.js"
 
 pool:
   vmImage: ubuntu-latest

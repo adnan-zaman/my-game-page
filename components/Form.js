@@ -60,6 +60,7 @@ export default function Form(props) {
     const newFieldValues = fieldValues.map((value, i) =>
       i === index ? e.target.value : value
     );
+
     setFieldValues(newFieldValues);
   }
 

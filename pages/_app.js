@@ -1,3 +1,4 @@
+import React from "react";
 import "../public/stylesheets/style.css";
 import Head from "next/head";
 

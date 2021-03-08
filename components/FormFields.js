@@ -52,8 +52,9 @@ export function TextField(props) {
   const inputId = `form-field-${props.label}-${props.parentId}`;
   const minLength = props.min;
   const maxLength = props.max;
-
   const validatorAdded = useRef(false);
+  //reference to input html element
+  const inputField = useRef(undefined);
 
   //to ensure validator only gets added to parent Form once
   if (!validatorAdded.current) {
@@ -65,7 +66,8 @@ export function TextField(props) {
    * Checks the validity of input
    */
   function validate() {
-    const [element, validityState] = getElementAndValidityState(inputId);
+    const element = inputField.current;
+    const validityState = element.validity;
 
     if (validityState.valueMissing)
       return { message: `${props.label} is required.`, element };
@@ -93,6 +95,7 @@ export function TextField(props) {
         required={props.required}
         minLength={minLength}
         maxLength={maxLength}
+        ref={inputField}
       />
     </FormFieldTemplate>
   );
@@ -115,6 +118,8 @@ export function EmailField(props) {
   const maxLength = props.max || 50;
 
   const validatorAdded = useRef(false);
+  //reference to input html element
+  const inputField = useRef(undefined);
 
   //to ensure validator only gets added to parent Form once
   if (!validatorAdded.current) {
@@ -130,7 +135,8 @@ export function EmailField(props) {
    * {message: error message, element: reference to HtmlElement that contains error}
    */
   function validate() {
-    const [element, validityState] = getElementAndValidityState(inputId);
+    const element = inputField.current;
+    const validityState = element.validity;
 
     if (validityState.valueMissing)
       return { message: `${labelName} is required.`, element };
@@ -161,6 +167,7 @@ export function EmailField(props) {
         required={props.required}
         minLength={minLength}
         maxLength={maxLength}
+        ref={inputField}
       />
     </FormFieldTemplate>
   );
@@ -181,6 +188,8 @@ export function PasswordField(props) {
   const maxLength = props.max || 50;
 
   const validatorAdded = useRef(false);
+  //reference to input html element
+  const inputField = useRef(undefined);
 
   //to ensure validator only gets added to parent Form once
   if (!validatorAdded.current) {
@@ -192,7 +201,8 @@ export function PasswordField(props) {
    * Checks the validity of input
    */
   function validate() {
-    const [element, validityState] = getElementAndValidityState(inputId);
+    const element = inputField.current;
+    const validityState = element.validity;
 
     if (validityState.valueMissing)
       return { message: `${labelName} is required.`, element };
@@ -221,20 +231,8 @@ export function PasswordField(props) {
         required={true}
         minLength={minLength}
         maxLength={maxLength}
+        ref={inputField}
       />
     </FormFieldTemplate>
   );
-}
-
-/**
- * Convenience function that returns an HtmlElement and its ValidityState
- * object given an id.
- *
- * @param {string} elementId id of FormField's HtmlElement to validate
- * @returns {array} [HtmlElement, validityState]
- */
-function getElementAndValidityState(elementId) {
-  const element = document.querySelector(`[id='${elementId}']`);
-  const validityState = element.validity;
-  return [element, validityState];
 }

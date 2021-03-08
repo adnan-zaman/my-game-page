@@ -236,3 +236,47 @@ export function PasswordField(props) {
     </FormFieldTemplate>
   );
 }
+
+/**
+ * Hidden input field
+ *
+ * @param {object} props
+ * - label {string} FormField's label (not visible, just for naming purposes)
+ * - name {string} name for input element
+ * - value {string} input's value
+ */
+export function HiddenField(props) {
+  const inputId = `form-field-${props.label}-${props.parentId}`;
+
+  const validatorAdded = useRef(false);
+  //reference to input html element
+  const inputField = useRef(undefined);
+
+  //to ensure validator only gets added to parent Form once
+  if (!validatorAdded.current) {
+    props.addValidator(validate);
+    validatorAdded.current = true;
+  }
+
+  /**
+   * Checks the validity of input
+   */
+  function validate() {
+    //always valid
+    return null;
+  }
+
+  return (
+    <FormFieldTemplate>
+      <label htmlFor={inputId}></label>
+      <input
+        id={inputId}
+        name={props.name}
+        value={props.value}
+        hidden={true}
+        readOnly={true}
+        ref={inputField}
+      />
+    </FormFieldTemplate>
+  );
+}

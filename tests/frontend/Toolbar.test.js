@@ -41,5 +41,6 @@ describe("Toolbar component", function () {
     expect(formValues).to.have.lengthOf(2);
     expect(formValues).to.contain("query=testsearch");
     expect(formValues).to.contain("page=0");
+    wrapper.unmount();
   });
 });

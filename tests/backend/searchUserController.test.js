@@ -14,6 +14,8 @@ GET /search?query={search+term}&page={pageNumber}
 returns:
   res.locals.users: [{id, displayName}], <- array of search results (users)
   res.locals.hasNext: (boolean) <- whether or not there is a next page
+  res.locals.searchQuery: (string) <- the search query
+  res.locals.page: (number) <- the page being rendered
          
 
 data flow:
@@ -62,8 +64,10 @@ describe("GET /search", function () {
     const args = db.searchUser.args[0];
     assert.strictEqual(args[0], "person"); //searchTerm
     assert.strictEqual(args[1], 0); //offset
-    assert.strictEqual(this.res.nextApp.render.lastArg, "/searchUser");
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/resultsPage");
     assert.deepStrictEqual(this.res.locals.users, users.slice(0, 10));
+    assert.strictEqual(this.res.locals.searchQuery, "person");
+    assert.strictEqual(this.res.locals.page, 0);
   });
 
   it("should send data on valid input & page > 0", async function () {
@@ -79,8 +83,10 @@ describe("GET /search", function () {
     const args = db.searchUser.args[0];
     assert.strictEqual(args[0], "person"); //searchTerm
     assert.strictEqual(args[1], 40); //offset
-    assert.strictEqual(this.res.nextApp.render.lastArg, "/searchUser");
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/resultsPage");
     assert.deepStrictEqual(this.res.locals.users, users.slice(0, 10));
+    assert.strictEqual(this.res.locals.searchQuery, "person");
+    assert.strictEqual(this.res.locals.page, 4);
   });
   it("should send empty list if no results", async function () {
     this.req.query.query = "test";
@@ -94,7 +100,7 @@ describe("GET /search", function () {
     const args = db.searchUser.args[0];
     assert.strictEqual(args[0], "test"); //searchTerm
     assert.strictEqual(args[1], 60); //offset
-    assert.strictEqual(this.res.nextApp.render.lastArg, "/searchUser");
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/resultsPage");
     assert.deepStrictEqual(this.res.locals.users, []);
   });
 
@@ -111,7 +117,7 @@ describe("GET /search", function () {
     const args = db.searchUser.args[0];
     assert.strictEqual(args[0], "test"); //searchTerm
     assert.strictEqual(args[1], 40); //offset
-    assert.strictEqual(this.res.nextApp.render.lastArg, "/searchUser");
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/resultsPage");
     assert.deepStrictEqual(this.res.locals.users, users);
     assert.strictEqual(this.res.locals.hasNext, false);
   });
@@ -128,7 +134,7 @@ describe("GET /search", function () {
     const args = db.searchUser.args[0];
     assert.strictEqual(args[0], "test"); //searchTerm
     assert.strictEqual(args[1], 40); //offset
-    assert.strictEqual(this.res.nextApp.render.lastArg, "/searchUser");
+    assert.strictEqual(this.res.nextApp.render.lastArg, "/resultsPage");
     assert.deepStrictEqual(this.res.locals.users, users);
     assert.strictEqual(this.res.locals.hasNext, false);
   });

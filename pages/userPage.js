@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import Game from "../components/Game";
 import GameSearchBox from "../components/GameSearchBox";
 
+import Toolbar from "../components/Toolbar";
+
 /**
  *
  * The page that is displayed when
@@ -194,6 +196,11 @@ export default function UserPage(props) {
 
   return (
     <>
+      <Toolbar />
+      <img
+        src={props.profilePic}
+        alt={`${props.displayName}'s profile picture`}
+      />
       <h1>{props.displayName}</h1>
       <div>
         <div

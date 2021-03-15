@@ -43,7 +43,7 @@ router.put(
     next();
   },
   intArrayValidator(),
-  catchValidatorErrors,
+  catchValidatorErrors(),
   updateFavesController.favoritesValidator,
   updateFavesController.checkGames,
   updateFavesController.addGames,

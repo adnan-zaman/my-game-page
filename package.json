@@ -17,7 +17,7 @@
     "runTestBackend": "cross-env  NODE_ENV=test mocha  ./tests/backend/*.test.js",
     "runTestAll": "cross-env  NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/**/*.test.js",
     "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./app ",
-    "rec": "cypress run --record --key befeb5d3-d92f-4361-918a-057fb5e57d65"
+    
   },
   "dependencies": {
     "@babel/core": "^7.13.8",

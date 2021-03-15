@@ -75,7 +75,7 @@ CREATE PROCEDURE SearchUser(
     IN `limit` INT
 )
 BEGIN
-	SELECT id, displayName 
+	SELECT id, displayName, profilePic 
     FROM users
 	WHERE displayName LIKE CONCAT('%', searchName, '%')
 	ORDER BY displayName ASC
@@ -95,8 +95,8 @@ CREATE PROCEDURE AddUser(
     IN userDisplayName VARCHAR(20)
 )
 BEGIN
-	INSERT INTO users(email, `password`, displayName)
-    VALUES(userEmail, userPass, userDisplayName);
+	INSERT INTO users(email, `password`, displayName, profilePic)
+    VALUES(userEmail, userPass, userDisplayName, '/images/default-game.png');
 END$$
 
 CREATE PROCEDURE AddGame(
@@ -155,6 +155,7 @@ BEGIN
 		email VARCHAR(50) NOT NULL,
 		`password` VARCHAR(50) NOT NULL,
         displayName VARCHAR(20) NOT NULL,
+        profilePic VARCHAR(99) NOT NULL DEFAULT('/images/default-profile-pic.png'),
         
         CONSTRAINT PK_Users PRIMARY KEY(id),
         CONSTRAINT UQ_Users_Email UNIQUE(email),

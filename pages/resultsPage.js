@@ -24,9 +24,11 @@ export default function ResultsPage(props) {
         key={user.id}
         displayName={user.displayName}
         pageUrl={`/user/${user.id}`}
+        profilePic={user.profilePic}
       />
     );
   }
+  console.log(props.hasNext);
   return (
     <>
       <div>

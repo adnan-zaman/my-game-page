@@ -13,6 +13,13 @@ const config = {
   database: process.env.db,
 };
 
+const pool = mysql.createPool({
+  connectionLimit: 100,
+  ...config,
+});
+
+pool.query = promisify(pool.query.bind(pool));
+
 function createConnection() {
   const connection = mysql.createConnection(config);
 
@@ -22,6 +29,25 @@ function createConnection() {
   return connection;
 }
 
+exports.query = query;
+
+/**
+ *
+ * @param {string} query the query escaped with ?s
+ * @param {object[]} args list of arguments
+ *
+ * @returns {Promise} a promise that will resolve with query results
+ *
+ */
+function query(query, args) {
+  let newQuery = query;
+  while (args.length > 0) {
+    newQuery = newQuery.replace("?", `'${args[0]}'`);
+    args.shift();
+  }
+
+  return pool.query(newQuery);
+}
 /**
  * Find a user by their id
  *
@@ -32,7 +58,7 @@ exports.getUserById = async function (id) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL GetUserById(?)", [id]);
+    const results = await query("CALL GetUserById(?)", [id]);
     return results[0][0];
   } catch (e) {
     if (conn) conn.end();
@@ -50,9 +76,7 @@ exports.getUserByDisplayName = async function (displayName) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL GetUserByDisplayName(?)", [
-      displayName,
-    ]);
+    const results = await query("CALL GetUserByDisplayName(?)", [displayName]);
     return results[0][0];
   } catch (e) {
     if (conn) conn.end();
@@ -70,7 +94,7 @@ exports.getUserByEmail = async function (email) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL GetUserByEmail(?)", [email]);
+    const results = await query("CALL GetUserByEmail(?)", [email]);
     debug(results[0]);
     return results[0][0];
   } catch (e) {
@@ -90,7 +114,7 @@ exports.addUser = async function (email, password, displayName) {
   let conn;
   try {
     conn = createConnection();
-    await conn.query("CALL AddUser(?,?,?)", [email, password, displayName]);
+    await query("CALL AddUser(?,?,?)", [email, password, displayName]);
   } catch (e) {
     if (conn) conn.end();
     throw e;
@@ -108,9 +132,7 @@ exports.getUsersFavoriteGames = async function (userId) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL GetUsersFavoriteGameInfo(?)", [
-      userId,
-    ]);
+    const results = await query("CALL GetUsersFavoriteGameInfo(?)", [userId]);
     //debug(results[0]);
     return results[0];
   } catch (e) {
@@ -129,7 +151,7 @@ exports.getGameById = async function (gameId) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL GetGameById(?)", [gameId]);
+    const results = await query("CALL GetGameById(?)", [gameId]);
     return results[0][0];
   } catch (e) {
     if (conn) conn.end();
@@ -141,7 +163,7 @@ exports.addGame = async function (gameId, name, coverurl) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL AddGame(?, ?, ?)", [
+    const results = await query("CALL AddGame(?, ?, ?)", [
       gameId,
       name,
       coverurl,
@@ -156,7 +178,7 @@ exports.addFavoriteGame = async function (userId, gameId, rank) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL AddFavoriteGame(?, ? ,?)", [
+    const results = await query("CALL AddFavoriteGame(?, ? ,?)", [
       userId,
       gameId,
       rank,
@@ -171,7 +193,7 @@ exports.changeFavoriteGameRank = async function (userId, gameId, rank) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL ChangeFavoriteGameRank(?, ? ,?)", [
+    const results = await query("CALL ChangeFavoriteGameRank(?, ? ,?)", [
       userId,
       gameId,
       rank,
@@ -186,7 +208,7 @@ exports.removeFavoriteGame = async function (userId, gameId) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL RemoveFavoriteGame(?, ?)", [
+    const results = await query("CALL RemoveFavoriteGame(?, ?)", [
       userId,
       gameId,
     ]);
@@ -209,7 +231,7 @@ exports.searchUser = async function (searchTerm, offset, limit) {
   let conn;
   try {
     conn = createConnection();
-    const results = await conn.query("CALL SearchUser(?, ?, ?)", [
+    const results = await query("CALL SearchUser(?, ?, ?)", [
       searchTerm,
       offset,
       limit,

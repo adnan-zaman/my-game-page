@@ -38,6 +38,7 @@ const { UserNotFoundError, IncorrectPasswordError } = require("./core/errors");
 const indexRouter = require("./routes/indexRouter");
 const userRouter = require("./routes/userRouter");
 const apiRouter = require("./routes/apiRouter");
+const searchRouter = require("./routes/searchRouter");
 
 const app = express();
 const nextApp = next({ dev: true });
@@ -123,6 +124,7 @@ app.head("*", (req, res) => res.send("OK"));
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api", apiRouter);
+app.use("/search", searchRouter);
 app.all("*", nextHandler);
 
 // catch 404 and forward to error handler

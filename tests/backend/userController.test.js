@@ -27,6 +27,7 @@ describe("GET /user/:id", function () {
       email: "first@abc.com",
       password: "password1",
       displayName: "first",
+      profilePic: "/profilePics/img1.jpg",
     };
 
     //user who is viewing page
@@ -35,6 +36,7 @@ describe("GET /user/:id", function () {
       email: "second@abc.com",
       password: "password1",
       displayName: "second",
+      profilePic: "/profilePics/img1.jpg",
     };
 
     const expectedGames = [
@@ -56,6 +58,7 @@ describe("GET /user/:id", function () {
     assert.strictEqual(this.res.locals.id, null);
     assert.strictEqual(this.nextFake.callCount, 0);
     assert.strictEqual(this.res.nextApp.render.lastArg, "/userPage");
+    assert.strictEqual(this.res.locals.profilePic, "/profilePics/img1.jpg");
     assert.deepStrictEqual(this.res.locals.games, expectedGames);
   });
 
@@ -66,6 +69,7 @@ describe("GET /user/:id", function () {
       email: "first@abc.com",
       password: "password1",
       displayName: "first",
+      profilePic: "/profilePics/img1.jpg",
     };
 
     this.req.params.id = "" + user.id;
@@ -87,6 +91,7 @@ describe("GET /user/:id", function () {
     assert.strictEqual(this.res.locals.id, 1);
     assert.strictEqual(this.nextFake.callCount, 0);
     assert.strictEqual(this.res.nextApp.render.lastArg, "/userPage");
+    assert.strictEqual(this.res.locals.profilePic, "/profilePics/img1.jpg");
     assert.deepStrictEqual(this.res.locals.games, expectedGames);
   });
 

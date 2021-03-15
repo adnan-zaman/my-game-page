@@ -16,6 +16,7 @@ exports.getUserPage = async (req, res, next) => {
     if (!user) throw createError(404, "User does not exist");
 
     res.locals.displayName = user.displayName;
+    res.locals.profilePic = user.profilePic;
 
     const favoriteGames = await db.getUsersFavoriteGames(req.params.id);
 

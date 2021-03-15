@@ -56,7 +56,11 @@ describe("GET /search", function () {
     this.req.query.page = "0";
     const users = [];
     for (let i = 1; i <= 20; i++)
-      users.push({ id: i, displayName: `person${i}` });
+      users.push({
+        id: i,
+        displayName: `person${i}`,
+        profilePic: "/profilePics/img1.jpg",
+      });
     db.searchUser.callsFake(() => [...users]);
 
     await searchUserController(this.req, this.res, this.nextFake);
@@ -75,7 +79,11 @@ describe("GET /search", function () {
     this.req.query.page = "4";
     const users = [];
     for (let i = 1; i <= 20; i++)
-      users.push({ id: i, displayName: `person${i}` });
+      users.push({
+        id: i,
+        displayName: `person${i}`,
+        profilePic: "/profilePics/img1.jpg",
+      });
     db.searchUser.callsFake(() => [...users]);
 
     await searchUserController(this.req, this.res, this.nextFake);
@@ -109,7 +117,11 @@ describe("GET /search", function () {
     this.req.query.page = "4";
     const users = [];
     for (let i = 1; i <= 10; i++)
-      users.push({ id: i, displayName: `test${i}` });
+      users.push({
+        id: i,
+        displayName: `test${i}`,
+        profilePic: "/profilePics/img1.jpg",
+      });
     db.searchUser.callsFake(() => [...users]);
 
     await searchUserController(this.req, this.res, this.nextFake);
@@ -126,7 +138,12 @@ describe("GET /search", function () {
     this.req.query.query = "test";
     this.req.query.page = "4";
     const users = [];
-    for (let i = 1; i <= 7; i++) users.push({ id: i, displayName: `test${i}` });
+    for (let i = 1; i <= 7; i++)
+      users.push({
+        id: i,
+        displayName: `test${i}`,
+        profilePic: "/profilePics/img1.jpg",
+      });
     db.searchUser.callsFake(() => [...users]);
 
     await searchUserController(this.req, this.res, this.nextFake);

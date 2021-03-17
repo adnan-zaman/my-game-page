@@ -194,9 +194,10 @@ export default function UserPage(props) {
     />
   ));
 
+  console.log(props);
   return (
     <>
-      <Toolbar />
+      <Toolbar userId={props.id} profilePic={props.profilePic} />
       <img
         src={props.profilePic}
         alt={`${props.displayName}'s profile picture`}

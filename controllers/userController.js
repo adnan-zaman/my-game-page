@@ -27,6 +27,7 @@ exports.getUserPage = async (req, res, next) => {
     res.locals.id =
       req.user && req.user.id == req.params.id ? req.user.id : null;
 
+    console.log(res.locals);
     return res.nextApp.render(req, res, "/userPage");
   } catch (e) {
     return next(e);

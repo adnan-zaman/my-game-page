@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Form from "../components/Form";
-import { EmailField, PasswordField } from "../components/FormFields";
+import Toolbar from "../components/Toolbar";
 import SearchResult from "../components/SearchResult";
 
 /**
@@ -14,6 +13,8 @@ import SearchResult from "../components/SearchResult";
  *  - hasNext {boolean} whether or not there is a next page
  *  - searchQuery {string} the search query these results are for
  *  - page {number} the current search page
+ *  - userId {number} logged in user's user id
+ *  - profilePic {string} src url of user's profile picture
  */
 export default function ResultsPage(props) {
   const searchResults = [];
@@ -28,9 +29,10 @@ export default function ResultsPage(props) {
       />
     );
   }
-  console.log(props.hasNext);
+
   return (
     <>
+      <Toolbar userId={props.userId} profilePic={props.profilePic} />
       <div>
         {searchResults.length > 0 ? (
           searchResults

@@ -27,6 +27,13 @@ describe("GET /search", function () {
   beforeEach(function () {
     this.res = new MockResponse();
     this.req = new MockRequest();
+    this.req.user = {
+      id: 1,
+      email: "first@abc.com",
+      password: "password1",
+      displayName: "first",
+      profilePic: "/profilePics/img1.jpg",
+    };
     this.nextFake = sinon.fake();
     sinon.stub(db, "searchUser");
     db.searchUser.callsFake(() => []);
@@ -72,6 +79,8 @@ describe("GET /search", function () {
     assert.deepStrictEqual(this.res.locals.users, users.slice(0, 10));
     assert.strictEqual(this.res.locals.searchQuery, "person");
     assert.strictEqual(this.res.locals.page, 0);
+    assert.strictEqual(this.res.locals.userId, 1);
+    assert.strictEqual(this.res.locals.profilePic, "/profilePics/img1.jpg");
   });
 
   it("should send data on valid input & page > 0", async function () {
@@ -95,7 +104,10 @@ describe("GET /search", function () {
     assert.deepStrictEqual(this.res.locals.users, users.slice(0, 10));
     assert.strictEqual(this.res.locals.searchQuery, "person");
     assert.strictEqual(this.res.locals.page, 4);
+    assert.strictEqual(this.res.locals.userId, 1);
+    assert.strictEqual(this.res.locals.profilePic, "/profilePics/img1.jpg");
   });
+
   it("should send empty list if no results", async function () {
     this.req.query.query = "test";
     this.req.query.page = "6";

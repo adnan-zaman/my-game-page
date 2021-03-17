@@ -30,6 +30,8 @@ module.exports = async function searchUserController(req, res, next) {
     //and it is the last page
     res.locals.hasNext = results.length > 10;
     res.locals.users = results.slice(0, 10);
+    res.locals.userId = req.user.id;
+    res.locals.profilePic = req.user.profilePic;
     res.locals.searchQuery = req.query.query;
     res.locals.page = Number(req.query.page);
     return res.nextApp.render(req, res, "/resultsPage");

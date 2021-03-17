@@ -16,8 +16,7 @@
     "runTestFrontend": "cross-env  NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/frontend/*.test.js",
     "runTestBackend": "cross-env  NODE_ENV=test mocha  ./tests/backend/*.test.js",
     "runTestAll": "cross-env  NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/**/*.test.js",
-    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./app ",
-    
+    "runDev": "cross-env DEBUG=mygamepage-* nodemon --ignore ./sessions --ignore ./public ./app "  
   },
   "dependencies": {
     "@babel/core": "^7.13.8",

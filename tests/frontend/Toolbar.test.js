@@ -13,15 +13,19 @@ const expect = require("chai").expect;
 
 describe("Toolbar component", function () {
   it("should contain a Form component", function () {
-    const wrapper = shallow(<Toolbar />);
+    const wrapper = shallow(
+      <Toolbar userId={1} profilePic="/images/img1.jpg" />
+    );
     expect(wrapper.find("Form")).to.have.lengthOf(1);
   });
   it("should contain a TextField component inside the Form", function () {
-    const wrapper = shallow(<Toolbar />);
+    const wrapper = shallow(
+      <Toolbar userId={1} profilePic="/images/img1.jpg" />
+    );
     expect(wrapper.find("Form").find("TextField")).to.have.lengthOf(1);
   });
   it("should redirect to appropriate page on submitting form", function () {
-    const wrapper = mount(<Toolbar />);
+    const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
     wrapper
       .find("Form")
       .find("TextField")
@@ -42,5 +46,13 @@ describe("Toolbar component", function () {
     expect(formValues).to.contain("query=testsearch");
     expect(formValues).to.contain("page=0");
     wrapper.unmount();
+  });
+  it("it should link to user's page through profile picture", function () {
+    const wrapper = shallow(
+      <Toolbar userId={1} profilePic="/images/img1.jpg" />
+    );
+    const linkWrapper = wrapper.find("a[href='/user/1']");
+    expect(linkWrapper).to.have.lengthOf(1);
+    expect(linkWrapper.find('img[src="/images/img1.jpg"]')).to.have.lengthOf(1);
   });
 });

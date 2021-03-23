@@ -16,38 +16,45 @@ export default function Signup(props) {
   }
   return (
     <>
-      <h1>Join and make your own Game Page today!</h1>
-      <Form
-        id="signup-form"
-        submitBtnText="Sign Up"
-        onSubmit={handleSubmit}
-        method="post"
-        action="/signup"
-      >
-        <TextField
-          value={props.displayName_value || ""}
-          label="Display Name"
-          name="displayName"
-          required={true}
-          max={20}
-        />
-        <EmailField
-          value={props.email_value || ""}
-          label="Email"
-          name="email"
-          required={true}
-          max={50}
-        />
-        <PasswordField
-          value={props.password || ""}
-          label="Password"
-          name="password"
-          required={true}
-          max={50}
-          min={8}
-        />
-      </Form>
-      {errorMessage && <p>{errorMessage}</p>}
+      <img src="/images/logo.png" className="main-logo-img" />
+      <h1 className="display-1 logo-name mb-3">MyGamePage</h1>
+      <div className="main-form-container w-75">
+        <Form
+          id="signup-form"
+          submitBtnText="Sign Up"
+          onSubmit={handleSubmit}
+          method="post"
+          action="/signup"
+        >
+          <TextField
+            value={props.displayName_value || ""}
+            label="Display Name"
+            name="displayName"
+            required={true}
+            max={20}
+          />
+          <EmailField
+            value={props.email_value || ""}
+            label="Email"
+            name="email"
+            required={true}
+            max={50}
+          />
+          <PasswordField
+            value={props.password || ""}
+            label="Password"
+            name="password"
+            required={true}
+            max={50}
+            min={8}
+          />
+        </Form>
+        <p className="d-sm-inline-block mx-1">Already have an account?</p>
+        <a href="/" className="d-block d-sm-inline-block mx-1">
+          Log in here.
+        </a>
+        <p className="text-danger">{errorMessage}</p>
+      </div>
     </>
   );
 }

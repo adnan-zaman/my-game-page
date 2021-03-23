@@ -21,21 +21,11 @@ import React, { useState, useRef, useEffect } from "react";
 function FormFieldTemplate(props) {
   const children = React.Children.toArray(props.children);
   //preserve existing css classes + add bootstrap classes
-  const label = React.cloneElement(children[0], {
-    className: (children[0].className || "") + " col-form-label col-md-1",
-  });
-  const control = React.cloneElement(children[1], {
-    className: (children[1].className || "") + " form-control",
+  const control = React.cloneElement(children[0], {
+    className: (children[0].className || "") + " form-control w-75",
   });
 
-  return (
-    <div className="container-md mb-3">
-      <div className="row">
-        {label}
-        <div className="col-md-11">{control}</div>
-      </div>
-    </div>
-  );
+  return <div className="form-group m-3">{control}</div>;
 }
 
 /**
@@ -86,7 +76,6 @@ export function TextField(props) {
 
   return (
     <FormFieldTemplate>
-      <label htmlFor={inputId}>{props.label}</label>
       <input
         id={inputId}
         name={props.name}
@@ -95,6 +84,7 @@ export function TextField(props) {
         required={props.required}
         minLength={minLength}
         maxLength={maxLength}
+        placeholder={props.label}
         ref={inputField}
       />
     </FormFieldTemplate>
@@ -157,7 +147,6 @@ export function EmailField(props) {
 
   return (
     <FormFieldTemplate>
-      <label htmlFor={inputId}>{labelName}</label>
       <input
         id={inputId}
         name={props.name}
@@ -167,6 +156,7 @@ export function EmailField(props) {
         required={props.required}
         minLength={minLength}
         maxLength={maxLength}
+        placeholder={labelName}
         ref={inputField}
       />
     </FormFieldTemplate>
@@ -221,7 +211,6 @@ export function PasswordField(props) {
 
   return (
     <FormFieldTemplate>
-      <label htmlFor={inputId}>{labelName}</label>
       <input
         id={inputId}
         name={props.name}
@@ -231,6 +220,7 @@ export function PasswordField(props) {
         required={true}
         minLength={minLength}
         maxLength={maxLength}
+        placeholder={labelName}
         ref={inputField}
       />
     </FormFieldTemplate>
@@ -268,7 +258,6 @@ export function HiddenField(props) {
 
   return (
     <FormFieldTemplate>
-      <label htmlFor={inputId}></label>
       <input
         id={inputId}
         name={props.name}

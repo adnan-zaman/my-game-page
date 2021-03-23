@@ -17,15 +17,16 @@ export default function Login(props) {
 
   return (
     <>
-      <h1>MyGamePage</h1>
-
-      <div>
+      <img src="/images/logo.png" className="main-logo-img" />
+      <h1 className="display-1 logo-name mb-3">MyGamePage</h1>
+      <div className="main-form-container w-75">
         <Form
           id="login-form"
           submitBtnText="Login"
           onSubmit={handleSubmit}
           method="post"
           action="/"
+          className="mb-3 mw-100"
         >
           <EmailField
             name="email"
@@ -38,12 +39,13 @@ export default function Login(props) {
             value={props.password_value || ""}
           />
         </Form>
-        <Link href="/signup">
-          <p>
-            Don't have an account? <a>Sign up here.</a>
-          </p>
-        </Link>
-        <p className="error-msg ">{errorMessage}</p>
+
+        <p className="d-sm-inline-block mx-1">Don't have an account?</p>
+        <a href="/signup" className="d-block d-sm-inline-block mx-1">
+          Sign up here.
+        </a>
+
+        <p className="text-danger">{errorMessage}</p>
       </div>
     </>
   );

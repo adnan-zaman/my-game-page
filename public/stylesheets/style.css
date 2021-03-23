@@ -1,26 +1,39 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+:root {
+  --primary-color: #00137f;
+  --secondary-color: #354185;
+  --tertiary-color: #555869;
+  --round-radius: 20px;
 }
 
-/* div {
-  border: 1px solid black;
-} */
+.main-form-container {
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  border: 10px solid var(--primary-color);
+  border-radius: var(--round-radius);
+}
 
-body > div > div {
-  border: 8px solid #290cad;
-  background-color: #cac1f3;
-  border-radius: 15px;
-  padding: 10px;
-  max-width: 780px;
+.logo-name {
+  margin: auto;
+  text-align: center;
+}
+
+.main-logo-img {
+  display: block;
+  margin: auto;
 }
 
 form * {
   border: 0px solid black;
 }
 
-.error-msg {
-  color: red;
+.btn-primary {
+  background-color: var(--secondary-color);
+}
+
+.form-group input {
+  margin: auto;
+  color: var(--tertiary-color);
 }
 
 .favorite-games-list {

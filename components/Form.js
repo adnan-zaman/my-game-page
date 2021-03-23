@@ -85,15 +85,13 @@ export default function Form(props) {
         noValidate={true}
         action={props.action}
         method={props.method}
+        className={props.className}
       >
         {children}
-        <div className="container-md mb-3">
-          <div className="row">
-            <button className="btn btn-primary col-md-1" type="submit">
-              {props.submitBtnText || "Submit"}
-            </button>
-          </div>
-        </div>
+
+        <button className="btn btn-primary" type="submit">
+          {props.submitBtnText || "Submit"}
+        </button>
       </form>
     </>
   );

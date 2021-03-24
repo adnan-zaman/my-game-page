@@ -29,10 +29,10 @@
       "static/chunks/webpack.js",
       "static/chunks/pages/login.js"
     ],
-    "/signup": [
+    "/userPage": [
       "static/chunks/main.js",
       "static/chunks/webpack.js",
-      "static/chunks/pages/signup.js"
+      "static/chunks/pages/userPage.js"
     ]
   },
   "ampFirstPages": []

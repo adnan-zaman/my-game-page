@@ -198,12 +198,15 @@ export default function UserPage(props) {
   return (
     <>
       <Toolbar userId={props.id} profilePic={props.profilePic} />
-      <img
-        src={props.profilePic}
-        alt={`${props.displayName}'s profile picture`}
-      />
-      <h1>{props.displayName}</h1>
-      <div>
+      <div className="user-page-header mb-3">
+        <img
+          src={props.profilePic}
+          alt={`${props.displayName}'s profile picture`}
+          className="page-profile-pic rounded-circle"
+        />
+        <h1 className="display-1 d-inline">{props.displayName}</h1>
+      </div>
+      <div className="user-page-games m-auto rounded-lg">
         <div
           className="favorite-games-list"
           onDrop={dropGameOnContainer}
@@ -211,18 +214,29 @@ export default function UserPage(props) {
         >
           {favoriteGamesList}
         </div>
-        {props.id &&
-          (!isEditing ? (
-            <button onClick={() => setIsEditing(true)}>Edit</button>
-          ) : (
-            <>
-              <button onClick={rollbackChanges}>Cancel</button>
-              <button onClick={saveChanges}>Save</button>
-            </>
-          ))}
-        {errorMessage && <span>{errorMessage}</span>}
+        <div className="button-bar">
+          {props.id &&
+            (!isEditing ? (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="btn btn-secondary"
+              >
+                Edit
+              </button>
+            ) : (
+              <>
+                <button onClick={rollbackChanges} className="btn btn-secondary">
+                  Cancel
+                </button>
+                <button onClick={saveChanges} className="btn btn-primary">
+                  Save
+                </button>
+              </>
+            ))}
+          <span className="danger-text">{errorMessage}</span>
+        </div>
+        {isEditing && <GameSearchBox />}
       </div>
-      {isEditing && <GameSearchBox />}
     </>
   );
 }

@@ -1,7 +1,9 @@
 :root {
   --primary-color: #00137f;
   --secondary-color: #354185;
-  --tertiary-color: #555869;
+  --secondary-color-hover: #354186;
+  --tertiary-color: #a9a9ad;
+  --bg-1: #151a36;
   --round-radius: 20px;
 }
 
@@ -28,7 +30,13 @@ form * {
 }
 
 .btn-primary {
+  border-color: var(--primary-color);
   background-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  border-color: var(--primary-color);
+  background-color: var(--secondary-color-hover);
 }
 
 .form-group input {
@@ -36,7 +44,65 @@ form * {
   color: var(--tertiary-color);
 }
 
-.favorite-games-list {
+.page-profile-pic {
+  width: 200px;
+  border: 1px solid black;
+}
+
+.user-page-header {
+  text-align: center;
+}
+
+.user-page-games {
+  display: flex;
+  flex-direction: column;
   height: 700px;
+  width: 75%;
+  border: 10px solid var(--primary-color);
+  background-color: var(--secondary-color);
+}
+
+.favorite-games-list {
+  flex: 1 1 auto;
   overflow-y: scroll;
+  color: var(--tertiary-color);
+}
+
+.button-bar {
+  flex: 0 1 auto;
+  border-top: 2px solid black;
+  background-color: var(--bg-1);
+}
+
+.game-container {
+  border: 2px solid black;
+}
+
+.game-container img {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.game-container p {
+  font-size: 2.5rem;
+}
+
+.game-img {
+  vertical-align: middle;
+  text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+  .user-page-games {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .game-container p {
+    font-size: 1.5rem;
+  }
+
+  .game-name {
+    text-align: center;
+  }
 }

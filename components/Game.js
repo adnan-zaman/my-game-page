@@ -23,26 +23,44 @@ export default function Game(props) {
 
   return (
     <div
-      className="game-container"
+      className="game-container rounded mb-3"
       data-index={props["data-index"]}
       onDragStart={props.onDragStart}
       onDragOver={props.onDragOver}
       onDrop={props.onDrop}
       draggable={props.draggable}
     >
-      <img
-        src={props.gameCoverUrl}
-        alt={`Cover art for ${props.gameName}`}
-        height={90}
-        width={90}
-        {...undraggable}
-      />
-      <p {...undraggable}>{props.gameName}</p>
-      {props.isEditing && (
-        <button {...undraggable} onClick={() => props.onDelete(props.gameId)}>
-          Delete
-        </button>
-      )}
+      <div className="container">
+        <div className="row">
+          <div className="game-img col-md-3">
+            <img
+              src={props.gameCoverUrl}
+              alt={`Cover art for ${props.gameName}`}
+              height={90}
+              width={90}
+              className="rounded d-inline-block m-auto"
+              {...undraggable}
+            />
+          </div>
+          <div
+            className={`game-name d-inline-block ${
+              props.isEditing ? "col-md-6" : "col-md-9"
+            }`}
+          >
+            <p {...undraggable}>{props.gameName}</p>
+          </div>
+
+          {props.isEditing && (
+            <button
+              {...undraggable}
+              onClick={() => props.onDelete(props.gameId)}
+              className="col-md-3 btn btn-danger"
+            >
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

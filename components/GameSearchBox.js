@@ -108,14 +108,22 @@ export default function GameSearchBox(props) {
   }
 
   return (
-    <div>
-      <div>
+    <div className="game-search-box d-flex flex-column">
+      <div className="search-results game-list">
+        {errorMessage && <p>{errorMessage}</p>}
+        {loading && <p>Loading...</p>}
+        {displayedSearchResults}
+      </div>
+      <div className="button-bar">
         <form onSubmit={handleSearch}>
-          <label htmlFor="game-search-bar">Name of Game:</label>
+          <label htmlFor="game-search-bar" className="d-none">
+            Name of Game
+          </label>
           <input
             id="game-search-bar"
             value={displayedSearchTerm}
             onChange={handleChange}
+            placeholder="Name of Game..."
           ></input>
           <button type="submit">Search</button>
           {searchPage >= 0 && (
@@ -145,11 +153,6 @@ export default function GameSearchBox(props) {
             </>
           )}
         </form>
-      </div>
-      <div className="search-results">
-        {errorMessage && <p>{errorMessage}</p>}
-        {loading && <p>Loading...</p>}
-        {displayedSearchResults}
       </div>
     </div>
   );

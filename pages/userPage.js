@@ -206,34 +206,43 @@ export default function UserPage(props) {
         />
         <h1 className="display-1 d-inline">{props.displayName}</h1>
       </div>
-      <div className="user-page-games m-auto rounded-lg">
+      <div className={`user-page-main ${isEditing && "d-flex"}`}>
         <div
-          className="favorite-games-list"
-          onDrop={dropGameOnContainer}
-          onDragOver={isEditing ? dragOver : undefined}
+          className={`user-page-games rounded-lg d-flex flex-column ${
+            isEditing ? "is-editing" : "m-auto"
+          }`}
         >
-          {favoriteGamesList}
-        </div>
-        <div className="button-bar">
-          {props.id &&
-            (!isEditing ? (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="btn btn-secondary"
-              >
-                Edit
-              </button>
-            ) : (
-              <>
-                <button onClick={rollbackChanges} className="btn btn-secondary">
-                  Cancel
+          <div
+            className="favorite-games-list game-list"
+            onDrop={dropGameOnContainer}
+            onDragOver={isEditing ? dragOver : undefined}
+          >
+            {favoriteGamesList}
+          </div>
+          <div className="button-bar">
+            {props.id &&
+              (!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="btn btn-secondary"
+                >
+                  Edit
                 </button>
-                <button onClick={saveChanges} className="btn btn-primary">
-                  Save
-                </button>
-              </>
-            ))}
-          <span className="danger-text">{errorMessage}</span>
+              ) : (
+                <>
+                  <button
+                    onClick={rollbackChanges}
+                    className="btn btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button onClick={saveChanges} className="btn btn-primary">
+                    Save
+                  </button>
+                </>
+              ))}
+            <span className="danger-text">{errorMessage}</span>
+          </div>
         </div>
         {isEditing && <GameSearchBox />}
       </div>

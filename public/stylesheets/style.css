@@ -99,7 +99,21 @@ form * {
   text-align: center;
 }
 
+#drop-space {
+  height: 25%;
+  border: 1px dashed var(--tertiary-color);
+}
+
 /* Game Search Box */
+
+.button-bar input {
+  vertical-align: middle;
+}
+
+input#page-number {
+  color: white;
+  width: 50px;
+}
 
 @media only screen and (max-width: 768px) {
   .user-page-games {

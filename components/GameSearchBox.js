@@ -125,18 +125,23 @@ export default function GameSearchBox(props) {
             onChange={handleChange}
             placeholder="Name of Game..."
           ></input>
-          <button type="submit">Search</button>
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
           {searchPage >= 0 && (
             <>
               {searchPage > 0 && (
                 <button
                   type="button"
                   onClick={() => changePage(searchPage - 1)}
+                  className="btn btn-secondary"
                 >
                   Prev
                 </button>
               )}
-              <label htmlFor="page-number">Page:</label>
+              <label htmlFor="page-number" className="d-none">
+                Page:
+              </label>
               <input
                 id="page-number"
                 disabled={true}
@@ -146,6 +151,7 @@ export default function GameSearchBox(props) {
                 <button
                   type="button"
                   onClick={() => changePage(searchPage + 1)}
+                  className="btn btn-secondary"
                 >
                   Next
                 </button>

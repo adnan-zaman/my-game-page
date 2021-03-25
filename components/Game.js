@@ -23,7 +23,7 @@ export default function Game(props) {
 
   return (
     <div
-      className="game-container rounded mb-3"
+      className="game-container rounded my-3 mx-2"
       data-index={props["data-index"]}
       onDragStart={props.onDragStart}
       onDragOver={props.onDragOver}
@@ -39,7 +39,6 @@ export default function Game(props) {
               height={90}
               width={90}
               className="rounded d-inline-block m-auto"
-              {...undraggable}
             />
           </div>
           <div
@@ -47,12 +46,11 @@ export default function Game(props) {
               props.isEditing ? "col-md-6" : "col-md-9"
             }`}
           >
-            <p {...undraggable}>{props.gameName}</p>
+            <p>{props.gameName}</p>
           </div>
 
           {props.isEditing && (
             <button
-              {...undraggable}
               onClick={() => props.onDelete(props.gameId)}
               className="col-md-3 btn btn-danger"
             >

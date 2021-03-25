@@ -36,14 +36,15 @@ export default function UserPage(props) {
    */
   function startDragGame(e) {
     e.stopPropagation();
-    e.dataTransfer.setData("text/plain", e.target.dataset.index);
+    e.dataTransfer.setData("text/plain", e.currentTarget.dataset.index);
   }
 
   //dragover handler is needed to make element
   //draggable
   function dragOver(e) {
-    e.preventDefault();
     e.stopPropagation();
+    e.preventDefault();
+
     e.dataTransfer.dropEffect = "move";
   }
 
@@ -54,12 +55,13 @@ export default function UserPage(props) {
    * @param {DragEvent} e
    */
   function dropGameOnGame(e) {
-    e.preventDefault();
     e.stopPropagation();
+    e.preventDefault();
+
     const newFaveGames = [...displayedFavoriteGames];
     const newGame = e.dataTransfer.getData("application/json");
     //index of game that was dropped on
-    const dropTarget = Number(e.target.dataset.index);
+    const dropTarget = Number(e.currentTarget.dataset.index);
     //dataTransfer will contain a js object if the game being dragged
     //is from search results, meaning a new game is being added
     //to favorite games
@@ -125,7 +127,6 @@ export default function UserPage(props) {
 
       //add draggedGame back to the end
       newFaveGames[newPos] = draggedGame;
-      console.log(newFaveGames);
     }
 
     setDisplayedFavoriteGames(newFaveGames);
@@ -212,12 +213,16 @@ export default function UserPage(props) {
             isEditing ? "is-editing" : "m-auto"
           }`}
         >
-          <div
-            className="favorite-games-list game-list"
-            onDrop={dropGameOnContainer}
-            onDragOver={isEditing ? dragOver : undefined}
-          >
+          <div className="favorite-games-list game-list">
             {favoriteGamesList}
+            {isEditing && (
+              <div
+                id="drop-space"
+                className="my-3 mx-2"
+                onDrop={dropGameOnContainer}
+                onDragOver={dragOver}
+              ></div>
+            )}
           </div>
           <div className="button-bar">
             {props.id &&
@@ -241,7 +246,7 @@ export default function UserPage(props) {
                   </button>
                 </>
               ))}
-            <span className="danger-text">{errorMessage}</span>
+            <span className="text-danger">{errorMessage}</span>
           </div>
         </div>
         {isEditing && <GameSearchBox />}

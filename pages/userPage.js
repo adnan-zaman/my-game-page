@@ -157,15 +157,12 @@ export default function UserPage(props) {
     setErrorMessage("");
     const faveGameIds = displayedFavoriteGames.map((game) => game.id);
 
-    const response = await fetch(
-      `http://localhost:3000/api/favorites/${props.id}`,
-      {
-        method: "PUT",
-        credentials: "same-origin",
-        body: JSON.stringify(faveGameIds),
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const response = await fetch(`/api/favorites/${props.id}`, {
+      method: "PUT",
+      credentials: "same-origin",
+      body: JSON.stringify(faveGameIds),
+      headers: { "Content-Type": "application/json" },
+    });
     if (response.ok) {
       setIsEditing(false);
       setFavoriteGames(displayedFavoriteGames);
@@ -173,6 +170,15 @@ export default function UserPage(props) {
       const error = await response.json();
       setErrorMessage(error.message);
     }
+  }
+
+  /**
+   * Adds a game to the end of displayedFavoriteGames.
+   *
+   * @param {object} game game object
+   */
+  function onAdd(game) {
+    setDisplayedFavoriteGames([...displayedFavoriteGames, game]);
   }
 
   //get a list of Game components corresponding to favorite games
@@ -195,7 +201,6 @@ export default function UserPage(props) {
     />
   ));
 
-  console.log(props);
   return (
     <>
       <Toolbar userId={props.id} profilePic={props.profilePic} />
@@ -207,7 +212,7 @@ export default function UserPage(props) {
         />
         <h1 className="display-1 d-inline">{props.displayName}</h1>
       </div>
-      <div className={`user-page-main ${isEditing && "d-flex"}`}>
+      <div className={`user-page-main ${isEditing && "d-md-flex rounded-lg"}`}>
         <div
           className={`user-page-games rounded-lg d-flex flex-column ${
             isEditing ? "is-editing" : "m-auto"
@@ -249,7 +254,7 @@ export default function UserPage(props) {
             <span className="text-danger">{errorMessage}</span>
           </div>
         </div>
-        {isEditing && <GameSearchBox />}
+        {isEditing && <GameSearchBox onAdd={onAdd} />}
       </div>
     </>
   );

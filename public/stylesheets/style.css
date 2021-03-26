@@ -104,6 +104,24 @@ form * {
   border: 1px dashed var(--tertiary-color);
 }
 
+.game-container [class*="pos-"] {
+  font-size: 3rem;
+  color: #a9a9ad;
+}
+
+.game-container .pos-1 {
+  font-size: 3.5rem;
+  color: #feffa6;
+}
+
+.game-container .pos-2,
+.game-container .pos-3,
+.game-container .pos-4,
+.game-container .pos-5 {
+  font-size: 3rem;
+  color: #b5e1ff;
+}
+
 /* Game Search Box */
 
 .button-bar input {
@@ -116,8 +134,10 @@ input#page-number {
 }
 
 @media only screen and (max-width: 768px) {
-  .user-page-games {
-    width: 100%;
+  .user-page-games,
+  .game-search-box {
+    width: 90%;
+    margin: auto;
     height: 100vh;
   }
 

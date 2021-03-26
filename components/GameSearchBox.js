@@ -44,6 +44,7 @@ export default function GameSearchBox(props) {
       draggable={true}
       onDragStart={(e) => startDragGame(e, game)}
       onDragOver={dragOver}
+      onAdd={() => props.onAdd(game)}
     />
   ));
 
@@ -95,26 +96,33 @@ export default function GameSearchBox(props) {
   async function fetchAndPopulateSearchResults(term, page) {
     setErrorMessage("");
     setLoading(true);
-    const query = `http://localhost:3000/api/search/${term}/${page}`;
-    const response = await fetch(query);
-    const data = await response.json();
-    if (response.ok) {
-      setSearchResults(data.results);
-      setHasNext(data.hasNext);
-    } else {
-      setErrorMessage(results.message);
+
+    try {
+      const query = `/api/search/${term}/${page}`;
+      const response = await fetch(query);
+      const data = await response.json();
+
+      if (response.ok) {
+        setSearchResults(data.results);
+        setHasNext(data.hasNext);
+      } else {
+        setErrorMessage(results.message);
+      }
+      setLoading(false);
+    } catch (e) {
+      setErrorMessage(e.message + "\n" + msg);
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
     <div className="game-search-box d-flex flex-column">
-      <div className="search-results game-list">
+      <div className="search-results game-list order-2 order-md-1">
         {errorMessage && <p>{errorMessage}</p>}
         {loading && <p>Loading...</p>}
         {displayedSearchResults}
       </div>
-      <div className="button-bar">
+      <div className="button-bar order-1 order-md-2">
         <form onSubmit={handleSearch}>
           <label htmlFor="game-search-bar" className="d-none">
             Name of Game

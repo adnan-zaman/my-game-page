@@ -4,12 +4,20 @@ import React, { useState, useRef, useEffect } from "react";
  *
  * A component representing a single game
  *
- * @param {object} props
- *  - onAdd? {function} - callback for games in GameSearchBox to be added to favorite games list.
- *                        Used in mobile view.
+ * @param {object} props :
+ *
+ *  - data-index? {string}: index of game in the fave game list
+ *
+ *  - onAdd? {function}: callback for games in GameSearchBox to be added to favorite games list.
+ *  Used in mobile view. Mandatory for Games in GameSearchBox.
+ *
+ *  - changePosition? {function(currPos: int, nextPos: int)}: callback for games in fave game list to change position.
+ * Used in mobile view. Mandatory for Games in fave game list.
  */
 
 export default function Game(props) {
+  //I cast it to number so often maybe I should just save it hm
+  const dataIndex = props["data-index"] && Number(props["data-index"]);
   return (
     <div
       className="game-container container rounded my-3 "
@@ -22,12 +30,16 @@ export default function Game(props) {
       <div className="row">
         <p
           className={`col-md-1 col-1 ${
-            props["data-index"] && `pos-${Number(props["data-index"]) + 1}`
+            props["data-index"] && `pos-${dataIndex + 1}`
           }`}
         >
-          {props["data-index"] && Number(props["data-index"]) + 1 + "."}
+          {props["data-index"] && dataIndex + 1 + "."}
         </p>
-        <div className="game-img col-md-2 col-11">
+        <div
+          className={`game-img col-md-2 ${
+            props.isEditing ? "col-10" : "col-11"
+          }`}
+        >
           <img
             src={props.gameCoverUrl}
             alt={`Cover art for ${props.gameName}`}
@@ -35,6 +47,28 @@ export default function Game(props) {
             width={90}
             className="rounded d-inline-block m-auto"
           />
+        </div>
+        <div
+          className={`change-pos-buttons d-md-none ${
+            props.isEditing ? "col-1" : "d-none"
+          }`}
+        >
+          {props.isEditing && dataIndex > 0 && (
+            <button
+              className="btn btn-secondary change-pos-up"
+              onClick={() => props.changePosition(dataIndex, dataIndex - 1)}
+            >
+              ^
+            </button>
+          )}
+          {props.isEditing && !props.isLast && (
+            <button
+              className="btn btn-secondary change-pos-down"
+              onClick={() => props.changePosition(dataIndex, dataIndex + 1)}
+            >
+              v
+            </button>
+          )}
         </div>
         <div
           className={`game-name d-inline-block ${

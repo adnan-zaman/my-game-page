@@ -28,16 +28,12 @@ export default function Game(props) {
       draggable={props.draggable}
     >
       <div className="row">
-        <p
-          className={`col-md-1 col-1 ${
-            props["data-index"] && `pos-${dataIndex + 1}`
-          }`}
-        >
+        <p className={`col-1 ${props["data-index"] && `pos-${dataIndex + 1}`}`}>
           {props["data-index"] && dataIndex + 1 + "."}
         </p>
         <div
           className={`game-img col-md-2 ${
-            props.isEditing ? "col-10" : "col-11"
+            props.isEditing ? "col-9" : "col-11"
           }`}
         >
           <img
@@ -50,23 +46,23 @@ export default function Game(props) {
         </div>
         <div
           className={`change-pos-buttons d-md-none ${
-            props.isEditing ? "col-1" : "d-none"
+            props.isEditing ? "col-2" : "d-none"
           }`}
         >
           {props.isEditing && dataIndex > 0 && (
             <button
-              className="btn btn-secondary change-pos-up"
+              className="change-pos-up"
               onClick={() => props.changePosition(dataIndex, dataIndex - 1)}
             >
-              ^
+              <i className="bi-caret-up-fill" />
             </button>
           )}
           {props.isEditing && !props.isLast && (
             <button
-              className="btn btn-secondary change-pos-down"
+              className="change-pos-down"
               onClick={() => props.changePosition(dataIndex, dataIndex + 1)}
             >
-              v
+              <i className="bi-caret-down-fill" />
             </button>
           )}
         </div>
@@ -83,7 +79,7 @@ export default function Game(props) {
             onClick={() => props.onDelete(props.gameId)}
             className="col-md-3 btn btn-danger"
           >
-            Delete
+            Delete <i className="bi-trash-fill mx-1" />
           </button>
         )}
 
@@ -93,7 +89,7 @@ export default function Game(props) {
           //therefore if no data-index, its a GameSearchBox game
           !props["data-index"] && (
             <button onClick={props.onAdd} className="btn btn-success d-md-none">
-              Add
+              Add <i className="bi-plus-circle-fill mx-1" />
             </button>
           )
         }

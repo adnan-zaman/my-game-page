@@ -19,6 +19,10 @@ function MyApp({ Component, pageProps }) {
           crossOrigin="anonymous"
           key="bs-js"
         ></script>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
+        />
       </Head>
       <Component {...pageProps} />
     </>

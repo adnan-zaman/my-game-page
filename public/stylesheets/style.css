@@ -145,6 +145,28 @@ input#page-number {
     font-size: 1.5rem;
   }
 
+  .game-container .pos-1 {
+    font-size: 3rem;
+    color: #feffa6;
+  }
+
+  .game-container .pos-2,
+  .game-container .pos-3,
+  .game-container .pos-4,
+  .game-container .pos-5 {
+    font-size: 2.5rem;
+    color: #b5e1ff;
+  }
+
+  i {
+    font-size: 2rem;
+  }
+
+  .btn-danger i,
+  .btn-success i {
+    font-size: 1.2rem;
+  }
+
   .game-name {
     text-align: center;
   }

@@ -67,6 +67,7 @@ export default function UserPage(props) {
     //to favorite games
     if (newGame) {
       const newGameAsObject = JSON.parse(newGame);
+      if (gameAlreadyExists(newGameAsObject)) return;
       //we replace elements as we go, eventually we an element to newFaveGames[newFaveGames.length]
       //this increases the length and the loop goes on forever
       //so we keep the length of the list before we start
@@ -74,8 +75,8 @@ export default function UserPage(props) {
       //game to be added in
       let holder = newGameAsObject;
       for (let i = 0; i <= length; i++) {
-        if (newFaveGames[i] && newFaveGames[i].id === newGameAsObject.id)
-          return;
+        // if (newFaveGames[i] && newFaveGames[i].id === newGameAsObject.id)
+        //   return;
         //start swapping from dropTarget onwards
         if (i >= dropTarget) {
           //put holder into the list, take what was there and put into holder
@@ -114,7 +115,10 @@ export default function UserPage(props) {
     //is from search results, meaning a new game is being added
     //to favorite games
     if (newGame) {
-      newFaveGames.push(JSON.parse(newGame));
+      const newGameAsObject = JSON.parse(newGame);
+      if (gameAlreadyExists(newGameAsObject)) return;
+
+      newFaveGames.push(newGameAsObject);
     }
     //if there is no js object, then the game being dragged is an already
     //existing game. dragged game is added to the end and rest are shifted up
@@ -178,7 +182,36 @@ export default function UserPage(props) {
    * @param {object} game game object
    */
   function onAdd(game) {
+    if (gameAlreadyExists(game)) return;
     setDisplayedFavoriteGames([...displayedFavoriteGames, game]);
+  }
+
+  /**
+   * Called by Games in mobile view to change positions in the fave game list.
+   *
+   * @param {number} currIndex the index of the game that is changing position
+   * @param {number} nextIndex the index the game is trying to move to
+   */
+  function changePosition(currIndex, nextIndex) {
+    const newFaveGames = [...displayedFavoriteGames];
+    const temp = newFaveGames[nextIndex];
+    newFaveGames[nextIndex] = newFaveGames[currIndex];
+    newFaveGames[currIndex] = temp;
+    setDisplayedFavoriteGames(newFaveGames);
+  }
+
+  /**
+   * Checks if a game is already in displayedFavoriteGames
+   *
+   * @param {object} listOfGames game json object
+   * @returns true if game already exists, false otherwise
+   */
+  function gameAlreadyExists(game) {
+    for (const g of displayedFavoriteGames) {
+      console.log(`${g.id} ${game.id}`);
+      if (g.id === game.id) return true;
+    }
+    return false;
   }
 
   //get a list of Game components corresponding to favorite games
@@ -198,6 +231,8 @@ export default function UserPage(props) {
       onDragOver={isEditing ? dragOver : undefined}
       onDrop={isEditing ? dropGameOnGame : undefined}
       onDelete={deleteGame}
+      changePosition={changePosition}
+      isLast={index === displayedFavoriteGames.length - 1}
     />
   ));
 

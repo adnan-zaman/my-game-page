@@ -88,7 +88,10 @@ export default function Game(props) {
           //data-index prop is only given to games in the favorite game list
           //therefore if no data-index, its a GameSearchBox game
           !props["data-index"] && (
-            <button onClick={props.onAdd} className="btn btn-success d-md-none">
+            <button
+              onClick={props.onAdd}
+              className="btn btn-success d-md-none w-100"
+            >
               Add <i className="bi-plus-circle-fill mx-1" />
             </button>
           )

@@ -14,19 +14,30 @@ import React, { useState, useRef, useEffect } from "react";
 /**
  * Common layout template that FormFields use
  * @param {object} props expected props:
- * - FormField's label should be first child
- * - FormField's control should be second child
+ * - groupClass {str} css class for the form-group containing the input
+ * - children:
+ * - FormField's control
  *
  */
 function FormFieldTemplate(props) {
   const children = React.Children.toArray(props.children);
   //preserve existing css classes + add bootstrap classes
   const control = React.cloneElement(children[0], {
-    className: (children[0].className || "") + " form-control w-75",
+    className:
+      (children[0].className || "") +
+      ` form-control ${props.inline ? "w-100" : "w-75"}`,
   });
 
-  return <div className="form-group m-3">{control}</div>;
+  return (
+    <div
+      className={`${props.inline ? "" : "form-group m-3"} ${props.groupClass}`}
+    >
+      {control}
+    </div>
+  );
 }
+
+//dont use the ado vacation/timeoff for holiday just dont put any time
 
 /**
  * General text input field.
@@ -75,7 +86,7 @@ export function TextField(props) {
   }
 
   return (
-    <FormFieldTemplate>
+    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
       <input
         id={inputId}
         name={props.name}
@@ -146,7 +157,7 @@ export function EmailField(props) {
   }
 
   return (
-    <FormFieldTemplate>
+    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
       <input
         id={inputId}
         name={props.name}
@@ -210,7 +221,7 @@ export function PasswordField(props) {
   }
 
   return (
-    <FormFieldTemplate>
+    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
       <input
         id={inputId}
         name={props.name}
@@ -257,7 +268,7 @@ export function HiddenField(props) {
   }
 
   return (
-    <FormFieldTemplate>
+    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
       <input
         id={inputId}
         name={props.name}

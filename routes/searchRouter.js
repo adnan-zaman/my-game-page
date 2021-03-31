@@ -14,8 +14,16 @@ const {
 
 const searchUserController = require("../controllers/searchUserController");
 
+function isUserLoggedIn(req, res, next) {
+  if (!req.user) {
+    res.redirect("/");
+  }
+  next();
+}
+
 router.get(
   "/",
+  isUserLoggedIn,
   pageValidator("query"),
   queryValidator("location"),
   catchValidatorErrors("page", 404),

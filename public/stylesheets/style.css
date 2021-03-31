@@ -55,6 +55,12 @@ form * {
   border: 1px solid black;
 }
 
+.toolbar {
+  border: 1px solid var(--primary-color);
+  background-color: var(--secondary-color);
+  width: 100%;
+}
+
 /* User Page */
 
 .user-page-header {

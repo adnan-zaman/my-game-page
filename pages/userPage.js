@@ -238,8 +238,13 @@ export default function UserPage(props) {
 
   return (
     <>
-      <Toolbar userId={props.id} profilePic={props.profilePic} />
-      <div className="user-page-header mb-3">
+      {
+        //only display Toolbar if user is logged in
+        props.toolbarId && (
+          <Toolbar userId={props.toolbarId} profilePic={props.userProfilePic} />
+        )
+      }
+      <div className="user-page-header mb-3 mt-2">
         <img
           src={props.profilePic}
           alt={`${props.displayName}'s profile picture`}

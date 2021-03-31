@@ -27,7 +27,13 @@ exports.getUserPage = async (req, res, next) => {
     res.locals.id =
       req.user && req.user.id == req.params.id ? req.user.id : null;
 
-    console.log(res.locals);
+    //logged in user's profile pic
+    res.locals.userProfilePic = req.user && req.user.profilePic;
+    //a bit redundant, may change the edit page mechanism later
+    //this id is the user's id and is so the Toolbar can always link
+    //to user's page regardless of viewing someone else's page or not
+    //res.locals.id only controls whether there are user pages or not
+    res.locals.toolbarId = req.user && req.user.id;
     return res.nextApp.render(req, res, "/userPage");
   } catch (e) {
     return next(e);

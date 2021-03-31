@@ -21,6 +21,8 @@ import React, { useState, useRef } from "react";
  *
  * - method? {string} value for form's method attribute
  *
+ * - inline {boolean} whether this is an inline form or not
+ *
  * -props.children should be a list of FormField elements. Each FormField
  *  should be initialized with an initial value prop.
  *
@@ -44,7 +46,29 @@ export default function Form(props) {
       onChange: handleChange,
       parentId: props.id, //add parent id to so FormField can make unique ids for its elements
       index,
+      inline: props.inline,
     })
+  );
+
+  const submitBtn = (
+    <button className={`btn btn-primary ${props.btnClass}`} type="submit">
+      {props.submitBtnText || "Submit"}
+    </button>
+  );
+
+  //what to display inside the form
+  //if its an inline form, put all children and button in one row
+  //else display children as they are
+  const innerForm = props.inline ? (
+    <div className="row">
+      {children}
+      {submitBtn}
+    </div>
+  ) : (
+    <>
+      {children}
+      {submitBtn}
+    </>
   );
 
   /**
@@ -87,11 +111,7 @@ export default function Form(props) {
         method={props.method}
         className={props.className}
       >
-        {children}
-
-        <button className="btn btn-primary" type="submit">
-          {props.submitBtnText || "Submit"}
-        </button>
+        {innerForm}
       </form>
     </>
   );

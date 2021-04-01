@@ -30,7 +30,10 @@ describe("SearchResult component", function () {
         profilePic="/profilePics/img1.jpg"
       />
     );
-    expect(wrapper.find("a").getDOMNode()).to.have.property("href", "/user/1");
+    expect(wrapper.find("a").first().getDOMNode()).to.have.property(
+      "href",
+      "/user/1"
+    );
     wrapper.unmount();
   });
 

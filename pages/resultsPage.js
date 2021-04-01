@@ -32,24 +32,32 @@ export default function ResultsPage(props) {
 
   return (
     <>
-      <Toolbar userId={props.userId} profilePic={props.profilePic} />
-      <div>
-        {searchResults.length > 0 ? (
-          searchResults
-        ) : (
-          <p>There are no results..</p>
-        )}
+      <div className="full-page-flex-container d-flex flex-column">
+        <Toolbar userId={props.userId} profilePic={props.profilePic} />
+        <div className="search-results-container">
+          {searchResults.length > 0 ? (
+            searchResults
+          ) : (
+            <p>There are no results..</p>
+          )}
+        </div>
+        <div className="search-results-container-nav-buttons">
+          {props.page > 0 && (
+            <a
+              href={`/search?query=${props.searchQuery}&page=${props.page - 1}`}
+            >
+              <button className="btn btn-secondary">Prev</button>
+            </a>
+          )}
+          {props.hasNext && (
+            <a
+              href={`/search?query=${props.searchQuery}&page=${props.page + 1}`}
+            >
+              <button className="btn btn-secondary">Next</button>
+            </a>
+          )}
+        </div>
       </div>
-      {props.page > 0 && (
-        <a href={`/search?query=${props.searchQuery}&page=${props.page - 1}`}>
-          <button>Prev</button>
-        </a>
-      )}
-      {props.hasNext && (
-        <a href={`/search?query=${props.searchQuery}&page=${props.page + 1}`}>
-          <button>Next</button>
-        </a>
-      )}
     </>
   );
 }

@@ -14,14 +14,19 @@ import React from "react";
  */
 export default function SearchResult(props) {
   return (
-    <div>
-      <img
-        src={props.profilePic}
-        alt={`${props.displayName}'s profile picture`}
-      />
-      <a href={props.pageUrl}>
-        <h2>{props.displayName}</h2>
-      </a>
-    </div>
+    <a href={props.pageUrl}>
+      <div className="search-result row rounded m-3">
+        <div className="col-3">
+          <img
+            src={props.profilePic}
+            alt={`${props.displayName}'s profile picture`}
+            className="rounded-circle border"
+          />
+        </div>
+        <div className="col-9">
+          <h2>{props.displayName}</h2>
+        </div>
+      </div>
+    </a>
   );
 }

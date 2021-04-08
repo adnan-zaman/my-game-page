@@ -55,4 +55,18 @@ describe("Toolbar component", function () {
     expect(linkWrapper).to.have.lengthOf(1);
     expect(linkWrapper.find('img[src="/images/img1.jpg"]')).to.have.lengthOf(1);
   });
+  it("should have dropdown content that is default invisible", function () {
+    const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
+    expect(
+      getComputedStyle(wrapper.find(".dropdown-content").getDOMNode()).style
+    ).to.have.property("display", "none");
+  });
+  it("should show dropdown content after button is clicked", function () {
+    const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
+    wrapper.find(".dropdown-button").simulate("click");
+    expect(
+      getComputedStyle(wrapper.find(".dropdown-content").getDOMNode()).style
+    ).to.have.property("display", "block");
+  });
+  it("should delete session and redirect to login page on clicking sign out", function () {});
 });

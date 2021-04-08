@@ -99,7 +99,7 @@ app.use(
   session({
     genid: (req) => {
       const id = uid.sync(24);
-      //debug(`no session id found. generating id: ${id}`);
+      debug(`no session id found. generating id: ${id}`);
       return id;
     },
     store: new FileStore({ logFn: () => {} }), //this is to avoid those messages that appear when file store is empty

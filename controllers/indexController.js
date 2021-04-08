@@ -12,6 +12,7 @@ const authDebug = require("debug")("mygamepage-passport");
 exports.loginGet = function (req, res) {
   debug("GET /");
   debug(`session id: ${req.sessionID}`);
+  debug(req.user);
 
   if (req.isAuthenticated()) return res.redirect(`/user/${req.user.id}`);
 

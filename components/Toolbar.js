@@ -10,6 +10,8 @@ import Test from "./Test";
  * - profilePic {string} src url for user's profile picture
  */
 export default function Toolbar(props) {
+  const [showDropdown, setShowDropdown] = useState(false);
+
   function handleSubmit(e, errorInfo) {
     console.log(errorInfo);
     if (errorInfo) e.preventDefault();
@@ -23,7 +25,7 @@ export default function Toolbar(props) {
         submitBtnText="Go!"
         method="get"
         action="/search"
-        className="col-md-11 col-10"
+        className="col-md-10 col-9"
         btnClass="col-md-1 col-2 pt-1"
         inline={true}
       >
@@ -35,15 +37,32 @@ export default function Toolbar(props) {
         />
         <HiddenField label="Page" name="page" value="0" groupClass="d.none" />
       </Form>
-      <a href={`/user/${props.userId}`} className="col-md-1 col-2 pt-1">
-        <img
-          src={props.profilePic}
-          alt={`Your profile picture`}
-          className="rounded-circle"
-          height="45"
-          width="45"
-        />
-      </a>
+      <div className="col-md-2 col-3 pt-1">
+        <a href={`/user/${props.userId}`}>
+          <img
+            src={props.profilePic}
+            alt={`Your profile picture`}
+            className="rounded-circle"
+            height="45"
+            width="45"
+          />
+        </a>
+        <div className="dropdown d-inline-block">
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="dropdown-button ml-2"
+          >
+            <i className="bi bi-caret-down-fill" />
+          </button>
+          <div
+            className={`dropdown-content ${
+              showDropdown ? "d-block" : "d-none"
+            }`}
+          >
+            <a href="/logout">Sign Out</a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

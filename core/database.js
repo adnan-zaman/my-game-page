@@ -95,7 +95,6 @@ exports.getUserByEmail = async function (email) {
   try {
     conn = createConnection();
     const results = await query("CALL GetUserByEmail(?)", [email]);
-    debug(results[0]);
     return results[0][0];
   } catch (e) {
     if (conn) conn.end();

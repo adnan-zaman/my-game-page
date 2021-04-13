@@ -17,7 +17,7 @@ export default function Signup(props) {
   return (
     <>
       <img src="/images/logo.png" className="main-logo-img" />
-      <h1 className="display-1 logo-name mb-3">MyGamePage</h1>
+      <h1 className="main-header logo-name mb-3">MyGamePage</h1>
       <div className="main-form-container w-75">
         <Form
           id="signup-form"

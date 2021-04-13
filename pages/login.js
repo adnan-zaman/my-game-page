@@ -18,7 +18,7 @@ export default function Login(props) {
   return (
     <>
       <img src="/images/logo.png" className="main-logo-img" />
-      <h1 className="display-1 logo-name mb-3">MyGamePage</h1>
+      <h1 className="main-header display-md-1 logo-name mb-3">MyGamePage</h1>
       <div className="main-form-container w-75">
         <Form
           id="login-form"

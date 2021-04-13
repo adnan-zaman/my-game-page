@@ -25,8 +25,8 @@ export default function Toolbar(props) {
         submitBtnText="Go!"
         method="get"
         action="/search"
-        className="col-md-10 col-9"
-        btnClass="col-md-1 col-2 pt-1"
+        className="col-md-10 col-8"
+        btnClass="col-md-1 col-2 pt-1 text-center"
         inline={true}
       >
         <TextField
@@ -37,7 +37,7 @@ export default function Toolbar(props) {
         />
         <HiddenField label="Page" name="page" value="0" groupClass="d.none" />
       </Form>
-      <div className="col-md-2 col-3 pt-1">
+      <div className="col-md-2 col-4 pt-1">
         <div className="toolbar-options">
           <a href={`/user/${props.userId}`}>
             <img

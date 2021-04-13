@@ -27,9 +27,10 @@ body {
   background-color: #dedee4;
 }
 
-.logo-name {
+.main-header {
   margin: auto;
   text-align: center;
+  font-size: 5rem;
 }
 
 .main-logo-img {
@@ -199,6 +200,9 @@ input#page-number {
 }
 
 @media only screen and (max-width: 768px) {
+  .main-header {
+    font-size: 3rem;
+  }
   .user-page-games,
   .game-search-box {
     width: 90%;

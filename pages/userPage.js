@@ -250,7 +250,7 @@ export default function UserPage(props) {
           alt={`${props.displayName}'s profile picture`}
           className="page-profile-pic rounded-circle"
         />
-        <h1 className="display-1 d-inline">{props.displayName}</h1>
+        <h1 className="main-header d-inline">{props.displayName}</h1>
       </div>
       <div className={`user-page-main ${isEditing && "d-md-flex rounded-lg"}`}>
         <div

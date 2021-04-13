@@ -183,6 +183,21 @@ input#page-number {
   position: absolute;
 }
 
+.toolbar-options {
+  float: right;
+}
+
+.dropdown-content {
+  position: absolute;
+  right: 0px;
+  width: 100px;
+}
+
+.dropdown-content a {
+  margin: auto;
+  text-align: center;
+}
+
 @media only screen and (max-width: 768px) {
   .user-page-games,
   .game-search-box {
@@ -208,7 +223,7 @@ input#page-number {
     color: #b5e1ff;
   }
 
-  i {
+  *[class*="change-pos"] i {
     font-size: 2rem;
   }
 

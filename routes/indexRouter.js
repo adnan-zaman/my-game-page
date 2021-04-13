@@ -35,17 +35,11 @@ router.post(
 );
 
 router.get("/logout", (req, res) => {
-  debug("its logout");
-  debug(req.user);
   req.logOut();
-  debug("clear those cookies");
   res.status(200).clearCookie("connect.sid", {
     path: "/",
   });
-  debug("destroy?");
-
   req.session.destroy(function (err) {
-    debug("back to lgon");
     res.redirect("/");
   });
 });

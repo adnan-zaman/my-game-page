@@ -38,28 +38,32 @@ export default function Toolbar(props) {
         <HiddenField label="Page" name="page" value="0" groupClass="d.none" />
       </Form>
       <div className="col-md-2 col-3 pt-1">
-        <a href={`/user/${props.userId}`}>
-          <img
-            src={props.profilePic}
-            alt={`Your profile picture`}
-            className="rounded-circle"
-            height="45"
-            width="45"
-          />
-        </a>
-        <div className="dropdown d-inline-block">
-          <button
-            onClick={() => setShowDropdown(!showDropdown)}
-            className="dropdown-button ml-2"
-          >
-            <i className="bi bi-caret-down-fill" />
-          </button>
-          <div
-            className={`dropdown-content ${
-              showDropdown ? "d-block" : "d-none"
-            }`}
-          >
-            <a href="/logout">Sign Out</a>
+        <div className="toolbar-options">
+          <a href={`/user/${props.userId}`}>
+            <img
+              src={props.profilePic}
+              alt={`Your profile picture`}
+              className="rounded-circle"
+              height="45"
+              width="45"
+            />
+          </a>
+          <div className="dropdown d-inline-block">
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="dropdown-button ml-2"
+            >
+              <i className="bi bi-caret-down-fill" />
+            </button>
+            <div
+              className={`dropdown-content ${
+                showDropdown ? "d-block" : "d-none"
+              }`}
+            >
+              <a href="/logout" className="d-block">
+                Sign Out
+              </a>
+            </div>
           </div>
         </div>
       </div>

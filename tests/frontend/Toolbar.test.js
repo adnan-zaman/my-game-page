@@ -47,7 +47,7 @@ describe("Toolbar component", function () {
     expect(formValues).to.contain("page=0");
     wrapper.unmount();
   });
-  it("it should link to user's page through profile picture", function () {
+  it("should link to user's page through profile picture", function () {
     const wrapper = shallow(
       <Toolbar userId={1} profilePic="/images/img1.jpg" />
     );
@@ -57,16 +57,17 @@ describe("Toolbar component", function () {
   });
   it("should have dropdown content that is default invisible", function () {
     const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
-    expect(
-      getComputedStyle(wrapper.find(".dropdown-content").getDOMNode()).style
-    ).to.have.property("display", "none");
+    //.dropdown-content will also have d-none so it should be invisible
+    expect(wrapper.find(".dropdown-content.d-none")).to.have.lengthOf(1);
   });
   it("should show dropdown content after button is clicked", function () {
     const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
     wrapper.find(".dropdown-button").simulate("click");
-    expect(
-      getComputedStyle(wrapper.find(".dropdown-content").getDOMNode()).style
-    ).to.have.property("display", "block");
+    //should lose d-none to become visible
+    expect(wrapper.find(".dropdown-content.d-none")).to.have.lengthOf(0);
   });
-  it("should delete session and redirect to login page on clicking sign out", function () {});
+  it("should delete session and redirect to login page on clicking sign out", function () {
+    const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
+    wrapper.find('a[href="/logout"]');
+  });
 });

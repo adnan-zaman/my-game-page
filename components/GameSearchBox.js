@@ -136,36 +136,38 @@ export default function GameSearchBox(props) {
           <button type="submit" className="btn btn-primary">
             Search
           </button>
-          {searchPage >= 0 && (
-            <>
-              {searchPage > 0 && (
-                <button
-                  type="button"
-                  onClick={() => changePage(searchPage - 1)}
-                  className="btn btn-secondary"
-                >
-                  Prev
-                </button>
-              )}
-              <label htmlFor="page-number" className="d-none">
-                Page:
-              </label>
-              <input
-                id="page-number"
-                disabled={true}
-                value={searchPage + 1}
-              ></input>
-              {hasNext && (
-                <button
-                  type="button"
-                  onClick={() => changePage(searchPage + 1)}
-                  className="btn btn-secondary"
-                >
-                  Next
-                </button>
-              )}
-            </>
-          )}
+
+          <div className="float-md-right">
+            <button
+              type="button"
+              onClick={() => changePage(searchPage - 1)}
+              className={`btn btn-secondary ${
+                searchPage > 0 ? "visible" : "invisible"
+              }`}
+            >
+              Prev
+            </button>
+
+            <label htmlFor="page-number" className="d-none">
+              Page:
+            </label>
+            <input
+              id="page-number"
+              className={searchPage >= 0 ? "visible" : "invisible"}
+              disabled={true}
+              value={searchPage + 1}
+            ></input>
+
+            <button
+              type="button"
+              onClick={() => changePage(searchPage + 1)}
+              className={`btn btn-secondary ${
+                searchPage >= 0 && hasNext ? "visible" : "invisible"
+              }`}
+            >
+              Next
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -23,6 +23,8 @@ import React, { useState, useRef } from "react";
  *
  * - inline {boolean} whether this is an inline form or not
  *
+ * - encType? {string} form's enctype
+ *
  * -props.children should be a list of FormField elements. Each FormField
  *  should be initialized with an initial value prop.
  *
@@ -110,6 +112,7 @@ export default function Form(props) {
         action={props.action}
         method={props.method}
         className={props.className}
+        encType={props.encType}
       >
         {innerForm}
       </form>

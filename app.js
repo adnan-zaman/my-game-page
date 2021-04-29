@@ -19,6 +19,7 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const fileUpload = require("express-fileupload");
 
 //node modules
 const path = require("path");
@@ -91,6 +92,7 @@ app.use(logger("dev"));
 app.use(express.urlencoded());
 //parse json post body
 app.use(express.json());
+app.use(fileUpload());
 //static resources
 app.use(express.static(path.join(__dirname, "public")));
 

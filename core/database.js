@@ -242,3 +242,7 @@ exports.searchUser = async function (searchTerm, offset, limit) {
     throw e;
   }
 };
+
+exports.updateUser = async function (userId, changes) {
+  return "oh yes";
+};

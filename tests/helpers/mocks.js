@@ -24,6 +24,7 @@ class MockRequest {
       Authorization: "Bearer 12345",
     });
     this.query = {};
+    this.params = {};
     this.files = {};
     this.isAuthenticated = sinon.stub();
   }

@@ -17,34 +17,98 @@ exports.getUserSettings = async function (req, res) {
 // Send 200
 
 /**
- * Checks session cookie to confirm user sending request
- * and user whose settings are being changed are the same person
+ * Checks whether the user id provided in the endpoint
+ * is a valid user id
  *
  * @param {Request} req express request object
  * @param {Response} res express response object
  * @param {Function} next express next
  */
-exports.checkAuthentication = async function (req, res, next) {};
+exports.validateUserId = async function (req, res, next) {
+  if (isNaN(Number(req.params.userId)))
+    return res.status(400).json({ message: "userId must be a number." });
+  next();
+};
 
 /**
- * Returns a middleware that checks whether the file sent
- * in the request is the specified mime type. If valid,
- * will add `fileExtension` to request.
+ * Checks whether user is authenticated and authorized
  *
- * @param {string} type the mime type
- * @param {string?} subtype the mime subtype. if falsey value, all subtypes within type will be considered valid
- * @returns {function} middleware
+ * @param {Request} req express request object
+ * @param {Response} res express response object
+ * @param {Function} next express next
  */
-exports.validateMimeType = async function (type, subtype = "") {};
+exports.checkAuthentication = async function (req, res, next) {
+  if (!req.isAuthenticated())
+    return res
+      .status(401)
+      .json({ message: "Need to establish session before usage." });
+
+  if (req.user.id !== Number(req.params.userId))
+    return res
+      .status(401)
+      .json({ message: "User can only edit their own settings." });
+
+  next();
+};
 
 /**
- * Returns a middleware that checks whether the file sent
- * in the request is less than or equal to desired file size
+ * Creates a middleware that verifies
+ * whether required files exist in req.files
  *
- * @param {number} size file size in bytes
+ * @param {string[]} files list of files that should exist in req.files
  * @returns {function} middleware
  */
-exports.validateFileSize = async function (size) {};
+exports.verifyFilesExist = function (files) {
+  return function (req, res, next) {
+    for (const file of files) {
+      if (!req.files[file])
+        return res.status(400).json({ message: `Missing file: ${file}` });
+    }
+    next();
+  };
+};
+
+/**
+ * Returns a middleware that checks whether the files sent
+ * in the request is the specified mime type.
+ *
+ * @param {object} mapping mapping between a file in req.files and its expected mime type
+ * @returns {function} middleware
+ */
+exports.validateMimeTypes = function (mapping) {
+  return function (req, res, next) {
+    for (const file of Object.keys(mapping)) {
+      const actualMimetype = req.files[file].mimetype;
+
+      if (!actualMimetype.includes(mapping[file]))
+        return res.status(400).json({
+          message: `${file} should be ${mapping[file]}, got ${actualMimetype}`,
+        });
+    }
+    next();
+  };
+};
+
+/**
+ * Returns a middleware that checks whether the files sent
+ * in the request are less than or equal to desired file size
+ *
+ * @param {object} mapping mapping between a file in req.files and its expected size in bytes
+ * @returns {function} middleware
+ */
+exports.validateFileSizes = function (mapping) {
+  return function (req, res, next) {
+    for (const file of Object.keys(mapping)) {
+      const actualSize = req.files[file].size;
+
+      if (actualSize > mapping[file])
+        return res.status(413).json({
+          message: `${file} file size too big`,
+        });
+    }
+    next();
+  };
+};
 
 /**
  * Generates file name and saves profile picture
@@ -55,7 +119,16 @@ exports.validateFileSize = async function (size) {};
  * @param {Response} res express response object
  * @param {Function} next express next
  */
-exports.saveProfilePicture = async function (req, res, next) {};
+exports.saveProfilePicture = function (req, res, next) {
+  const fileNameParts = req.files.profilePicture.name.split(".");
+  //even if there are multiple periods in file name, the last part
+  //will be the file extension
+  const fileExtension = fileNameParts[fileNameParts.length - 1];
+
+  req.profilePicFileName = `${req.user.id}-profilepic.${fileExtension}`;
+  req.files.profilePicture.mv(`/public/images/${req.profilePicFileName}`);
+  next();
+};
 
 /**
  * Checks to see whether the profile picture stored in database
@@ -65,7 +138,16 @@ exports.saveProfilePicture = async function (req, res, next) {};
  * @param {Response} res express response object
  * @param {Function} next express next
  */
-exports.updateProfilePicInDatabase = async function (req, res, next) {};
+exports.updateProfilePicInDatabase = async function (req, res, next) {
+  if (req.user.profilePic !== req.profilePicFileName) {
+    try {
+      await db.updateUser(req.user.id, { profilePic: req.profilePicFileName });
+    } catch (e) {
+      return res.status(500).json({ message: "Internal error" });
+    }
+  }
+  next();
+};
 
 /**
  * Returns a middleware that will send a json object
@@ -75,4 +157,8 @@ exports.updateProfilePicInDatabase = async function (req, res, next) {};
  * @param {string} the message
  * @returns {function} middleware
  */
-exports.sendSuccessMessage = async function (message) {};
+exports.sendSuccessMessage = function (message) {
+  return function (req, res) {
+    return res.status(200).json({ message });
+  };
+};

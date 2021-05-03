@@ -41,7 +41,7 @@ exports.query = query;
  */
 function query(query, args) {
   let newQuery = query;
-  while (args.length > 0) {
+  while (args && args.length > 0) {
     newQuery = newQuery.replace("?", `'${args[0]}'`);
     args.shift();
   }
@@ -55,13 +55,10 @@ function query(query, args) {
  * @returns {object} the requested user
  */
 exports.getUserById = async function (id) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL GetUserById(?)", [id]);
     return results[0][0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -73,13 +70,10 @@ exports.getUserById = async function (id) {
  * @returns {object} the requested user
  */
 exports.getUserByDisplayName = async function (displayName) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL GetUserByDisplayName(?)", [displayName]);
     return results[0][0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -91,13 +85,10 @@ exports.getUserByDisplayName = async function (displayName) {
  * @return {object} the requested user
  */
 exports.getUserByEmail = async function (email) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL GetUserByEmail(?)", [email]);
     return results[0][0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -110,12 +101,9 @@ exports.getUserByEmail = async function (email) {
  * @param {string} displayName new user display name
  */
 exports.addUser = async function (email, password, displayName) {
-  let conn;
   try {
-    conn = createConnection();
     await query("CALL AddUser(?,?,?)", [email, password, displayName]);
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -128,14 +116,10 @@ exports.addUser = async function (email, password, displayName) {
  * favorite to least favorite.
  */
 exports.getUsersFavoriteGames = async function (userId) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL GetUsersFavoriteGameInfo(?)", [userId]);
-    //debug(results[0]);
     return results[0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -147,72 +131,42 @@ exports.getUsersFavoriteGames = async function (userId) {
  * @return the requested game
  */
 exports.getGameById = async function (gameId) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL GetGameById(?)", [gameId]);
     return results[0][0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
 
 exports.addGame = async function (gameId, name, coverurl) {
-  let conn;
   try {
-    conn = createConnection();
-    const results = await query("CALL AddGame(?, ?, ?)", [
-      gameId,
-      name,
-      coverurl,
-    ]);
+    await query("CALL AddGame(?, ?, ?)", [gameId, name, coverurl]);
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
 
 exports.addFavoriteGame = async function (userId, gameId, rank) {
-  let conn;
   try {
-    conn = createConnection();
-    const results = await query("CALL AddFavoriteGame(?, ? ,?)", [
-      userId,
-      gameId,
-      rank,
-    ]);
+    await query("CALL AddFavoriteGame(?, ? ,?)", [userId, gameId, rank]);
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
 
 exports.changeFavoriteGameRank = async function (userId, gameId, rank) {
-  let conn;
   try {
-    conn = createConnection();
-    const results = await query("CALL ChangeFavoriteGameRank(?, ? ,?)", [
-      userId,
-      gameId,
-      rank,
-    ]);
+    await query("CALL ChangeFavoriteGameRank(?, ? ,?)", [userId, gameId, rank]);
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
 
 exports.removeFavoriteGame = async function (userId, gameId) {
-  let conn;
   try {
-    conn = createConnection();
-    const results = await query("CALL RemoveFavoriteGame(?, ?)", [
-      userId,
-      gameId,
-    ]);
+    await query("CALL RemoveFavoriteGame(?, ?)", [userId, gameId]);
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
@@ -227,9 +181,7 @@ exports.removeFavoriteGame = async function (userId, gameId) {
  * @returns {array} list of user objects of format {id, displayName}
  */
 exports.searchUser = async function (searchTerm, offset, limit) {
-  let conn;
   try {
-    conn = createConnection();
     const results = await query("CALL SearchUser(?, ?, ?)", [
       searchTerm,
       offset,
@@ -238,11 +190,28 @@ exports.searchUser = async function (searchTerm, offset, limit) {
 
     return results[0];
   } catch (e) {
-    if (conn) conn.end();
     throw e;
   }
 };
 
+/**
+ * Updates a user's data
+ *
+ * @param {numbe} userId user id
+ * @param {object} changes mapping of column name to new value
+ * @example db.updateUser(278, {password: 'newPass1', profilePic: 'images/278-profilepic.jpg'})
+ */
 exports.updateUser = async function (userId, changes) {
-  return "oh yes";
+  let updates = "";
+  const cols = Object.keys(changes);
+  for (let i = 0; i < cols.length; i++) {
+    updates += `\`${cols[i]}\` = \'${changes[cols[i]]}\'`;
+    updates += i < cols.length - 1 ? "," : "";
+  }
+
+  try {
+    await query(`UPDATE Users SET ${updates} WHERE ID = ${userId}`);
+  } catch (e) {
+    throw e;
+  }
 };

@@ -37,8 +37,6 @@ function FormFieldTemplate(props) {
   );
 }
 
-//dont use the ado vacation/timeoff for holiday just dont put any time
-
 /**
  * General text input field.
  *
@@ -275,6 +273,81 @@ export function HiddenField(props) {
         value={props.value}
         hidden={true}
         readOnly={true}
+        ref={inputField}
+      />
+    </FormFieldTemplate>
+  );
+}
+
+/**
+ * File upload field
+ *
+ * @param {object} props
+ * - value {string} file inputs are uncontrolled components, so the value is just there
+ *                  to conform with Form component's logic. Value can be anything.
+ * - label {string} FormField's label
+ * - name {string} name for input element
+ * - required? {boolean} whether this FormField is required or not
+ * - size? {number} max size of file in bytes
+ * - accept? {string} mime type
+ */
+export function FileUploadField(props) {
+  const inputId = `form-field-${props.label}-${props.parentId}`;
+  const validatorAdded = useRef(false);
+  //reference to input html element
+  const inputField = useRef(undefined);
+
+  //to ensure validator only gets added to parent Form once
+  if (!validatorAdded.current) {
+    props.addValidator(validate);
+    validatorAdded.current = true;
+  }
+
+  /**
+   * Checks the validity of input
+   */
+  function validate() {
+    const element = inputField.current;
+    const validityState = element.validity;
+    const files = element.files;
+
+    if (validityState.valueMissing)
+      return { message: `${props.label} is required.`, element };
+
+    for (let i = 0; i < files.length; i++) {
+      if (props.accept) {
+        const acceptParts = props.accept.split("/");
+        for (const part of acceptParts) {
+          if (part !== "*" && !files[i].type.includes(part))
+            //prefer returning subtype over type
+            return {
+              message: `${props.label} is wrong format. Expected: ${
+                acceptParts[1] !== "*" ? acceptParts[1] : acceptParts[0]
+              }`,
+              element,
+            };
+        }
+      }
+
+      if (props.size && files[i].size > props.size)
+        return {
+          message: `${props.label} is too big. Max ${props.size / 1000000}MB`,
+          element,
+        };
+    }
+
+    return null;
+  }
+
+  return (
+    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+      <input
+        id={inputId}
+        type="file"
+        name={props.name}
+        onChange={(e) => props.onChange(e, props.index)}
+        required={props.required}
+        accept={props.accept}
         ref={inputField}
       />
     </FormFieldTemplate>

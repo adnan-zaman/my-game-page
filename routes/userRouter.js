@@ -11,12 +11,12 @@ const router = express.Router();
 
 router.get("/settings", userSettingsController.getUserSettings);
 
-router.post("/settings", (req, res) => {
-  console.log(req.files);
-  console.log(req.body.duder);
-  req.files.profilePicture.mv("images.png");
-  res.send("good");
-});
+router.post(
+  "/settings",
+  userSettingsController.saveProfilePicture,
+  userSettingsController.updateProfilePicInDatabase,
+  userSettingsController.sendSuccessMessage("OK")
+);
 
 router.get("/:id", userController.getUserPage);
 

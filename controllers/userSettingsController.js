@@ -125,8 +125,8 @@ exports.saveProfilePicture = function (req, res, next) {
   //will be the file extension
   const fileExtension = fileNameParts[fileNameParts.length - 1];
 
-  req.profilePicFileName = `${req.user.id}-profilepic.${fileExtension}`;
-  req.files.profilePicture.mv(`/public/images/${req.profilePicFileName}`);
+  req.profilePicFileName = `/images/${req.user.id}-profilepic.${fileExtension}`;
+  req.files.profilePicture.mv(`public/${req.profilePicFileName}`);
   next();
 };
 

@@ -37,6 +37,8 @@ export default function Form(props) {
     React.Children.map(props.children, (child) => child.props.value)
   );
 
+  console.log("state");
+  console.log(fieldValues);
   //list of validators of all of this Form's FormFields
   const fieldValidators = useRef([]);
 
@@ -84,7 +86,7 @@ export default function Form(props) {
     //so if a FormField passes it's props.index, we can set
     //the correct state
     const newFieldValues = fieldValues.map((value, i) =>
-      i === index ? e.target.value : value
+      i === index ? e.target.files || e.target.value : value
     );
 
     setFieldValues(newFieldValues);

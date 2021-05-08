@@ -18,6 +18,8 @@ export default function SearchResult(props) {
       <div className="search-result row rounded m-3">
         <div className="col-3">
           <img
+            height={100}
+            width={100}
             src={props.profilePic}
             alt={`${props.displayName}'s profile picture`}
             className="rounded-circle border"

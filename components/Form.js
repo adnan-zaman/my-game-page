@@ -9,11 +9,13 @@ import React, { useState, useRef } from "react";
  * @param {object} props Expected props:
  * - id {string} form htmlElement's id
  *
- * - onSubmit {function(event, object)} callback for when form submits.
- *   Form will send two arguments, the first is the event, the second
+ * - onSubmit {function(event, object, object)} callback for when form submits.
+ *   Form will send three arguments, the first is the event, the second
  *   is the error info object. If one of the FormFields within the Form
  *   were not valid, the second argument will be an object containing
- *   information about the error. If everything was valid, it will be null.
+ *   information about the error. If everything was valid, it will be null. Third object
+ *   will be an object mapping field names to field values. If the Form is being used like a
+ *   regular form (not calling rest apis) then you can just ignore the third argument.
  *
  * - submitBtnText {string} the textContent for the submit button
  *
@@ -37,8 +39,6 @@ export default function Form(props) {
     React.Children.map(props.children, (child) => child.props.value)
   );
 
-  console.log("state");
-  console.log(fieldValues);
   //list of validators of all of this Form's FormFields
   const fieldValidators = useRef([]);
 
@@ -99,11 +99,21 @@ export default function Form(props) {
    * @param {event} e
    */
   function validateAllFields(e) {
+    const values = {};
+    console.log("Form submit");
+    React.Children.forEach(props.children, (child, i) => {
+      console.log(child.props.name);
+      console.log(i);
+      console.log(fieldValues[i]);
+      values[child.props.name] = fieldValues[i];
+    });
+
     for (const validator of fieldValidators.current) {
       const errorInfo = validator();
-      if (errorInfo) return props.onSubmit(e, errorInfo);
+      if (errorInfo) return props.onSubmit(e, errorInfo, values);
     }
-    props.onSubmit(e, null);
+
+    props.onSubmit(e, null, values);
   }
   return (
     <>

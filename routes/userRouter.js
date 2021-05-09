@@ -11,8 +11,13 @@ const router = express.Router();
 
 router.get("/settings", userSettingsController.getUserSettings);
 
-router.post(
-  "/settings",
+router.put(
+  "/settings/:userId",
+  userSettingsController.checkAuthentication,
+  userSettingsController.validateUserId,
+  userSettingsController.verifyFilesExist(["profilePicture"]),
+  userSettingsController.validateMimeTypes({ profilePicture: "image" }),
+  userSettingsController.validateFileSizes({ profilePicture: 5000000 }),
   userSettingsController.saveProfilePicture,
   userSettingsController.updateProfilePicInDatabase,
   userSettingsController.sendSuccessMessage("OK")

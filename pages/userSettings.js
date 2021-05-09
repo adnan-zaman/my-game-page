@@ -5,31 +5,55 @@ import Form from "../components/Form";
 import { FileUploadField } from "../components/FormFields";
 
 export default function UserSettingsPage(props) {
-  const form = useRef();
-  const fileInp = useRef();
-  const [text, setText] = useState("");
-  function handleFileChange(e) {
-    console.log(e.target.files);
-  }
+  //object for setting status message when uploading profile pic
+  //success: true if response code was 200, false otherwise
+  //message: the message to display
+  const [profilePicStatus, setProfilePicStatus] = useState({
+    success: false,
+    message: "",
+  });
 
-  function handleSubmit(e, errorInfo) {
-    console.log("in");
+  async function handleProfilePicSubmit(e, errorInfo, values) {
     e.preventDefault();
-    console.log("lout");
-    if (errorInfo) setText(errorInfo.message);
-    else setText("good");
+    if (errorInfo) {
+      return setProfilePicStatus({
+        success: false,
+        message: errorInfo.message,
+      });
+    }
 
-    // const f = new FormData();
-    // f.append("profilePicture", fileInp.current.files[0]);
+    const formData = new FormData();
 
-    // const response = await fetch("http://localhost:3000/user/settings", {
-    //   method: "POST",
-    //   body: f,
-    // });
+    if (values.profilePicture.length > 1)
+      return setProfilePicError("Only one file can be uploaded.");
 
-    // if (response.ok) {
-    //   setText("goodbye");
-    // }
+    formData.append("profilePicture", values.profilePicture[0]);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/user/settings/${props.userId}`,
+        {
+          method: "PUT",
+          credentials: "same-origin",
+          body: formData,
+        }
+      );
+
+      if (response.ok)
+        setProfilePicStatus({
+          success: true,
+          message: "Saved!",
+        });
+      else {
+        const error = await response.json();
+        setProfilePicStatus({ success: false, message: error.message });
+      }
+    } catch (e) {
+      console.log(e);
+      setProfilePicStatus({
+        success: false,
+        message: "Internal Server Error.",
+      });
+    }
   }
 
   return (
@@ -44,23 +68,29 @@ export default function UserSettingsPage(props) {
         <hr />
 
         <h2>Change Profile Picture</h2>
-        <label for="profilePicture">New Display Name</label>
         <Form
           id="newProfilePic"
-          onSubmit={handleSubmit}
+          onSubmit={handleProfilePicSubmit}
           submitBtnText="Save"
           inline={true}
+          className={"d-inline-block"}
         >
           <FileUploadField
             label="Profile Picture"
             name="profilePicture"
             required={true}
             value=""
-            accept="image/png"
+            accept="image/*"
             size={5000000}
           />
         </Form>
-
+        <p
+          className={`d-inline-block mx-4 ${
+            profilePicStatus.success ? "text-success" : "text-danger"
+          }`}
+        >
+          {profilePicStatus.message}
+        </p>
         <hr />
 
         <h2>Change Password</h2>
@@ -85,7 +115,7 @@ export default function UserSettingsPage(props) {
           type="password"
         ></input>
         <button>Save</button>
-        <p>{text}</p>
+
         <hr />
       </div>
     </>

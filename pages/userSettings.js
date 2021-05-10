@@ -30,7 +30,7 @@ export default function UserSettingsPage(props) {
     formData.append("profilePicture", values.profilePicture[0]);
     try {
       const response = await fetch(
-        `http://localhost:3000/user/settings/${props.userId}`,
+        `http://localhost:3000/user/settings/profile-picture/${props.userId}`,
         {
           method: "PUT",
           credentials: "same-origin",

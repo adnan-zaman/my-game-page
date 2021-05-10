@@ -261,20 +261,112 @@ describe("userSettingsController", async function () {
 
   describe("sendSuccessMessage", async function () {
     it("should send message with right format", async function () {
-      const middleware = userSettingsController.sendSuccessMessage(
-        "wow thats good"
-      );
+      const middleware =
+        userSettingsController.sendSuccessMessage("wow thats good");
       await middleware(this.req, this.res);
       expect(this.res.json.firstCall.firstArg).to.deep.equal({
         message: "wow thats good",
       });
     });
     it("should set status to 200", async function () {
-      const middleware = userSettingsController.sendSuccessMessage(
-        "wow thats good"
-      );
+      const middleware =
+        userSettingsController.sendSuccessMessage("wow thats good");
       await middleware(this.req, this.res);
       expect(this.res.status.firstCall.firstArg).to.equal(200);
+    });
+  });
+
+  describe("verifyOldPassword", function () {
+    it("should call next if oldPassword == existing password", function () {
+      this.req.user = { id: 42, password: "password1" };
+      this.req.body.oldPassword = "password1";
+      userSettingsController.verifyOldPassword(
+        this.req,
+        this.res,
+        this.nextFake
+      );
+
+      expect(this.nextFake.callCount).to.equal(1);
+    });
+    it("should send 401 error if oldPassword != existing password", function () {
+      this.req.user = { id: 42, password: "password1" };
+      this.req.body.oldPassword = "password2";
+      userSettingsController.verifyOldPassword(
+        this.req,
+        this.res,
+        this.nextFake
+      );
+
+      expect(this.res.status.firstCall.firstArg).to.equal(401);
+      expect(this.res.json.firstCall.firstArg).to.have.property("message");
+      expect(this.nextFake.callCount).to.equal(0);
+    });
+  });
+
+  describe("verifyNewPassword", function () {
+    it("should call next if newPassword1 == newPassword2", function () {
+      this.req.body.newPassword1 = "password1";
+      this.req.body.newPassword2 = "password1";
+      userSettingsController.verifyNewPassword(
+        this.req,
+        this.res,
+        this.nextFake
+      );
+
+      expect(this.nextFake.callCount).to.equal(1);
+    });
+
+    it("should send 400 error if newPassword1 != newPassword2", function () {
+      this.req.body.newPassword1 = "password1";
+      this.req.body.newPassword2 = "password2";
+      userSettingsController.verifyNewPassword(
+        this.req,
+        this.res,
+        this.nextFake
+      );
+
+      expect(this.res.status.firstCall.firstArg).to.equal(400);
+      expect(this.res.json.firstCall.firstArg).to.have.property("message");
+      expect(this.nextFake.callCount).to.equal(0);
+    });
+  });
+
+  describe("updateUser", function () {
+    it("should update single field in database", async function () {
+      this.req.user = { id: 33 };
+      this.req.body.newPassword1 = "password1";
+      this.req.body.newPassword2 = "password1";
+      sinon.stub(db, "updateUser");
+      const middleware = userSettingsController.updateUser({
+        password: "newPassword1",
+      });
+      await middleware(this.req, this.res, this.nextFake);
+
+      const args = db.updateUser.firstCall.args;
+      expect(args[0]).to.equal(33);
+      expect(args[1]).to.deep.equal({ password: "password1" });
+      expect(this.nextFake.callCount).to.equal(1);
+      sinon.restore();
+    });
+    it("should update multiple fields in database", async function () {
+      this.req.user = { id: 33 };
+      this.req.body.newPassword1 = "password1";
+      this.req.body.newPassword2 = "password1";
+      this.req.body.newDisplayName = "dudeman101";
+      sinon.stub(db, "updateUser");
+      const middleware = userSettingsController.updateUser({
+        password: "newPassword1",
+      });
+      await middleware(this.req, this.res, this.nextFake);
+
+      const args = db.updateUser.firstCall.args;
+      expect(args[0]).to.equal(33);
+      expect(args[1]).to.deep.equal({
+        password: "password1",
+        displayName: "dudeman101",
+      });
+      expect(this.nextFake.callCount).to.equal(1);
+      sinon.restore();
     });
   });
 });

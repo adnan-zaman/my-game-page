@@ -68,6 +68,10 @@ describe("Toolbar component", function () {
   });
   it("should delete session and redirect to login page on clicking sign out", function () {
     const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
-    wrapper.find('a[href="/logout"]');
+    expect(wrapper.find('a[href="/logout"]')).to.have.lengthOf(1);
+  });
+  it("should have a link to settings page in dropdown", function () {
+    const wrapper = mount(<Toolbar userId={1} profilePic="/images/img1.jpg" />);
+    expect(wrapper.find('a[href="/user/settings"]')).to.have.lengthOf(1);
   });
 });

@@ -59,6 +59,9 @@ export default function Toolbar(props) {
                 showDropdown ? "d-block" : "d-none"
               }`}
             >
+              <a href="/user/settings" className="d-block border-bottom">
+                Settings
+              </a>
               <a href="/logout" className="d-block">
                 Sign Out
               </a>

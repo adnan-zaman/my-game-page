@@ -42,22 +42,23 @@ exports.displayNameValidator = function () {
 /**
  * Creates a validation/sanitization middleware for password input
  *
- * @param {boolean} signup true if password is being sent as part of signup
+ * @param {boolean} signup true if password is being sent as part of signup / changing password
+ * @param {string} fieldName name of field that is a password input
  * @returns {ValidationChain}
  */
-exports.passwordValidator = function (signup = false) {
-  let base = body("password")
+exports.passwordValidator = function (signup = false, fieldName = "password") {
+  let base = body(fieldName)
     .trim()
     .not()
     .isEmpty()
-    .withMessage("Password is required.");
+    .withMessage(`${fieldName} is required.`);
 
   if (signup)
     base = base
       .isLength({ min: 8 })
-      .withMessage("Password must be minimum 8 characters long.")
+      .withMessage(`${fieldName} must be minimum 8 characters long.`)
       .isLength({ max: 50 })
-      .withMessage("Password is too long.");
+      .withMessage(`${fieldName} is too long.`);
 
   return base.escape();
 };

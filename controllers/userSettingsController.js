@@ -162,3 +162,53 @@ exports.sendSuccessMessage = function (message) {
     return res.status(200).json({ message });
   };
 };
+
+/**
+ * Verifies whether req.body.oldPassword equals users password
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express response object
+ * @param {Function} next express next
+ */
+exports.verifyOldPassword = function (req, res, next) {
+  if (req.user.password !== req.body.oldPassword)
+    return res.status(401).json({ message: "Old password is incorrect." });
+  next();
+};
+
+/**
+ * Verifies whether both new passwords sent are equal
+ *
+ * @param {Request} req express request object
+ * @param {Response} res express response object
+ * @param {Function} next express next
+ */
+exports.verifyNewPassword = function (req, res, next) {
+  if (req.body.newPassword1 !== req.body.newPassword2)
+    return res.status(400).json({ message: "New passwords must match." });
+  next();
+};
+
+/**
+ * Returns a middleware that updates the user in the database
+ *
+ * @param {object} mapping mapping between a column in User table and a property in req.body to get value from
+ * @returns {function} middleware
+ *
+ * @example //assuming req.body.newPassword and req.body.newDisplayName exist
+ * updateUser({password: 'newPassword', displayName: 'newDisplayName'})
+ */
+exports.updateUser = function (mapping) {
+  return async function (req, res, next) {
+    try {
+      const values = {};
+      for (const col in mapping) {
+        values[col] = req.body[mapping[col]];
+      }
+      await db.updateUser(req.user.id, values);
+      next();
+    } catch (e) {
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  };
+};

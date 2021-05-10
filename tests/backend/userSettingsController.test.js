@@ -342,7 +342,7 @@ describe("userSettingsController", async function () {
       });
       await middleware(this.req, this.res, this.nextFake);
 
-      const args = db.updateUser.firstCall.args;
+      const args = db.updateUser.args[0];
       expect(args[0]).to.equal(33);
       expect(args[1]).to.deep.equal({ password: "password1" });
       expect(this.nextFake.callCount).to.equal(1);
@@ -356,10 +356,11 @@ describe("userSettingsController", async function () {
       sinon.stub(db, "updateUser");
       const middleware = userSettingsController.updateUser({
         password: "newPassword1",
+        displayName: "newDisplayName",
       });
       await middleware(this.req, this.res, this.nextFake);
 
-      const args = db.updateUser.firstCall.args;
+      const args = db.updateUser.args[0];
       expect(args[0]).to.equal(33);
       expect(args[1]).to.deep.equal({
         password: "password1",

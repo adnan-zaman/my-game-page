@@ -25,6 +25,7 @@ class MockRequest {
     });
     this.query = {};
     this.params = {};
+    this.body = {};
     this.files = {};
     this.isAuthenticated = sinon.stub();
   }

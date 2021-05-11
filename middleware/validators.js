@@ -26,17 +26,18 @@ exports.emailValidator = function () {
 /**
  * Creates a validation/sanitization middleware for display name input
  *
+ * @param {string} fieldName name of field that is a password input
  * @returns {ValidationChain}
  */
-exports.displayNameValidator = function () {
-  return body("displayName")
+exports.displayNameValidator = function (fieldName = "displayName") {
+  return body(fieldName)
     .trim()
     .not()
     .isEmpty()
-    .withMessage("Display name is required.")
+    .withMessage(`${fieldName} is required.`)
     .escape()
     .isLength({ max: 20 })
-    .withMessage("Display name is too long");
+    .withMessage(`${fieldName} is too long. Max: 20 chars`);
 };
 
 /**

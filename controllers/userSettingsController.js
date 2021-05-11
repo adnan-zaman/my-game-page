@@ -212,3 +212,10 @@ exports.updateUser = function (mapping) {
     }
   };
 };
+
+exports.checkDisplayNameAvailability = async function (req, res, next) {
+  const user = await db.getUserByDisplayName(req.body.newDisplayName);
+  if (user)
+    return res.status(400).json({ message: "Display name already in use." });
+  next();
+};

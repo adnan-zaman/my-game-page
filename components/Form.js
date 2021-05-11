@@ -100,11 +100,8 @@ export default function Form(props) {
    */
   function validateAllFields(e) {
     const values = {};
-    console.log("Form submit");
+
     React.Children.forEach(props.children, (child, i) => {
-      console.log(child.props.name);
-      console.log(i);
-      console.log(fieldValues[i]);
       values[child.props.name] = fieldValues[i];
     });
 

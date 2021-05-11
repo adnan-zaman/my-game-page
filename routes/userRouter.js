@@ -6,6 +6,7 @@ const userSettingsController = require("../controllers/userSettingsController");
 const {
   passwordValidator,
   catchValidatorErrors,
+  displayNameValidator,
 } = require("../middleware/validators");
 const passport = require("passport");
 
@@ -27,19 +28,24 @@ router.put(
   userSettingsController.sendSuccessMessage("OK")
 );
 
-//check auth
-//validate user id
-//verify props exist (oldPassword, newPassword1, newPassword2)
-//verify oldPassword is same in database
-//verify newPass1 == newPass2
-//update db
-//send success msg
 router.put(
   "/settings/password/:userId",
   passwordValidator(true, "oldPassword"),
   passwordValidator(true, "newPassword1"),
   passwordValidator(true, "newPassword2"),
   catchValidatorErrors(),
+  userSettingsController.verifyOldPassword,
+  userSettingsController.verifyNewPassword,
+  userSettingsController.updateUser({ password: "newPassword1" }),
+  userSettingsController.sendSuccessMessage("OK")
+);
+
+router.put(
+  "/settings/display-name/:userId",
+  displayNameValidator("newDisplayName"),
+  catchValidatorErrors(),
+  userSettingsController.checkDisplayNameAvailability,
+  userSettingsController.updateUser({ displayName: "newDisplayName" }),
   userSettingsController.sendSuccessMessage("OK")
 );
 

@@ -27,6 +27,9 @@ import React, { useState, useRef } from "react";
  *
  * - encType? {string} form's enctype
  *
+ * - noMargin? {bool} sets all FormField's noMargin prop to true, which removes
+ *   the margins that they normally have and force them on the left side like an unstyled form
+ *
  * -props.children should be a list of FormField elements. Each FormField
  *  should be initialized with an initial value prop.
  *
@@ -51,6 +54,7 @@ export default function Form(props) {
       parentId: props.id, //add parent id to so FormField can make unique ids for its elements
       index,
       inline: props.inline,
+      noMargin: props.noMargin,
     })
   );
 

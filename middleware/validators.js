@@ -119,7 +119,7 @@ exports.catchValidatorErrors = function (responseType = "json", status = 400) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       if (responseType === "json")
-        return res.status(status).json(errors.array()[0].msg);
+        return res.status(status).json({ message: errors.array()[0].msg });
       else if ((responseType = "page")) {
         const err = errors.array()[0];
         err.status = status;

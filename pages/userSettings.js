@@ -6,6 +6,7 @@ import {
   FileUploadField,
   PasswordField,
   TextField,
+  EmailField,
 } from "../components/FormFields";
 
 export default function UserSettingsPage(props) {
@@ -104,7 +105,9 @@ export default function UserSettingsPage(props) {
           message: "Saved!",
         });
       else {
+        console.log("erro");
         const error = await response.json();
+        console.log(error);
         setPasswordStatus({ success: false, message: error.message });
       }
     } catch (e) {
@@ -157,15 +160,16 @@ export default function UserSettingsPage(props) {
   return (
     <>
       <Toolbar userId={props.userId} profilePic={props.profilePic} />
-      <h1>Your Settings</h1>
-      <div>
-        <h2>Change Display Name</h2>
+      <h1 className="ml-2">Your Settings</h1>
+      <div className="my-3">
+        <h2 className="ml-2">Change Display Name</h2>
         <Form
           id="newDisplayName"
           onSubmit={handleDisplayNameSubmit}
           submitBtnText="Save"
           inline={true}
-          className={"d-inline-block"}
+          className={"d-inline-block ml-2"}
+          btnClass="col-3 text-center"
         >
           <TextField
             label="Display Name"
@@ -173,6 +177,7 @@ export default function UserSettingsPage(props) {
             required={true}
             max={20}
             value=""
+            groupClass="col-9"
           />
         </Form>
         <p
@@ -184,13 +189,14 @@ export default function UserSettingsPage(props) {
         </p>
         <hr />
 
-        <h2>Change Profile Picture</h2>
+        <h2 className="ml-2">Change Profile Picture</h2>
         <Form
           id="newProfilePic"
           onSubmit={handleProfilePicSubmit}
           submitBtnText="Save"
           inline={true}
-          className={"d-inline-block"}
+          className={"d-inline-block ml-2"}
+          btnClass="col-2 text-align"
         >
           <FileUploadField
             label="Profile Picture"
@@ -199,6 +205,7 @@ export default function UserSettingsPage(props) {
             value=""
             accept="image/*"
             size={5000000}
+            groupClass="col-9"
           />
         </Form>
         <p
@@ -210,39 +217,44 @@ export default function UserSettingsPage(props) {
         </p>
         <hr />
 
-        <h2>Change Password</h2>
+        <h2 className="ml-2">Change Password</h2>
         <Form
           id="newPassword"
           onSubmit={handlePasswordSubmit}
           submitBtnText="Save"
-          className={"d-inline-block"}
+          className={"d-inline-block ml-2"}
+          noMargin={true}
+          btnClass="my-3"
         >
           <PasswordField
             label="Old Password"
             name="oldPassword"
-            min={8}
             value=""
+            className="my-3"
           />
           <PasswordField
             label="New Password"
             name="newPassword1"
             min={8}
             value=""
+            className="my-3"
           />
           <PasswordField
             label="Re-enter New Password"
             name="newPassword2"
             min={8}
             value=""
+            className="my-3"
           />
         </Form>
         <p
-          className={`d-inline-block mx-4 ${
+          className={`my-1 ml-2 ${
             passwordStatus.success ? "text-success" : "text-danger"
           }`}
         >
           {passwordStatus.message}
         </p>
+
         <hr />
       </div>
     </>

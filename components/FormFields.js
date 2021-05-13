@@ -30,7 +30,9 @@ function FormFieldTemplate(props) {
 
   return (
     <div
-      className={`${props.inline ? "" : "form-group m-3"} ${props.groupClass}`}
+      className={`${props.inline || props.noMargin ? "" : "form-group m-3"} ${
+        props.groupClass
+      }`}
     >
       {control}
     </div>
@@ -84,7 +86,11 @@ export function TextField(props) {
   }
 
   return (
-    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+    <FormFieldTemplate
+      groupClass={props.groupClass}
+      inline={props.inline}
+      noMargin={props.noMargin}
+    >
       <input
         id={inputId}
         name={props.name}
@@ -155,7 +161,11 @@ export function EmailField(props) {
   }
 
   return (
-    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+    <FormFieldTemplate
+      groupClass={props.groupClass}
+      inline={props.inline}
+      noMargin={props.noMargin}
+    >
       <input
         id={inputId}
         name={props.name}
@@ -219,7 +229,11 @@ export function PasswordField(props) {
   }
 
   return (
-    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+    <FormFieldTemplate
+      groupClass={props.groupClass}
+      inline={props.inline}
+      noMargin={props.noMargin}
+    >
       <input
         id={inputId}
         name={props.name}
@@ -231,6 +245,7 @@ export function PasswordField(props) {
         maxLength={maxLength}
         placeholder={labelName}
         ref={inputField}
+        className={props.className}
       />
     </FormFieldTemplate>
   );
@@ -266,7 +281,11 @@ export function HiddenField(props) {
   }
 
   return (
-    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+    <FormFieldTemplate
+      groupClass={props.groupClass}
+      inline={props.inline}
+      noMargin={props.noMargin}
+    >
       <input
         id={inputId}
         name={props.name}
@@ -340,7 +359,11 @@ export function FileUploadField(props) {
   }
 
   return (
-    <FormFieldTemplate groupClass={props.groupClass} inline={props.inline}>
+    <FormFieldTemplate
+      groupClass={props.groupClass}
+      inline={props.inline}
+      noMargin={props.noMargin}
+    >
       <input
         id={inputId}
         type="file"

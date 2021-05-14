@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 /**
  *
@@ -44,6 +44,12 @@ export default function Form(props) {
 
   //list of validators of all of this Form's FormFields
   const fieldValidators = useRef([]);
+
+  useEffect(() => {
+    console.log("efect");
+    console.log(fieldValidators.current.length);
+    fieldValidators.current = [];
+  }, [props.children]);
 
   //takes control of childrens state and passes own props
   const children = React.Children.map(props.children, (child, index) =>
@@ -104,6 +110,10 @@ export default function Form(props) {
    */
   function validateAllFields(e) {
     const values = {};
+
+    console.log("validateall fields");
+    console.log(fieldValidators.length);
+    console.log(fieldValidators);
 
     React.Children.forEach(props.children, (child, i) => {
       values[child.props.name] = fieldValues[i];

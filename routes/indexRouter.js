@@ -22,8 +22,16 @@ router.post(
 );
 
 router.get("/signup", indexController.signupGet);
+
 router.post(
   "/signup",
+  (req, res) => {
+    console.log("body is");
+    console.log(req.body);
+    console.log("files is ");
+    console.log(req.files);
+    return res.status(200);
+  },
   validators.emailValidator(),
   validators.displayNameValidator(),
   validators.passwordValidator(true),

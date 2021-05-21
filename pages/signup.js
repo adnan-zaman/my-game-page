@@ -13,10 +13,14 @@ export default function Signup(props) {
     props.error && (props.error.message || props.error.msg)
   );
 
+  //page of the form
   const [page, setPage] = useState(0);
 
+  //values of the first page are saved so they can be repopulated
+  //user goes from page 1 back to page 0
   const formValues = useRef({ email: "", displayName: "", password: "" });
 
+  //a page of the form is a list of FormFields
   const firstPageFields = [
     <TextField
       value={props.displayName_value || ""}
@@ -45,6 +49,8 @@ export default function Signup(props) {
     />,
   ];
 
+  //HiddenFields contain the values from the first page
+  //so they are also sent when the form is finally sent
   const secondPageFields = [
     <FileUploadField
       value=""
@@ -52,10 +58,15 @@ export default function Signup(props) {
       name="profilePicture"
       accept="image/*"
       size={5000000}
+      key={0}
     />,
-    <HiddenField name="email" value={formValues.current.email} />,
-    <HiddenField name="password" value={formValues.current.password} />,
-    <HiddenField name="displayName" value={formValues.current.password} />,
+    <HiddenField name="email" value={formValues.current.email} key={1} />,
+    <HiddenField name="password" value={formValues.current.password} key={2} />,
+    <HiddenField
+      name="displayName"
+      value={formValues.current.displayName}
+      key={3}
+    />,
   ];
 
   function handleSubmit(e, errorInfo, values) {
@@ -69,7 +80,38 @@ export default function Signup(props) {
       for (const value in values) formValues.current[value] = values[value];
       setPage(1);
     }
+
+    setErrorMessage("");
   }
+
+  //list of buttons for the Form
+  const buttonList =
+    page === 0
+      ? [
+          <button className="btn btn-primary mx-3" type="submit" key={0}>
+            Next
+          </button>,
+        ]
+      : [
+          <button
+            className="btn btn-secondary mx-3"
+            type="button"
+            onClick={(e) => {
+              setPage(0);
+              return [
+                formValues.current.displayName,
+                formValues.current.email,
+                formValues.current.password,
+              ];
+            }}
+            key={0}
+          >
+            Prev
+          </button>,
+          <button className="btn btn-primary mx-3" type="submit" key={1}>
+            Sign Up
+          </button>,
+        ];
   return (
     <>
       <img src="/images/logo.png" className="main-logo-img" />
@@ -82,6 +124,7 @@ export default function Signup(props) {
           method="post"
           action="/signup"
           encType="multipart/form-data"
+          buttonList={buttonList}
         >
           {page === 0 ? firstPageFields : secondPageFields}
         </Form>

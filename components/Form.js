@@ -30,6 +30,10 @@ import React, { useState, useRef, useEffect } from "react";
  * - noMargin? {bool} sets all FormField's noMargin prop to true, which removes
  *   the margins that they normally have and force them on the left side like an unstyled form
  *
+ * - buttonList {<Button>[]} a list of Buttons, these will be displayed instead of the default submit button.
+ *   if the button's onClick handler returns a value, that value will set the list of FormField states
+ *   for the Form. (needed when going back to a previous page)
+ *
  * -props.children should be a list of FormField elements. Each FormField
  *  should be initialized with an initial value prop.
  *
@@ -45,26 +49,49 @@ export default function Form(props) {
   //list of validators of all of this Form's FormFields
   const fieldValidators = useRef([]);
 
-  useEffect(() => {
-    console.log("efect");
-    console.log(fieldValidators.current.length);
-    fieldValidators.current = [];
-  }, [props.children]);
-
   //takes control of childrens state and passes own props
-  const children = React.Children.map(props.children, (child, index) =>
-    React.cloneElement(child, {
+  const children = React.Children.map(props.children, (child, index) => {
+    return React.cloneElement(child, {
       value: fieldValues[index],
-      addValidator: (validator) => fieldValidators.current.push(validator),
+      addValidator: (validator) => {
+        fieldValidators.current.push(validator);
+      },
       onChange: handleChange,
       parentId: props.id, //add parent id to so FormField can make unique ids for its elements
       index,
       inline: props.inline,
       noMargin: props.noMargin,
-    })
-  );
+    });
+  });
 
-  const submitBtn = (
+  const buttonList = useRef(undefined);
+
+  //this is so onClick is only overwritten the first time
+  //a page is rendered in a Form
+  if (!buttonList.current && props.buttonList) {
+    buttonList.current = props.buttonList;
+    for (let i = 0; i < buttonList.current.length; i++) {
+      if (buttonList.current[i].props.onClick) {
+        const origFunc = buttonList.current[i].props.onClick;
+        //call the original onClick but also
+        //1. prevent form submission
+        //2. cleanup
+        //3. and if applicable, set state
+        buttonList.current[i] = React.cloneElement(buttonList.current[i], {
+          onClick: (e) => {
+            e.preventDefault();
+            const states = origFunc();
+            cleanup();
+            if (states) setFieldValues(states);
+          },
+        });
+      }
+    }
+  }
+
+  const buttonBar = props.buttonList ? (
+    <div>{props.buttonList}</div>
+  ) : (
     <button className={`btn btn-primary ${props.btnClass}`} type="submit">
       {props.submitBtnText || "Submit"}
     </button>
@@ -76,12 +103,12 @@ export default function Form(props) {
   const innerForm = props.inline ? (
     <div className="row">
       {children}
-      {submitBtn}
+      {buttonBar}
     </div>
   ) : (
     <>
       {children}
-      {submitBtn}
+      {buttonBar}
     </>
   );
 
@@ -103,6 +130,16 @@ export default function Form(props) {
   }
 
   /**
+   * Cleans up state, fieldValidators and buttonList.
+   * Should be called when switching between pages.
+   */
+  function cleanup() {
+    setFieldValues([]);
+    fieldValidators.current = [];
+    buttonList.current = undefined;
+  }
+
+  /**
    * Calls every FormField's validator function. If any field
    * is invalid, will send the error info object to parent component.
    *
@@ -110,10 +147,6 @@ export default function Form(props) {
    */
   function validateAllFields(e) {
     const values = {};
-
-    console.log("validateall fields");
-    console.log(fieldValidators.length);
-    console.log(fieldValidators);
 
     React.Children.forEach(props.children, (child, i) => {
       values[child.props.name] = fieldValues[i];
@@ -124,6 +157,7 @@ export default function Form(props) {
       if (errorInfo) return props.onSubmit(e, errorInfo, values);
     }
 
+    cleanup();
     props.onSubmit(e, null, values);
   }
   return (

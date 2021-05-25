@@ -20,6 +20,9 @@ export default function Signup(props) {
   //user goes from page 1 back to page 0
   const formValues = useRef({ email: "", displayName: "", password: "" });
 
+  //text for sign up button
+  const [signupText, setSignupText] = useState("Skip");
+
   //a page of the form is a list of FormFields
   const firstPageFields = [
     <TextField
@@ -84,6 +87,11 @@ export default function Signup(props) {
     setErrorMessage("");
   }
 
+  function handleChange(e) {
+    if (e.target.files && e.target.files.length === 1) setSignupText("Sign Up");
+    else setSignupText("Skip");
+  }
+
   //list of buttons for the Form
   const buttonList =
     page === 0
@@ -98,6 +106,9 @@ export default function Signup(props) {
             type="button"
             onClick={(e) => {
               setPage(0);
+              setSignupText("Skip");
+              //return value is list of FormField states
+              //we want Form to have after switching back to page 0
               return [
                 formValues.current.displayName,
                 formValues.current.email,
@@ -108,8 +119,13 @@ export default function Signup(props) {
           >
             Prev
           </button>,
-          <button className="btn btn-primary mx-3" type="submit" key={1}>
-            Sign Up
+          <button
+            className="btn btn-primary mx-3"
+            type="submit"
+            key={1}
+            lol={32}
+          >
+            {signupText}
           </button>,
         ];
   return (
@@ -121,12 +137,14 @@ export default function Signup(props) {
           id="signup-form"
           submitBtnText={page === 0 ? "Next" : "Sign Up"}
           onSubmit={handleSubmit}
+          onChange={handleChange}
           method="post"
           action="/signup"
           encType="multipart/form-data"
           buttonList={buttonList}
         >
           {page === 0 ? firstPageFields : secondPageFields}
+          {buttonList}
         </Form>
         <p className="d-sm-inline-block mx-1">Already have an account?</p>
         <a href="/" className="d-block d-sm-inline-block mx-1">

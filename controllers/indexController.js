@@ -5,6 +5,11 @@ const {
   UserAlreadyExistsError,
 } = require("../core/errors");
 const db = require("../core/database");
+const {
+  validateMimeTypes,
+  validateFileSizes,
+  saveProfilePicture,
+} = require("./userSettingsController");
 
 const debug = require("debug")("mygamepage-index");
 const authDebug = require("debug")("mygamepage-passport");
@@ -57,6 +62,50 @@ exports.signupGet = function (req, res, next) {
 
   res.nextApp.render(req, res, "/signup");
 };
+
+exports.catchValidatorErrors = function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty) {
+    res.locals.errorMessage = errors.array()[0];
+    res.locals.email_value = req.body.email;
+    res.locals.password_value = req.body.password;
+    res.locals.displayName_value = req.body.displayName;
+    res.locals.page = 0;
+    return res.nextApp.render(req, res, "/signup");
+  }
+  next();
+};
+
+exports.isRegistrationValid = async function (req, res, next) {
+  try {
+    const checks = [
+      db.getUserByEmail(req.body.email),
+      db.getUserByDisplayName(req.body.displayName),
+    ];
+
+    const [potentialUserEmail, potentialUserDisplayName] = await Promise.all(
+      checks
+    );
+
+    //user already exists
+    if (potentialUserEmail || potentialUserDisplayName) {
+      res.locals.errorMessage = potentialUserEmail
+        ? "Email is already in use."
+        : "Display name is already in use";
+      res.locals.email_value = req.body.email;
+      res.locals.password_value = req.body.password;
+      res.locals.displayName_value = req.body.displayName;
+      res.locals.page = 0;
+      return res.nextApp.render(req, res, "/signup");
+    }
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.optionalProfilePicChecks = function (req, res, next) {};
 
 exports.signupPost = async function (req, res, next) {
   debug("POST /signup");

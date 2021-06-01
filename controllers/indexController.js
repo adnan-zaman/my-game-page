@@ -9,7 +9,9 @@ const {
   validateMimeTypes,
   validateFileSizes,
   saveProfilePicture,
+  verifyFilesExist,
 } = require("./userSettingsController");
+const { verify } = require("sinon");
 
 const debug = require("debug")("mygamepage-index");
 const authDebug = require("debug")("mygamepage-passport");
@@ -29,8 +31,8 @@ exports.loginFormErrorHandler = function (req, res, next) {
 
   if (!errors.isEmpty()) {
     res.locals.error = errors.array()[0];
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
+    res.locals.email = req.body.email;
+    res.locals.password = req.body.password;
     return res.nextApp.render(req, res, "/login");
   }
 
@@ -43,8 +45,8 @@ exports.loginFail = function (err, req, res, next) {
     err instanceof IncorrectPasswordError
   ) {
     res.locals.error = err;
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
+    res.locals.email = req.body.email;
+    res.locals.password = req.body.password;
     return res.nextApp.render(req, res, "/login");
   }
   //non-usage related error
@@ -67,9 +69,9 @@ exports.catchValidatorErrors = function (req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty) {
     res.locals.errorMessage = errors.array()[0];
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
-    res.locals.displayName_value = req.body.displayName;
+    res.locals.email = req.body.email;
+    res.locals.password = req.body.password;
+    res.locals.displayName = req.body.displayName;
     res.locals.page = 0;
     return res.nextApp.render(req, res, "/signup");
   }
@@ -92,9 +94,9 @@ exports.isRegistrationValid = async function (req, res, next) {
       res.locals.errorMessage = potentialUserEmail
         ? "Email is already in use."
         : "Display name is already in use";
-      res.locals.email_value = req.body.email;
-      res.locals.password_value = req.body.password;
-      res.locals.displayName_value = req.body.displayName;
+      res.locals.email = req.body.email;
+      res.locals.password = req.body.password;
+      res.locals.displayName = req.body.displayName;
       res.locals.page = 0;
       return res.nextApp.render(req, res, "/signup");
     }
@@ -105,7 +107,41 @@ exports.isRegistrationValid = async function (req, res, next) {
   }
 };
 
-exports.optionalProfilePicChecks = function (req, res, next) {};
+exports.profilePictureValidation = function (req, res, next) {
+  const middlewares = [verifyFilesExist, verifyFilesExist];
+  const args = [["profilePicture"], ["loler"]];
+
+  let valid = true;
+  let error;
+  if (req.files) {
+    res.status = () => {
+      console.log("status");
+      return res;
+    };
+    res.json = (err) => {
+      console.log("json");
+      error = err;
+      valid = false;
+    };
+    for (let i = 0; i < middlewares.length; i++) {
+      middlewares[i](args[i])(req, res, next);
+
+      if (!valid) {
+        console.log("goodbye");
+        console.log(req.body);
+        console.log(req.body);
+        res.locals.errorMessage = error.message;
+        res.locals.email = req.body.email;
+        res.locals.password = req.body.password;
+        res.locals.displayName = req.body.displayName;
+        res.locals.page = 1;
+
+        return res.nextApp.render(req, res, "/signup");
+      }
+    }
+  }
+  res.send("uhoh");
+};
 
 exports.signupPost = async function (req, res, next) {
   debug("POST /signup");
@@ -114,9 +150,9 @@ exports.signupPost = async function (req, res, next) {
   //errors during validation/sanitization middlware
   if (!errors.isEmpty()) {
     res.locals.error = errors.array()[0];
-    res.locals.email_value = req.body.email;
-    res.locals.password_value = req.body.password;
-    res.locals.displayName_value = req.body.displayName;
+    res.locals.email = req.body.email;
+    res.locals.password = req.body.password;
+    res.locals.displayName = req.body.displayName;
     return res.nextApp.render(req, res, "/signup");
   }
 
@@ -131,9 +167,9 @@ exports.signupPost = async function (req, res, next) {
       res.locals.error = new UserAlreadyExistsError(
         potentialUserEmail ? "EMAIL" : "DISPLAYNAME"
       );
-      res.locals.email_value = req.body.email;
-      res.locals.password_value = req.body.password;
-      res.locals.displayName_value = req.body.displayName;
+      res.locals.email = req.body.email;
+      res.locals.password = req.body.password;
+      res.locals.displayName = req.body.displayName;
       return res.nextApp.render(req, res, "/signup");
     }
     await db.addUser(req.body.email, req.body.password, req.body.displayName);

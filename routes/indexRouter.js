@@ -2,9 +2,10 @@ const express = require("express");
 
 //middleware and controllers
 const indexController = require("../controllers/indexController");
+const userSettingsController = require("../controllers/userSettingsController");
 const validators = require("../middleware/validators");
 const passport = require("passport");
-
+const conditional = require("express-conditional-middleware");
 const debug = require("debug")("mygamepage-index");
 
 const router = express.Router();
@@ -20,23 +21,28 @@ router.post(
   indexController.loginSuccess,
   indexController.loginFail
 );
-router.get("/test", indexController.optionalProfilePicChecks);
+
 router.get("/signup", indexController.signupGet);
 
 router.post(
   "/signup",
-
+  (req, res, next) => {
+    console.log(req.body);
+    next();
+  },
   validators.emailValidator(),
   validators.displayNameValidator(),
   validators.passwordValidator(true),
-  indexController.catchValidatorErrors,
-  indexController.isRegistrationValid,
 
-  passport.authenticate("local"),
-  (req, res) => {
-    res.redirect(`/user/${req.user.id}`);
-  }
+  indexController.profilePictureValidation
 );
+
+// indexController.catchValidatorErrors,
+// indexController.isRegistrationValid,
+//   passport.authenticate("local"),
+//   (req, res) => {
+//     res.redirect(`/user/${req.user.id}`);
+//   }
 
 router.get("/logout", (req, res) => {
   req.logOut();

@@ -8,6 +8,8 @@ import {
   HiddenField,
 } from "../components/FormFields";
 
+import $ from "jquery";
+
 export default function Signup(props) {
   const [errorMessage, setErrorMessage] = useState(
     props.error && (props.error.message || props.error.msg)
@@ -72,7 +74,7 @@ export default function Signup(props) {
     />,
   ];
 
-  function handleSubmit(e, errorInfo, values) {
+  function handleSubmit(e, errorInfo, values, cleanup) {
     if (errorInfo) {
       e.preventDefault();
       return setErrorMessage(errorInfo.message);
@@ -82,6 +84,7 @@ export default function Signup(props) {
       e.preventDefault();
       for (const value in values) formValues.current[value] = values[value];
       setPage(1);
+      cleanup();
     }
 
     setErrorMessage("");

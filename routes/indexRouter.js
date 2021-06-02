@@ -13,6 +13,7 @@ const router = express.Router();
 router.get("/", indexController.loginGet);
 router.post(
   "/",
+  (req, res) => console.log(req.body) && res.send("ok"),
   validators.emailValidator(),
   validators.passwordValidator(),
   indexController.loginFormErrorHandler,
@@ -25,7 +26,7 @@ router.get("/signup", indexController.signupGet);
 
 router.post(
   "/signup",
-
+  (req, res) => console.log(req.body) && res.send("ok"),
   validators.emailValidator(),
   validators.displayNameValidator(),
   validators.passwordValidator(true),

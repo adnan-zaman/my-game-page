@@ -46,6 +46,13 @@ export default function Form(props) {
     React.Children.map(props.children, (child) => child.props.value)
   );
 
+  //set state to FormField default values after a cleanup
+  if (fieldValues.length === 0) {
+    setFieldValues(
+      React.Children.map(props.children, (child) => child.props.value)
+    );
+  }
+
   //list of validators of all of this Form's FormFields
   const fieldValidators = useRef([]);
 
@@ -165,8 +172,7 @@ export default function Form(props) {
       if (errorInfo) return props.onSubmit(e, errorInfo, values);
     }
 
-    cleanup();
-    props.onSubmit(e, null, values);
+    props.onSubmit(e, null, values, cleanup);
   }
   return (
     <>

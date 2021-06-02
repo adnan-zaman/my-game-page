@@ -11,45 +11,50 @@ import {
 import $ from "jquery";
 
 export default function Signup(props) {
-  const [errorMessage, setErrorMessage] = useState(
-    props.error && (props.error.message || props.error.msg)
-  );
+  console.log(props);
+  const [errorMessage, setErrorMessage] = useState(props.errorMessage || "");
 
   //page of the form
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(props.page || 0);
 
   //values of the first page are saved so they can be repopulated
   //user goes from page 1 back to page 0
-  const formValues = useRef({ email: "", displayName: "", password: "" });
+  const formValues = useRef({
+    email: props.email || "",
+    displayName: props.displayName || "",
+    password: props.password || "",
+  });
 
   //text for sign up button
   const [signupText, setSignupText] = useState("Skip");
 
+  console.log("signup redraw");
+  console.log(formValues.current);
   //a page of the form is a list of FormFields
   const firstPageFields = [
     <TextField
-      value={props.displayName_value || ""}
+      value={formValues.current.displayName}
       label="Display Name"
       name="displayName"
-      required={true}
+      required={false}
       max={20}
       key={0}
     />,
     <EmailField
-      value={props.email_value || ""}
+      value={formValues.current.email}
       label="Email"
       name="email"
-      required={true}
+      required={false}
       max={50}
       key={1}
     />,
     <PasswordField
-      value={props.password || ""}
+      value={formValues.current.password}
       label="Password"
       name="password"
-      required={true}
+      required={false}
       max={50}
-      min={8}
+      min={1}
       key={2}
     />,
   ];
@@ -61,13 +66,17 @@ export default function Signup(props) {
       value=""
       label="Profile Picture"
       name="profilePicture"
-      accept="image/*"
-      size={5000000}
       key={0}
     />,
-    <HiddenField name="email" value={formValues.current.email} key={1} />,
-    <HiddenField name="password" value={formValues.current.password} key={2} />,
+    <HiddenField label="email" name="email" value="eauk" key={1} />,
     <HiddenField
+      label="password"
+      name="password"
+      value={formValues.current.password}
+      key={2}
+    />,
+    <HiddenField
+      label="Display Name"
       name="displayName"
       value={formValues.current.displayName}
       key={3}
@@ -87,6 +96,8 @@ export default function Signup(props) {
       cleanup();
     }
 
+    //e.preventDefault();
+    console.log(formValues.current);
     setErrorMessage("");
   }
 

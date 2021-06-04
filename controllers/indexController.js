@@ -9,7 +9,7 @@ const {
   validateMimeTypes,
   validateFileSizes,
   saveProfilePicture,
-  updateUser,
+  updateProfilePicInDatabase,
   verifyFilesExist,
 } = require("./userSettingsController");
 
@@ -108,17 +108,11 @@ exports.isRegistrationValid = async function (req, res, next) {
 };
 
 exports.profilePictureValidation = function (req, res, next) {
-  const middlewares = [
-    verifyFilesExist,
-    validateMimeTypes,
-    validateFileSizes,
-    saveProfilePicture,
-  ];
+  const middlewares = [verifyFilesExist, validateMimeTypes, validateFileSizes];
   const args = [
     ["profilePicture"],
     { profilePicture: "image" },
     { profilePicture: 5000000 },
-    null,
   ];
 
   let valid = true;
@@ -126,10 +120,9 @@ exports.profilePictureValidation = function (req, res, next) {
   if (req.files) {
     res.status = () => res;
     res.json = (err) => (error = err) && (valid = false);
-
+    const fakeNext = () => null;
     for (let i = 0; i < middlewares.length; i++) {
-      if (args[i]) middlewares[i](args[i])(req, res, next);
-      else middlewares[i](req, res, next);
+      middlewares[i](args[i])(req, res, fakeNext);
 
       if (!valid) {
         res.locals.errorMessage = error.message;
@@ -142,6 +135,7 @@ exports.profilePictureValidation = function (req, res, next) {
       }
     }
   }
+
   next();
 };
 
@@ -151,9 +145,10 @@ exports.saveAndUpdateProfilePicture = async function (req, res, next) {
     let error;
     res.status = () => res;
     res.json = (err) => (error = err) && (valid = false);
+    const fakeNext = () => null;
+    saveProfilePicture(req, res, fakeNext);
 
-    saveProfilePicture(req, res, next);
-    await updateUser({ profilePic: "profilePicFileName" })(req, res, next);
+    await updateProfilePicInDatabase(req, res, fakeNext);
     if (!valid) {
       res.locals.errorMessage = error.message;
       res.locals.email = req.body.email;
@@ -165,42 +160,4 @@ exports.saveAndUpdateProfilePicture = async function (req, res, next) {
     }
   }
   next();
-};
-
-exports.signupPost = async function (req, res, next) {
-  debug("POST /signup");
-  debug(`session id: ${req.sessionID}`);
-  const errors = validationResult(req);
-  //errors during validation/sanitization middlware
-  if (!errors.isEmpty()) {
-    res.locals.error = errors.array()[0];
-    res.locals.email = req.body.email;
-    res.locals.password = req.body.password;
-    res.locals.displayName = req.body.displayName;
-    return res.nextApp.render(req, res, "/signup");
-  }
-
-  try {
-    const potentialUserEmail = await db.getUserByEmail(req.body.email);
-    const potentialUserDisplayName = await db.getUserByDisplayName(
-      req.body.displayName
-    );
-
-    //user already exists
-    if (potentialUserEmail || potentialUserDisplayName) {
-      res.locals.error = new UserAlreadyExistsError(
-        potentialUserEmail ? "EMAIL" : "DISPLAYNAME"
-      );
-      res.locals.email = req.body.email;
-      res.locals.password = req.body.password;
-      res.locals.displayName = req.body.displayName;
-      return res.nextApp.render(req, res, "/signup");
-    }
-    await db.addUser(req.body.email, req.body.password, req.body.displayName);
-    debug(`${req.body.email} added, about to authenticate`);
-
-    next();
-  } catch (e) {
-    next(e);
-  }
 };

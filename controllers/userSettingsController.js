@@ -61,9 +61,7 @@ exports.checkAuthentication = async function (req, res, next) {
 exports.verifyFilesExist = function (files) {
   return function (req, res, next) {
     for (const file of files) {
-      console.log("verifying");
       if (!req.files[file]) {
-        console.log("erroirng");
         return res.status(400).json({ message: `Missing file: ${file}` });
       }
     }

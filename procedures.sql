@@ -96,7 +96,7 @@ CREATE PROCEDURE AddUser(
 )
 BEGIN
 	INSERT INTO users(email, `password`, displayName, profilePic)
-    VALUES(userEmail, userPass, userDisplayName, '/images/default-game.png');
+    VALUES(userEmail, userPass, userDisplayName, '/images/default-profile-pic.png');
 END$$
 
 CREATE PROCEDURE AddGame(

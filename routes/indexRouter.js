@@ -34,13 +34,9 @@ router.post(
   indexController.profilePictureValidation,
   //add user
   async (req, res, next) => {
-    debug("adding");
     try {
-      debug("really adding");
       await db.addUser(req.body.email, req.body.password, req.body.displayName);
-      debug("added");
     } catch (e) {
-      debug("failure");
       next(e);
     }
     next();

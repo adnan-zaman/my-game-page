@@ -9,9 +9,9 @@ const {
   validateMimeTypes,
   validateFileSizes,
   saveProfilePicture,
+  updateUser,
   verifyFilesExist,
 } = require("./userSettingsController");
-const { verify } = require("sinon");
 
 const debug = require("debug")("mygamepage-index");
 const authDebug = require("debug")("mygamepage-passport");
@@ -108,28 +108,30 @@ exports.isRegistrationValid = async function (req, res, next) {
 };
 
 exports.profilePictureValidation = function (req, res, next) {
-  const middlewares = [verifyFilesExist, verifyFilesExist];
-  const args = [["profilePicture"], ["loler"]];
+  const middlewares = [
+    verifyFilesExist,
+    validateMimeTypes,
+    validateFileSizes,
+    saveProfilePicture,
+  ];
+  const args = [
+    ["profilePicture"],
+    { profilePicture: "image" },
+    { profilePicture: 5000000 },
+    null,
+  ];
 
   let valid = true;
   let error;
   if (req.files) {
-    res.status = () => {
-      console.log("status");
-      return res;
-    };
-    res.json = (err) => {
-      console.log("json");
-      error = err;
-      valid = false;
-    };
+    res.status = () => res;
+    res.json = (err) => (error = err) && (valid = false);
+
     for (let i = 0; i < middlewares.length; i++) {
-      middlewares[i](args[i])(req, res, next);
+      if (args[i]) middlewares[i](args[i])(req, res, next);
+      else middlewares[i](req, res, next);
 
       if (!valid) {
-        console.log("goodbye");
-        console.log(req.body);
-        console.log(req.body);
         res.locals.errorMessage = error.message;
         res.locals.email = req.body.email;
         res.locals.password = req.body.password;
@@ -140,7 +142,29 @@ exports.profilePictureValidation = function (req, res, next) {
       }
     }
   }
-  res.send("uhoh");
+  next();
+};
+
+exports.saveAndUpdateProfilePicture = async function (req, res, next) {
+  if (req.files) {
+    let valid = true;
+    let error;
+    res.status = () => res;
+    res.json = (err) => (error = err) && (valid = false);
+
+    saveProfilePicture(req, res, next);
+    await updateUser({ profilePic: "profilePicFileName" })(req, res, next);
+    if (!valid) {
+      res.locals.errorMessage = error.message;
+      res.locals.email = req.body.email;
+      res.locals.password = req.body.password;
+      res.locals.displayName = req.body.displayName;
+      res.locals.page = 0;
+
+      return res.nextApp.render(req, res, "/signup");
+    }
+  }
+  next();
 };
 
 exports.signupPost = async function (req, res, next) {

@@ -280,7 +280,6 @@ export function HiddenField(props) {
     return null;
   }
 
-  console.log("hidden value is " + props.value);
   return (
     <FormFieldTemplate
       groupClass={props.groupClass}

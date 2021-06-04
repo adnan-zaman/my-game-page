@@ -8,8 +8,6 @@ import {
   HiddenField,
 } from "../components/FormFields";
 
-import $ from "jquery";
-
 export default function Signup(props) {
   console.log(props);
   const [errorMessage, setErrorMessage] = useState(props.errorMessage || "");
@@ -28,8 +26,6 @@ export default function Signup(props) {
   //text for sign up button
   const [signupText, setSignupText] = useState("Skip");
 
-  console.log("signup redraw");
-  console.log(formValues.current);
   //a page of the form is a list of FormFields
   const firstPageFields = [
     <TextField
@@ -68,7 +64,12 @@ export default function Signup(props) {
       name="profilePicture"
       key={0}
     />,
-    <HiddenField label="email" name="email" value="eauk" key={1} />,
+    <HiddenField
+      label="email"
+      name="email"
+      value={formValues.current.email}
+      key={1}
+    />,
     <HiddenField
       label="password"
       name="password"
@@ -96,8 +97,6 @@ export default function Signup(props) {
       cleanup();
     }
 
-    //e.preventDefault();
-    console.log(formValues.current);
     setErrorMessage("");
   }
 

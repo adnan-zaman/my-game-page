@@ -53,6 +53,8 @@ passport.use(
       authDebug(`local strategy for ${email}`);
       try {
         const potentialUser = await db.getUserByEmail(email);
+        console.log("potential user is");
+        console.log(potentialUser);
         authDebug(potentialUser);
         if (!potentialUser) return done(new UserNotFoundError(), null);
         if (potentialUser.password !== password)
@@ -122,7 +124,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.head("*", (req, res) => res.send("OK"));
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/api", apiRouter);

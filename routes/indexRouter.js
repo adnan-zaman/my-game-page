@@ -5,7 +5,7 @@ const indexController = require("../controllers/indexController");
 const userSettingsController = require("../controllers/userSettingsController");
 const validators = require("../middleware/validators");
 const passport = require("passport");
-const conditional = require("express-conditional-middleware");
+const db = require("../core/database");
 const debug = require("debug")("mygamepage-index");
 
 const router = express.Router();
@@ -14,7 +14,6 @@ const router = express.Router();
 router.get("/", indexController.loginGet);
 router.post(
   "/",
-  (req, res) => console.log(req.body) && res.send("ok"),
   validators.emailValidator(),
   validators.passwordValidator(),
   indexController.loginFormErrorHandler,
@@ -27,20 +26,32 @@ router.get("/signup", indexController.signupGet);
 
 router.post(
   "/signup",
-  (req, res) => console.log(req.body) && res.send("ok"),
   validators.emailValidator(),
   validators.displayNameValidator(),
   validators.passwordValidator(true),
-
-  indexController.profilePictureValidation
+  indexController.catchValidatorErrors,
+  indexController.isRegistrationValid,
+  indexController.profilePictureValidation,
+  //add user
+  async (req, res, next) => {
+    debug("adding");
+    try {
+      debug("really adding");
+      await db.addUser(req.body.email, req.body.password, req.body.displayName);
+      debug("added");
+    } catch (e) {
+      debug("failure");
+      next(e);
+    }
+    next();
+  },
+  //req.user added
+  passport.authenticate("local"),
+  indexController.saveAndUpdateProfilePicture,
+  (req, res) => {
+    res.redirect(`/user/${req.user.id}`);
+  }
 );
-
-// indexController.catchValidatorErrors,
-// indexController.isRegistrationValid,
-//   passport.authenticate("local"),
-//   (req, res) => {
-//     res.redirect(`/user/${req.user.id}`);
-//   }
 
 router.get("/logout", (req, res) => {
   req.logOut();

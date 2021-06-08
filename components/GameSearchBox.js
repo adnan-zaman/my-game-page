@@ -156,6 +156,7 @@ export default function GameSearchBox(props) {
               className={`btn btn-secondary ${
                 searchPage > 0 ? "visible" : "invisible"
               }`}
+              disabled={loading}
             >
               Prev
             </button>
@@ -176,6 +177,7 @@ export default function GameSearchBox(props) {
               className={`btn btn-secondary ${
                 searchPage >= 0 && hasNext ? "visible" : "invisible"
               }`}
+              disabled={loading}
             >
               Next
             </button>

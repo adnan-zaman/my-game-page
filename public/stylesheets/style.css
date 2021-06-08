@@ -79,7 +79,7 @@ form * {
 .user-page-games,
 .game-search-box {
   flex: 1 1 50%;
-  height: 700px;
+  height: 500px;
   width: 75%;
   border: 10px solid var(--primary-color);
   background-color: var(--secondary-color);
@@ -157,6 +157,9 @@ input#page-number {
   color: white;
 }
 
+.loading-opacity {
+  opacity: 0.25;
+}
 .search-results-container,
 .search-results-container-nav-buttons {
   border: 1px solid black;
@@ -175,6 +178,24 @@ input#page-number {
 
 .full-page-flex-container {
   height: 100vh;
+}
+
+.spinner-border {
+  width: 100px;
+  height: 100px;
+  border-width: 20px;
+  color: white;
+}
+
+.game-search-box {
+  position: relative;
+}
+
+.load-container {
+  position: absolute;
+  left: 40%;
+  top: 30%;
+  z-index: 3;
 }
 
 /* Toolbar */

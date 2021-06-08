@@ -110,16 +110,28 @@ export default function GameSearchBox(props) {
       }
       setLoading(false);
     } catch (e) {
-      setErrorMessage(e.message + "\n" + msg);
+      setErrorMessage(e.message);
       setLoading(false);
     }
   }
 
   return (
     <div className="game-search-box d-flex flex-column">
-      <div className="search-results game-list order-2 order-md-1">
+      {loading && (
+        <div className="load-container">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">loading...</span>
+          </div>
+        </div>
+      )}
+
+      <div
+        className={`search-results game-list order-2 order-md-1 ${
+          loading ? "loading-opacity" : ""
+        }`}
+      >
         {errorMessage && <p>{errorMessage}</p>}
-        {loading && <p>Loading...</p>}
+
         {displayedSearchResults}
       </div>
       <div className="button-bar order-1 order-md-2">

@@ -34,7 +34,7 @@ export default function Toolbar(props) {
           value=""
           groupClass="col-10 col-md-11 pt-1"
         />
-        <HiddenField label="Page" name="page" value="0" groupClass="d.none" />
+        <HiddenField label="Page" name="page" value="0" groupClass="d-none" />
       </Form>
       <div className="col-md-2 col-4 pt-1">
         <div className="toolbar-options">

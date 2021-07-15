@@ -42,7 +42,7 @@ const apiRouter = require("./routes/apiRouter");
 const searchRouter = require("./routes/searchRouter");
 
 const app = express();
-const nextApp = next({ dev: true });
+const nextApp = next({ dev: process.env.NODE_ENV !== "prod" });
 const nextHandler = nextApp.getRequestHandler();
 
 /* setting up passport */
@@ -81,12 +81,6 @@ passport.deserializeUser(async (email, done) => {
     done(e, null);
   }
 });
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
-
-/* adding middleware */
 
 //http logging
 app.use(logger("dev"));

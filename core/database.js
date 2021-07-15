@@ -7,6 +7,7 @@ const { promisify } = require("util");
 const debug = require("debug")("mygamepage-db");
 
 const config = {
+  // host: "db",
   user: process.env.dbuser,
   password: process.env.dbpass,
   port: process.env.dbport,

@@ -10,8 +10,6 @@ const next = require("next");
 //set up axios interceptors
 require("./core/setupAxios");
 
-const { parse } = require("url");
-
 //middleware
 const logger = require("morgan");
 const createError = require("http-errors");
@@ -42,7 +40,7 @@ const apiRouter = require("./routes/apiRouter");
 const searchRouter = require("./routes/searchRouter");
 
 const app = express();
-const nextApp = next({ dev: process.env.NODE_ENV !== "prod" });
+const nextApp = next({ dev: process.env.NODE_ENV !== "production" });
 const nextHandler = nextApp.getRequestHandler();
 
 /* setting up passport */
@@ -82,6 +80,10 @@ passport.deserializeUser(async (email, done) => {
   }
 });
 
+// we dont use this but without it, res.render throws an error
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
 //http logging
 app.use(logger("dev"));
 //parse url encoded post body
@@ -92,6 +94,8 @@ app.use(fileUpload());
 //static resources
 app.use(express.static(path.join(__dirname, "public")));
 
+console.log(process.env.SECRET);
+console.log(process.env.DB);
 //sessions
 app.use(
   session({
@@ -101,7 +105,7 @@ app.use(
       return id;
     },
     store: new FileStore({ logFn: () => {} }), //this is to avoid those messages that appear when file store is empty
-    secret: process.env.secret,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -133,7 +137,7 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.title = `Error ${err.status || 500}`;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+  res.locals.error = err;
 
   // render the error page
   res.status(err.status || 500);
@@ -142,6 +146,6 @@ app.use(function (err, req, res, next) {
 
 //start the app
 nextApp.prepare().then(() => {
-  debug(`listening on ${process.env.port || 3000}`);
-  app.listen(process.env.port || 3000);
+  debug(`listening on ${process.env.PORT || 3000}`);
+  app.listen(process.env.PORT || 3000);
 });

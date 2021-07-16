@@ -81,9 +81,9 @@ axios.interceptors.response.use(
 async function getNewToken() {
   debug(`refreshing token`);
   const response = await axios.post(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.clientid}&client_secret=${process.env.clientsecret}&grant_type=client_credentials`
+    `https://id.twitch.tv/oauth2/token?client_id=${process.env.CLIENTID}&client_secret=${process.env.CLIENTSECRET}&grant_type=client_credentials`
   );
-  process.env.accesstoken = response.data.access_token;
+  process.env.ACCESSTOKEN = response.data.access_token;
   return response.data.access_token;
 }
 

@@ -16,8 +16,8 @@ router.use((req, res, next) => {
   req.getApiHeaders = () => {
     return {
       Accept: "application/json",
-      "Client-ID": process.env.clientid,
-      Authorization: `Bearer ${process.env.accesstoken}`,
+      "Client-ID": process.env.CLIENTID,
+      Authorization: `Bearer ${process.env.ACCESSTOKEN}`,
     };
   };
   next();

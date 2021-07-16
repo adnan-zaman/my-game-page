@@ -1,0 +1,41 @@
+extends webpage.pug
+
+block styles
+    link(rel="stylesheet" href="../stylesheets/style.css")
+
+block scripts
+    script(src='/javascripts/game-search.js' defer=true) 
+    script(type='module' src='/javascripts/editFavoriteGames.mjs')
+    script.       
+        const globals = {
+            favoriteGames: !{JSON.stringify(games)},
+            id: !{id ? id : "null"}
+        }
+
+block content
+    div
+        h1 #{displayName}
+        if id
+            button Change
+
+    div#favorite-games-list-box
+        ul#favorite-games-list
+            each val in games
+                li
+                    div.game-container(data-gameid= val.id)
+                        img(src=val.coverurl)
+                        p= val.name
+                    
+                    
+        if id
+            button#edit-favorite-games-btn Change
+            button#cancel-edit-favorite-games-btn Cancel
+            div#search-box
+                form#search-form
+                    input(type="text")
+                    button(type="submit") Search
+                button#search-prev= '<'
+                button#search-next= '>'
+                div#search-results
+
+    

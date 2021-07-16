@@ -7,11 +7,11 @@ const { promisify } = require("util");
 const debug = require("debug")("mygamepage-db");
 
 const config = {
-  // host: "db",
-  user: process.env.dbuser,
-  password: process.env.dbpass,
-  port: process.env.dbport,
-  database: process.env.db,
+  host: process.env.DBHOST || "localhost",
+  user: process.env.DBUSER,
+  password: process.env.DBPASS,
+  port: process.env.DBPORT,
+  database: process.env.DB,
 };
 
 const pool = mysql.createPool({

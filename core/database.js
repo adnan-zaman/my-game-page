@@ -15,7 +15,7 @@ const config = {
 };
 
 const pool = mysql.createPool({
-  connectionLimit: 100,
+  connectionLimit: 10,
   ...config,
 });
 

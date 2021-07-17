@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env-shell SECRET=abcdefg DB=my_game_page_test DBUSER=root DBPASS=password DBPORT=3306 CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9 DEBUG=mygamepage-* NODE_ENV=production node ./app",
+    "start": "cross-env-shell SECRET=abcdefg DBHOST=ohunm00fjsjs1uzy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com DB=xbc7c0r6tvfil98x DBUSER=r9mlk6i8se3or725 DBPASS=aqoraxkltp9ohrmi DBPORT=3306 CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9 DEBUG=mygamepage-* NODE_ENV=production node ./app",
     "dev": "cross-env-shell SECRET=abcdefg DB=my_game_page_test DBUSER=root DBPASS=password DBPORT=3306 CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9 DEBUG=mygamepage-* NODE_ENV=dev nodemon --ignore ./sessions --ignore ./public ./app",
     "testFrontend": "cross-env-shell NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/frontend/*.test.js",
     "testBackend": "cross-env-shell NODE_ENV=test mocha  ./tests/backend/*.test.js",

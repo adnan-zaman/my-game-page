@@ -46,7 +46,7 @@ export default function UserSettingsPage(props) {
     formData.append("profilePicture", values.profilePicture[0]);
     try {
       const response = await fetch(
-        `http://localhost:3000/user/settings/profile-picture/${props.userId}`,
+        `/user/settings/profile-picture/${props.userId}`,
         {
           method: "PUT",
           credentials: "same-origin",
@@ -89,15 +89,12 @@ export default function UserSettingsPage(props) {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/user/settings/password/${props.userId}`,
-        {
-          method: "PUT",
-          credentials: "same-origin",
-          body: JSON.stringify(values),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await fetch(`/user/settings/password/${props.userId}`, {
+        method: "PUT",
+        credentials: "same-origin",
+        body: JSON.stringify(values),
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (response.ok)
         setPasswordStatus({
@@ -130,7 +127,7 @@ export default function UserSettingsPage(props) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/user/settings/display-name/${props.userId}`,
+        `/user/settings/display-name/${props.userId}`,
         {
           method: "PUT",
           credentials: "same-origin",

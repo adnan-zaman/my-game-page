@@ -7,7 +7,8 @@
     "dev": "cross-env-shell SECRET=abcdefg DB=my_game_page_test DBUSER=root DBPASS=password DBPORT=3306 CLIENTID=51nnao9y2yi09i32phg0ysizmwy2ko CLIENTSECRET=mkelc6y3yr8au7vahu0wg58x59k0v9 DEBUG=mygamepage-* NODE_ENV=dev nodemon --ignore ./sessions --ignore ./public ./app",
     "testFrontend": "cross-env-shell NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/frontend/*.test.js",
     "testBackend": "cross-env-shell NODE_ENV=test mocha  ./tests/backend/*.test.js",
-    "test": "cross-env-shell NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/**/*.test.js"
+    "test": "cross-env-shell NODE_ENV=test mocha --require @babel/register ./tests/helpers/browser.js  ./tests/**/*.test.js",
+    "build": "next build"
   },
   "dependencies": {
     "@babel/core": "^7.13.8",
